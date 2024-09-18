@@ -1,0 +1,50 @@
+
+# Spring环境配置
+spring:
+  # 应用名称
+  application:
+    name: service-user
+  # 激活的配置文件
+  profiles:
+    active: dev
+  # 主配置项，允许覆盖bean定义
+  main:
+    allow-bean-definition-overriding: true
+  # 云服务配置
+  cloud:
+    # Nacos服务发现与配置中心地址
+    nacos:
+      discovery:
+        # Nacos服务器地址
+        server-addr: 192.168.85.129:8848
+        # 指定命名空间名
+        namespace: ff22ea3c-3c52-4537-9656-2e52fc5b15a4
+        group: DEFAULT_GROUP
+      config:
+        # Nacos服务器地址
+        server-addr: 192.168.85.129:8848
+        # 指定命名空间名
+        namespace: ff22ea3c-3c52-4537-9656-2e52fc5b15a4
+        group: DEFAULT_GROUP
+        # 配置前缀
+        prefix: ${spring.application.name}
+        # 文件扩展名
+        file-extension: yaml
+  #springdoc-openapi项目配置
+springdoc:
+  swagger-ui:
+    path: /swagger-ui.html
+    tags-sorter: alpha
+    operations-sorter: alpha
+    show-extensions: true
+  api-docs:
+    path: /v3/api-docs
+  group-configs:
+    - group: 'default'
+      paths-to-match: '/user/**'
+      packages-to-scan: com.linyilinyi.user
+  default-flat-param-object: false
+knife4j:
+  enable: true
+  setting:
+    language: zh_cn

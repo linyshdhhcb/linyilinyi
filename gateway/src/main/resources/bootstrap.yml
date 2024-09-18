@@ -1,0 +1,54 @@
+
+# Spring环境配置
+spring:
+  # 应用名称
+  application:
+    name: gateway
+  # 激活的配置文件
+  profiles:
+    active: dev
+  # 主配置项，允许覆盖bean定义
+  main:
+    allow-bean-definition-overriding: true
+    web-application-type: reactive
+  # 云服务配置
+  cloud:
+    # Nacos服务发现与配置中心地址
+    nacos:
+      discovery:
+        # Nacos服务器地址
+        server-addr: 192.168.85.129:8848
+        # 指定命名空间名
+        namespace: ff22ea3c-3c52-4537-9656-2e52fc5b15a4
+        group: DEFAULT_GROUP
+      config:
+        # Nacos服务器地址
+        server-addr: 192.168.85.129:8848
+        # 指定命名空间名
+        namespace: ff22ea3c-3c52-4537-9656-2e52fc5b15a4
+        group: DEFAULT_GROUP
+        # 配置前缀
+        prefix: ${spring.application.name}
+        # 文件扩展名
+        file-extension: yaml
+#knife4j:
+#  gateway:
+#    enabled: true
+#    # 指定服务发现的模式聚合微服务文档，并且是默认`default`分组
+#    strategy: discover
+#    discover:
+#      enabled: true
+#      # 指定版本号(Swagger2|OpenAPI3)
+#      version : openapi3
+#      # 需要排除的微服务(eg:网关服务)
+#      excluded-services: ${spring.application.name}
+#      service-config:
+#        service-video:
+#          - group-name: "视频服务"
+#            order: 1
+#        service-user:
+#          - group-name: "用户服务"
+#            order: 2
+#        tags-sorter: order
+#        operations-sorter: order
+
