@@ -30,4 +30,11 @@ public interface FileService extends IService<File> {
 
     String deleteFiles(List<Long> ids);
 
+    Boolean checkFileMd5(String md5);
+
+    String fileMd5(java.io.File file);
+
+    String uploadChunk(String absolutePath, String md5, int chunkNumber);
+
+    Boolean checkChunk(String md5, int chunkNumber);
 }

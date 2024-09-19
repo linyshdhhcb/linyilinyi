@@ -10,6 +10,7 @@ import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.annotation.Resource;
 import jakarta.validation.Valid;
+import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import lombok.extern.slf4j.Slf4j;
 import org.mybatis.spring.annotation.MapperScan;
@@ -145,5 +146,57 @@ public class FileController {
     public Result<String> deleteFile(@NotNull(message = "id不能为空") @PathVariable List<Long> ids) {
         return Result.ok(fileService.deleteFiles(ids));
     }
+
+    @Operation(summary = "检查文件md5（已存在，未存在，传输部分）")
+    @GetMapping("/checkFileMd5/{md5}")
+    public Result<Boolean> checkFileMd5(@NotBlank(message = "md5不能为空") @PathVariable String md5) {
+        return Result.ok(fileService.checkFileMd5(md5));
+    }
+
+    @Operation(summary = "计算文件md5")
+    @PostMapping("/getFileMd5")
+    public Result<String> getFileMd5(@RequestPart("filedata") MultipartFile filedata) {
+        try {
+            long l = System.currentTimeMillis();
+            //创建临时文件
+            java.io.File tempFile = java.io.File.createTempFile("minio", ".temp");
+            //上传后自动删除
+            tempFile.deleteOnExit();
+            //将filedata内容写入tempfile
+            long l1 = System.currentTimeMillis();
+            filedata.transferTo(tempFile);
+            String absolutePath = tempFile.getAbsolutePath();
+            String s = fileService.fileMd5(new java.io.File(absolutePath));
+            System.out.println("#################文件计算md5耗时：" + (System.currentTimeMillis() - l));
+            return Result.ok(s);
+        } catch (IOException e) {
+            throw new LinyiException("文件计算md5失败" + e.getMessage());
+        }
+    }
+
+    @Operation(summary = "分片上传（md5是整个文件的）")
+    @PostMapping("/uploadChunk")
+    public Result<String> uploadChunk(@RequestPart("file") MultipartFile file,
+                                      @NotBlank(message = "md5不能为空") @RequestParam("md5") String md5,
+                                      @NotNull(message = "分块编号不能为空") @RequestParam("chunkNumber") int chunkNumber){
+        try {
+            java.io.File tempFile = java.io.File.createTempFile("minio", ".temp");
+            file.transferTo(tempFile);
+            String absolutePath = tempFile.getAbsolutePath();
+            return Result.ok(fileService.uploadChunk(absolutePath, md5, chunkNumber));
+        } catch (Exception e) {
+            throw new LinyiException("文件分片上传失败" + e.getMessage());
+        }
+
+    }
+
+    @Operation(summary = "检查分块是否存在")
+    @GetMapping("/checkChunk/{md5}/{chunkNumber}")
+    public Result<Boolean> checkChunk(@NotBlank(message = "md5不能为空") @PathVariable String md5,
+                                      @NotNull(message = "分块序号不能为空") @PathVariable int chunkNumber) {
+        return Result.ok(fileService.checkChunk(md5, chunkNumber));
+    }
+
+
 
 }

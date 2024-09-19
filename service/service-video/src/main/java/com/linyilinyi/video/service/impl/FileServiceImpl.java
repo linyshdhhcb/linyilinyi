@@ -18,7 +18,6 @@ import com.linyilinyi.video.service.FileService;
 import io.minio.*;
 import com.j256.simplemagic.ContentInfo;
 import com.j256.simplemagic.ContentInfoUtil;
-import io.minio.errors.*;
 import jakarta.annotation.Resource;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
@@ -29,7 +28,6 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.io.FileInputStream;
 import java.io.IOException;
-import java.security.InvalidKeyException;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.time.Instant;
@@ -39,7 +37,6 @@ import java.time.ZonedDateTime;
 import java.time.format.DateTimeFormatter;
 import java.time.temporal.ChronoUnit;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Optional;
 
@@ -196,8 +193,8 @@ public class FileServiceImpl extends ServiceImpl<FileMapper, File> implements Fi
         List<String> s = new ArrayList<>();
         for (Long id : ids) {
             List<File> items = getDeleteFileList(1, 1, id).getItems();
-            file = items.size()==0 ? getById(id) : items.get(0);
-            if (file == null){
+            file = items.size() == 0 ? getById(id) : items.get(0);
+            if (file == null) {
                 log.error("文件不存在，id为：{}", id);
                 continue;
             }
@@ -216,6 +213,72 @@ public class FileServiceImpl extends ServiceImpl<FileMapper, File> implements Fi
         return result;
     }
 
+    @Override
+    public Boolean checkFileMd5(String md5) {
+        LambdaQueryWrapper<File> queryWrapper = new LambdaQueryWrapper<File>().eq(StringUtils.isNotBlank(md5), File::getFileMd5, md5);
+        return Optional.ofNullable(fileMapper.selectOne(queryWrapper)).isEmpty() ? false : true;
+    }
+
+    /**
+     * 使用流式计算文件md5
+     *
+     * @param file
+     * @return
+     */
+    @Override
+    public String fileMd5(java.io.File file) {
+        // 通过FileInputStream读取文件内容，并在完成后自动关闭流
+        try (FileInputStream fis = new FileInputStream(file)) {
+            // 获取MD5消息摘要实例
+            MessageDigest digest = MessageDigest.getInstance("MD5");
+            // 创建一个8192字节的缓冲区，用于提高读取性能
+            byte[] buffer = new byte[32768];
+            int numRead;
+
+            // 循环读取文件内容直到结束
+            while ((numRead = fis.read(buffer)) != -1) {
+                // 更新消息摘要
+                digest.update(buffer, 0, numRead);
+            }
+
+            // 完成摘要生成
+            byte[] md5Bytes = digest.digest();
+            StringBuilder hexString = new StringBuilder();
+            // 构建MD5的十六进制字符串表示
+            for (byte b : md5Bytes) {
+                String hex = Integer.toHexString(0xFF & b);
+                if (hex.length() == 1) hexString.append('0');
+                hexString.append(hex);
+            }
+            // 返回MD5十六进制字符串
+            String string = hexString.toString();
+            //十六进制字符串的第一个字符是0，而在这种情况下可能会省略掉0
+            if (string.length() != 32) {
+                string = "0" + string;
+            }
+            return string;
+        } catch (IOException e) {
+            // 处理文件读取错误
+            System.err.println("文件读取错误: " + e.getMessage());
+            return null;
+        } catch (NoSuchAlgorithmException e) {
+            // 处理算法未找到异常
+            System.err.println("算法未找到: " + e.getMessage());
+            return null;
+        }
+    }
+
+    @Override
+    public String uploadChunk(String absolutePath, String md5, int chunkNumber) {
+        //获取分块文件的路径
+        String path = "chunk" + md5 + chunkNumber;
+        //获取mimeType
+        String mimeType = getMimeType(null);
+        //分块上传minio
+        boolean b = addFilesToMinIO(minioVo.getBucketName(), path, absolutePath, mimeType);
+        return b ? "分块上传成功" : "分块上传失败";
+
+    }
 
     /*----------------------------------------------------------功能类---------------------------------------------------------------------------------------*/
     private boolean addFilesToMinIO(String bucketName, String object, String absolutePath, String mimeType) {
@@ -245,34 +308,6 @@ public class FileServiceImpl extends ServiceImpl<FileMapper, File> implements Fi
             return false;
         }
     }
-
-    private String fileMd5(java.io.File file) {
-        try (FileInputStream fis = new FileInputStream(file)) { // 使用 file 直接创建 FileInputStream
-            MessageDigest digest = MessageDigest.getInstance("MD5");
-            byte[] buffer = new byte[8192]; // 使用较大的缓冲区以提高读取效率
-            int numRead;
-
-            while ((numRead = fis.read(buffer)) != -1) {
-                digest.update(buffer, 0, numRead);
-            }
-
-            byte[] md5Bytes = digest.digest();
-            StringBuilder hexString = new StringBuilder();
-            for (byte b : md5Bytes) {
-                String hex = Integer.toHexString(0xFF & b);
-                if (hex.length() == 1) hexString.append('0');
-                hexString.append(hex);
-            }
-            return hexString.toString();
-        } catch (IOException e) {
-            System.err.println("文件读取错误: " + e.getMessage());
-            return null;
-        } catch (NoSuchAlgorithmException e) {
-            System.err.println("算法未找到: " + e.getMessage());
-            return null;
-        }
-    }
-
 
     public String getPathTime() {
         return "/" + LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyy-MM-dd")).replace("-", "/") + "/";
