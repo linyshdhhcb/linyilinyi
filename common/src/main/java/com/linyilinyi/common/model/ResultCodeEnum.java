@@ -13,6 +13,10 @@ public enum ResultCodeEnum {
 
     SUCCESS(200,"成功"),
     FAIL(201, "失败"),
+    INSERT_FAIL(201, "插入失败"),
+    DELETE_FAIL(201, "删除失败"),
+    IS_DELETE_FAIL(201, "逻辑删除失败"),
+    UPDATE_FAIL(201, "修改失败"),
     FAIL_VIDEO(201,"视频信息插入失败"),
     SERVICE_ERROR(2012, "服务异常"),
     DATA_ERROR(204, "数据异常"),
@@ -33,6 +37,7 @@ public enum ResultCodeEnum {
     PERMISSION(209, "没有权限"),
     ACCOUNT_ERROR(214, "账号不正确"),
     PASSWORD_ERROR(215, "密码不正确"),
+    UPDATE_PASSWORD_ERROR(215, "密码不能修改"),
     PHONE_CODE_ERROR(215, "手机验证码不正确"),
     LOGIN_MOBLE_ERROR( 216, "账号不正确"),
     ACCOUNT_STOP( 216, "账号已停用"),

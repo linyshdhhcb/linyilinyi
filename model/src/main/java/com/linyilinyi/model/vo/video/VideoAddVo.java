@@ -20,7 +20,7 @@ import java.time.LocalDateTime;
 @Data
 public class VideoAddVo {
 
-    @NotBlank(message = "视频时长不能为空")
+    @NotNull(message = "视频时长不能为空")
     @Schema(description = "视频时长")
     private Long length;
 
@@ -49,5 +49,21 @@ public class VideoAddVo {
     @Schema(description = "创建时间")
     @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
     private LocalDateTime createTime;
+
+    @NotNull(message = "视频审核状态不能为空")
+    @Schema(description = "视频审核状态")
+    private Integer videoStart;
+
+    @NotNull(message = "图片审核状态不能为空")
+    @Schema(description = "视频审核状态")
+    private Integer imageStart;
+
+    @NotBlank(message = "视频MD5不能为空")
+    @Schema(description = "视频MD5")
+    private String videoMd5;
+
+    @NotBlank(message = "图片MD5不能为空")
+    @Schema(description = "图片MD5")
+    private String imageMd5;
 
 }

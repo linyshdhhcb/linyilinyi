@@ -87,11 +87,36 @@ public class VideoServiceImpl extends ServiceImpl<VideoMapper, Video> implements
         videoNew.setImage(user.getImage());
         videoNew.setUsername(user.getUsername());
         videoNew.setCreateTime(LocalDateTime.now());
+        videoNew.setVideoStart(video.getVideoStart());
+        videoNew.setVideoMd5(video.getVideoMd5());
+        videoNew.setImageStart(video.getImageStart());
+        videoNew.setImageMd5(video.getImageMd5());
         BeanUtils.copyProperties(video,videoNew);
         int insert = videoMapper.insert(videoNew);
         if(insert!=1){
             throw new LinyiException(ResultCodeEnum.FAIL);
         }
         return videoNew;
+    }
+
+    @Override
+    public String deleteVideo(List<Long> ids) {
+        int i = videoMapper.deleteBatchIds(ids);
+        if(i!= ids.size()){
+            throw new LinyiException(ResultCodeEnum.DELETE_FAIL);
+        }
+        return "删除成功";
+    }
+
+    @Override
+    public String updateVideo(Video video) {
+        if(Optional.ofNullable(video).isEmpty()){
+            throw new LinyiException(ResultCodeEnum.DATA_ERROR);
+        }
+        int i = videoMapper.updateById(video);
+        if (i!=1){
+            throw new LinyiException(ResultCodeEnum.UPDATE_FAIL);
+        }
+        return "修改成功";
     }
 }

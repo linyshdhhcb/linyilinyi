@@ -21,6 +21,7 @@
     <modules>
         <module>service-user</module>
         <module>service-video</module>
+        <module>service-article</module>
     </modules>
     <dependencies>
         <dependency>

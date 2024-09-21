@@ -1,7 +1,12 @@
 package com.linyilinyi.user.service;
 
 import com.baomidou.mybatisplus.extension.service.IService;
+import com.linyilinyi.common.model.PageResult;
 import com.linyilinyi.model.entity.user.User;
+import com.linyilinyi.model.vo.user.UserQueryVo;
+import com.linyilinyi.model.vo.user.UserUpdateVo;
+
+import java.util.List;
 
 /**
  * <p>
@@ -14,4 +19,10 @@ import com.linyilinyi.model.entity.user.User;
 public interface UserService extends IService<User> {
 
     User getUserById(Integer id);
+
+    String deleteUserById(List<Integer> ids);
+
+    PageResult<User> getUserList(long pageNo, long pageSize, UserQueryVo userQueryVo);
+
+    String updateUser(UserUpdateVo user);
 }

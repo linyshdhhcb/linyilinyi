@@ -11,6 +11,7 @@ import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import lombok.Data;
+import org.springframework.messaging.Message;
 
 /**
  * <p>
@@ -84,6 +85,22 @@ public class Video implements Serializable {
     @Schema(description = "逻辑删除标识（0：未删除；1：已删除）")
     @TableLogic
     private Integer isDelete;
+
+    @NotNull(message = "视频审核状态不能为空")
+    @Schema(description = "视频审核状态")
+    private Integer videoStart;
+
+    @NotNull(message = "图片审核状态不能为空")
+    @Schema(description = "视频审核状态")
+    private Integer imageStart;
+
+    @NotBlank(message = "视频MD5不能为空")
+   @Schema(description = "视频MD5")
+    private String videoMd5;
+
+    @NotBlank(message = "图片MD5不能为空")
+   @Schema(description = "图片MD5")
+    private String imageMd5;
 
 
 }

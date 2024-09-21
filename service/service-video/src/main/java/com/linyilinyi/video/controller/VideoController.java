@@ -1,5 +1,6 @@
 package com.linyilinyi.video.controller;
 
+import com.alibaba.nacos.shaded.com.google.protobuf.Message;
 import com.linyilinyi.common.exception.LinyiException;
 import com.linyilinyi.common.model.PageResult;
 import com.linyilinyi.common.model.Result;
@@ -13,12 +14,14 @@ import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.annotation.Resource;
 import jakarta.validation.Valid;
+import jakarta.validation.constraints.NotNull;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.validation.BindingResult;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
 
 
 /**
@@ -56,6 +59,18 @@ public class VideoController {
     @PostMapping("/addVideo")
     public Result<Video> addVideo(@Valid @RequestBody VideoAddVo videoAddVo) {
         return Result.ok(videoService.addVideo(videoAddVo));
+    }
+
+    @Operation(summary = "删除视频")
+    @DeleteMapping("/deleteVideo/{ids}")
+    public Result<String> deleteVideo(@NotNull(message = "ids不能为空") @PathVariable List<Long> ids) {
+        return Result.ok(videoService.deleteVideo(ids));
+    }
+
+    @Operation(summary = "修改视频信息")
+    @PutMapping("/updateVideo")
+    public Result<String> updateVideo(@Valid @RequestBody Video video) {
+        return Result.ok(videoService.updateVideo(video));
     }
 
 }

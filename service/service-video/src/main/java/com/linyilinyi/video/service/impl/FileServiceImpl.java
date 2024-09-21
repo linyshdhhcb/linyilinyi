@@ -1,6 +1,7 @@
 package com.linyilinyi.video.service.impl;
 
 
+import com.alibaba.fastjson2.JSONObject;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
@@ -18,16 +19,21 @@ import com.linyilinyi.video.service.FileService;
 import io.minio.*;
 import com.j256.simplemagic.ContentInfo;
 import com.j256.simplemagic.ContentInfoUtil;
+import io.minio.errors.*;
+import io.minio.messages.DeleteError;
+import io.minio.messages.Item;
 import jakarta.annotation.Resource;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.http.MediaType;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.io.FileInputStream;
 import java.io.IOException;
+import java.security.InvalidKeyException;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.time.Instant;
@@ -39,6 +45,8 @@ import java.time.temporal.ChronoUnit;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 /**
  * <p>
@@ -61,6 +69,8 @@ public class FileServiceImpl extends ServiceImpl<FileMapper, File> implements Fi
     @Autowired
     private MinioVo minioVo;
 
+    @Resource
+    private RedisTemplate redisTemplate;
 
     private String bucketName;
 
@@ -271,16 +281,141 @@ public class FileServiceImpl extends ServiceImpl<FileMapper, File> implements Fi
     @Override
     public String uploadChunk(String absolutePath, String md5, int chunkNumber) {
         //获取分块文件的路径
-        String path = "chunk" + md5 + chunkNumber;
+        String path = "/chunk/" + md5 + "/" + chunkNumber;
         //获取mimeType
         String mimeType = getMimeType(null);
         //分块上传minio
         boolean b = addFilesToMinIO(minioVo.getBucketName(), path, absolutePath, mimeType);
+        if (b) {
+            File file = new File();
+            file.setId(new SnowflakeIdWorker(0, 0).nextId());
+            file.setFileName(String.valueOf(chunkNumber));
+            file.setFileType(null);
+            file.setBucket(minioVo.getBucketName());
+            file.setFileUrl(minioVo.getEndpointUrl() + path);
+            file.setFilePath(minioVo.getBucketName() + "/chunk/" + md5);
+            file.setFileSize(new java.io.File(absolutePath).length() / 1024.0);
+            file.setFileMd5(fileMd5(new java.io.File(absolutePath)));
+            file.setUserId(AuthContextUser.getUserId());
+            file.setFileType("11003");
+            file.setStart(10001);
+            file.setCreateTime(LocalDateTime.now());
+            int insert = fileMapper.insert(file);
+            redisTemplate.opsForValue().set("chunk:" + md5 + ":" + chunkNumber + ":", JSONObject.toJSONString(file));
+            if (insert != 1) {
+                throw new LinyiException(ResultCodeEnum.INSERT_FAIL);
+            }
+        }
         return b ? "分块上传成功" : "分块上传失败";
 
     }
 
+    @Override
+    public Boolean checkChunk(String md5, int chunkNumber) {
+        //获取分块文件存储路径
+        String path = "/chunk/" + md5 + "/" + chunkNumber;
+        try {
+            File file = null;
+            String s = (String) redisTemplate.opsForValue().get("chunk:" + md5 + ":" + chunkNumber + ":");
+            if (s != null) {
+                file = JSONObject.parseObject(s, File.class);
+            } else {
+                LambdaQueryWrapper<File> queryWrapper = new LambdaQueryWrapper<File>().eq(File::getFileMd5, md5).eq(File::getFileName, chunkNumber);
+                file = fileMapper.selectOne(queryWrapper);
+            }
+            GetObjectResponse getChunk = minioClient.getObject(GetObjectArgs.builder().bucket(minioVo.getBucketName()).object(path).build());
+            return file != null && getChunk != null ? true : false;
+        } catch (Exception e) {
+            throw new LinyiException(201, "检化分块是否存在失败");
+        }
+    }
+
+    @Override
+    @Transactional
+    public String mergeChunk(String md5, String fileName, int chunkCount) {
+        String path = "/chunk/" + md5 + "/";
+        List<ComposeSource> sources = Stream.iterate(0, i -> ++i)
+                .limit(chunkCount)
+                .map(i -> ComposeSource.builder().bucket(minioVo.getBucketName()).object(path + i).build())
+                .collect(Collectors.toList());
+        File file = new File();
+        //获取文件类型
+        file.setFileType(fileName.substring(fileName.lastIndexOf(".")));
+        String object =minioVo.getBucketName()+"/"+ "video" + getPathTime() + md5 + file.getFileType();
+        try {
+            minioClient.composeObject(ComposeObjectArgs.builder().bucket(minioVo.getBucketName()).object(object).sources(sources).build());
+        } catch (Exception e) {
+            throw new LinyiException(201, "合并分块失败");
+        }
+        //插入上传文件信息
+        file.setFileUrl(minioVo.getEndpointUrl() + "/" + object);
+        file.setId(new SnowflakeIdWorker(0, 0).nextId());
+        file.setStart(10001);
+        file.setFilePath(object);
+        file.setFileName(md5 + fileName.substring(fileName.lastIndexOf(".")));
+        file.setUserId(AuthContextUser.getUserId());
+        file.setFileMd5(md5);
+        file.setBucket(minioVo.getBucketName());
+        file.setCreateTime(LocalDateTime.now());
+        file.setFileType("11002");
+        file.setFileSize(getMinioFileSize("chunk/" + md5 + "/"));
+        int insert = fileMapper.insert(file);
+        if (insert != 1) {
+            throw new LinyiException(ResultCodeEnum.INSERT_FAIL);
+        }
+        List<Long> ids = new ArrayList<>();
+        ArrayList<String> keys = new ArrayList<>();
+        for (int i = 0; i < chunkCount; i++) {
+            File file1 = JSONObject.parseObject((String) redisTemplate.opsForValue().get("chunk:" + md5 + ":" + i + ":"), File.class);
+            ids.add(file1.getId());
+            keys.add("chunk:" + md5 + ":" + i + ":");
+        }
+        Long delete = redisTemplate.delete(keys);
+        log.info("redis删除分块信息成功！{}条",delete);
+        String s = deleteFiles(ids);
+        log.info("mysql删除分块信息成功！{}",s);
+        //删除分片和文件夹
+        Boolean b = deleteMinioFile("chunk/" + md5 + "/");
+        if (!b){
+            log.error("删除分片失败");
+        }
+        return "成功";
+    }
+
+    private Boolean deleteMinioFile(String s) {
+        try {
+            minioClient.listObjects(ListObjectsArgs.builder().bucket(minioVo.getBucketName()).prefix(s).recursive(true).build()).forEach(item -> {
+                try {
+                    minioClient.removeObject(RemoveObjectArgs.builder().bucket(minioVo.getBucketName()).object(item.get().objectName()).build());
+                    log.info(item.get().objectName() + "删除minio分块成功");
+                } catch (Exception e) {
+                    throw new LinyiException("删除文件失败" + e.getMessage());
+                }
+            });
+            return true;
+        } catch (Exception e) {
+            throw new LinyiException("删除文件失败" + e.getMessage());
+        }
+    }
+
+
+    private Double getMinioFileSize(String object) {
+        try {
+            double sum = 0.0;
+            Iterable<Result<Item>> results = minioClient.listObjects(ListObjectsArgs.builder().bucket(minioVo.getBucketName()).prefix(object).recursive(true).build());
+            for (Result<Item> result : results) {
+                System.out.println(result.get().lastModified() + "\t" + result.get().size() + "\t" + result.get().objectName());
+                sum += result.get().size() / 1024.0;
+            }
+            return sum;
+        } catch (Exception e) {
+            throw new LinyiException("获取文件大小失败" + e.getMessage());
+        }
+    }
+
+
     /*----------------------------------------------------------功能类---------------------------------------------------------------------------------------*/
+
     private boolean addFilesToMinIO(String bucketName, String object, String absolutePath, String mimeType) {
         try {
             // 获取当前系统时间和服务器时间

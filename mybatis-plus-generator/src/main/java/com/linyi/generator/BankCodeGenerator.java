@@ -20,8 +20,8 @@ public class BankCodeGenerator {
 	private static final String DATA_SOURCE_USER_NAME  = "root";
 	private static final String DATA_SOURCE_PASSWORD  = "123456";
 	private static final String[] TABLE_NAMES = new String[]{
-//			"article",
-//			"article_data",
+			"article",
+			"article_data",
 //			"collect",
 //			"collect_group",
 //			"comment",
@@ -34,7 +34,7 @@ public class BankCodeGenerator {
 //			"video",
 //			"video_data",
 //			"likes",
-//			"follow"
+//			"follow",
 //			"file",
 //			"dictionary_label",
 //			"dictionary_type"

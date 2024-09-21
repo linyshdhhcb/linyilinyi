@@ -8,6 +8,8 @@ import com.linyilinyi.model.vo.video.VideoQueryVo;
 import com.linyilinyi.model.vo.video.VideoVo;
 import jakarta.validation.Valid;
 
+import java.util.List;
+
 /**
  * <p>
  * 视频信息表 服务类
@@ -24,4 +26,8 @@ public interface VideoService extends IService<Video> {
     VideoVo getVideoById(Long id);
 
     Video addVideo(VideoAddVo video);
+
+    String deleteVideo(List<Long> ids);
+
+    String updateVideo(Video video);
 }

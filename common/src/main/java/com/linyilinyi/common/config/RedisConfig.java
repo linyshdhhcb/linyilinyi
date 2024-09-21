@@ -1,5 +1,4 @@
 package com.linyilinyi.common.config;
-
 import com.fasterxml.jackson.annotation.JsonAutoDetect;
 import com.fasterxml.jackson.annotation.PropertyAccessor;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -19,10 +18,8 @@ import java.lang.reflect.Method;
 import java.time.Duration;
 
 /**
- * @Description Redis配置类
- * @Author linyi
- * @Date 2024/9/13
- * @ClassName: RedisConfig
+ * Redis配置类
+ *
  */
 @Configuration
 @EnableCaching

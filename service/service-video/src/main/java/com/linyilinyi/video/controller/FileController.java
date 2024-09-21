@@ -141,7 +141,7 @@ public class FileController {
         return Result.ok(fileService.getDeleteFileList(pageNo, pageSize, id));
     }
 
-    @Operation(summary = "物理删除上传文件")
+    @Operation(summary = "物理删除上传文件信息")
     @DeleteMapping("/deleteFile/{ids}")
     public Result<String> deleteFile(@NotNull(message = "id不能为空") @PathVariable List<Long> ids) {
         return Result.ok(fileService.deleteFiles(ids));
@@ -190,13 +190,19 @@ public class FileController {
 
     }
 
-    @Operation(summary = "检查分块是否存在")
+    @Operation(summary = "分块合并")
+    @PostMapping("/mergeChunk")
+    public Result<String> mergeChunk(@NotBlank(message = "文件md5不难为空")@RequestParam("md5") String md5,
+                                     @NotBlank(message = "源文件名不能为空") @RequestParam("fileName") String fileName,
+                                     @NotNull(message = "分块数量不能为空") @RequestParam("chunkCount") int chunkCount) {
+        return Result.ok(fileService.mergeChunk(md5, fileName,chunkCount));
+    }
+
+    @Operation(summary = "检查分块是否存在（调用上传分块接口是校验）")
     @GetMapping("/checkChunk/{md5}/{chunkNumber}")
     public Result<Boolean> checkChunk(@NotBlank(message = "md5不能为空") @PathVariable String md5,
                                       @NotNull(message = "分块序号不能为空") @PathVariable int chunkNumber) {
         return Result.ok(fileService.checkChunk(md5, chunkNumber));
     }
-
-
 
 }

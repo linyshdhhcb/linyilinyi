@@ -20,12 +20,16 @@
         <result column="nickname" property="nickname" />
         <result column="create_time" property="createTime" />
         <result column="update_time" property="updateTime" />
+        <result column="video_start" property="videoStart" />
+        <result column="image_start" property="imageStart" />
+        <result column="video_md5" property="videoMd5" />
+        <result column="image_md5" property="imageMd5" />
         <result column="is_delete" property="isDelete" />
     </resultMap>
 
     <!-- 通用查询结果列 -->
     <sql id="Base_Column_List">
-        id, length, size, url, path, name, intro, tag, image,user_id, nickname,username,create_time, update_time, is_delete
+        id, length, size, url, path, name, intro, tag, image,user_id, nickname,username,create_time, update_time,video_start,image_start,video_md5,image_md5, is_delete
     </sql>
 
 </mapper>

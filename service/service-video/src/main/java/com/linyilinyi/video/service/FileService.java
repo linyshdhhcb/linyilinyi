@@ -37,4 +37,6 @@ public interface FileService extends IService<File> {
     String uploadChunk(String absolutePath, String md5, int chunkNumber);
 
     Boolean checkChunk(String md5, int chunkNumber);
+
+    String mergeChunk(String md5, String fileName, int chunkCount);
 }

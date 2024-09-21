@@ -1,4 +1,4 @@
-package com.linyilinyi.user;
+package com.linyilinyi.article;
 
 import org.mybatis.spring.annotation.MapperScan;
 import org.springframework.boot.SpringApplication;
@@ -9,15 +9,16 @@ import org.springframework.cloud.openfeign.EnableFeignClients;
 /**
  * @Description
  * @Author linyi
- * @Date 2024/9/14
- * @ClassName: UserApplication
+ * @Date 2024/9/20
+ * @ClassName: ArticleApplication
  */
 @SpringBootApplication(scanBasePackages = {"com.linyilinyi.common.exception", "com.linyilinyi.common.config","com.linyilinyi.user"})
 @EnableDiscoveryClient
 @EnableFeignClients("com.linyilinyi")
-@MapperScan("com.linyilinyi.user.mapper")
-public class UserApplication {
+@MapperScan("com.linyilinyi.article.mapper")
+public class ArticleApplication {
+
     public static void main(String[] args) {
-        SpringApplication.run(UserApplication.class, args);
+        SpringApplication.run(ArticleApplication.class, args);
     }
 }
