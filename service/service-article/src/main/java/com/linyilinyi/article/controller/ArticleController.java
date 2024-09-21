@@ -1,5 +1,7 @@
 package com.linyilinyi.article.controller;
 
+import com.linyilinyi.article.service.ArticleService;
+import jakarta.annotation.Resource;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
@@ -15,4 +17,7 @@ import org.springframework.web.bind.annotation.RestController;
 @RequestMapping("/article")
 @SuppressWarnings({"unchecked", "rawtypes"})
 public class ArticleController {
+
+    @Resource
+    private ArticleService articleService;
 }
