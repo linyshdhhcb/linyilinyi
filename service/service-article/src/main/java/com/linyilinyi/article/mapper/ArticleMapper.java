@@ -1,7 +1,7 @@
 package com.linyilinyi.article.mapper;
 
-import com.linyilinyi.entity.po.Article;
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
+import com.linyilinyi.model.entity.article.Article;
 import org.springframework.stereotype.Repository;
 
 /**
