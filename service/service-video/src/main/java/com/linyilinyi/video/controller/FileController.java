@@ -54,7 +54,7 @@ public class FileController {
     }
 
 
-    @Operation(summary = "视频文件上传（视频不大于1G）")
+    @Operation(summary = "视频文件上传（视频不大于100M）")
     @PostMapping("/uploadVideoFile")
     //Spring Web MVC 的依赖下的一种处理上传文件的类
     public Result<File> uploadVideoFile(@RequestPart("filedata") MultipartFile filedata) {
@@ -63,8 +63,8 @@ public class FileController {
             if (!filedata.getContentType().startsWith("video/")) {
                 throw new LinyiException("文件类型不正确,只能上传视频");
             }
-            if (filedata.getSize() > 1024 * 1024 * 1024) {
-                return Result.fail("视频大小超过1G");
+            if (filedata.getSize() > 1024 * 1024 * 100) {
+                return Result.fail("视频大小超过100M");
             }
             File file = new File();
             //getSize()：获取文件大小（以字节为单位）
@@ -192,7 +192,7 @@ public class FileController {
 
     @Operation(summary = "分块合并")
     @PostMapping("/mergeChunk")
-    public Result<String> mergeChunk(@NotBlank(message = "文件md5不难为空")@RequestParam("md5") String md5,
+    public Result<File> mergeChunk(@NotBlank(message = "文件md5不难为空")@RequestParam("md5") String md5,
                                      @NotBlank(message = "源文件名不能为空") @RequestParam("fileName") String fileName,
                                      @NotNull(message = "分块数量不能为空") @RequestParam("chunkCount") int chunkCount) {
         return Result.ok(fileService.mergeChunk(md5, fileName,chunkCount));

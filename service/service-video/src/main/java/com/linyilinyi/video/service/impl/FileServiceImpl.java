@@ -332,7 +332,7 @@ public class FileServiceImpl extends ServiceImpl<FileMapper, File> implements Fi
 
     @Override
     @Transactional
-    public String mergeChunk(String md5, String fileName, int chunkCount) {
+    public File mergeChunk(String md5, String fileName, int chunkCount) {
         String path = "/chunk/" + md5 + "/";
         List<ComposeSource> sources = Stream.iterate(0, i -> ++i)
                 .limit(chunkCount)
@@ -379,7 +379,7 @@ public class FileServiceImpl extends ServiceImpl<FileMapper, File> implements Fi
         if (!b){
             log.error("删除分片失败");
         }
-        return "成功";
+        return file;
     }
 
     private Boolean deleteMinioFile(String s) {

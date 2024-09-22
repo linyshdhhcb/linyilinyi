@@ -38,5 +38,5 @@ public interface FileService extends IService<File> {
 
     Boolean checkChunk(String md5, int chunkNumber);
 
-    String mergeChunk(String md5, String fileName, int chunkCount);
+    File mergeChunk(String md5, String fileName, int chunkCount);
 }
