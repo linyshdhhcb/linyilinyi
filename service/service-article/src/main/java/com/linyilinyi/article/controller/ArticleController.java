@@ -62,4 +62,11 @@ public class ArticleController {
     public Result<String> updateArticle(@Valid @RequestBody Article article) {
         return Result.ok(articleService.updateArticle(article));
     }
+
+    @Operation(summary = "获取逻辑删除文章列表")
+    @RequestMapping("/getArticleListByIsDelete")
+    public Result<PageResult<Article>> getArticleListByIsDelete(@RequestParam(required = false, defaultValue = "1") long pageNo,
+                                                          @RequestParam(required = false, defaultValue = "5") long pageSize) {
+        return Result.ok(articleService.getArticleListByIsDelete(pageNo,pageSize));
+    }
 }

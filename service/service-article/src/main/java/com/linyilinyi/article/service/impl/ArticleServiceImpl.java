@@ -2,6 +2,7 @@ package com.linyilinyi.article.service.impl;
 
 
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
+import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.linyilinyi.article.mapper.ArticleMapper;
@@ -94,5 +95,12 @@ public class ArticleServiceImpl extends ServiceImpl<ArticleMapper, Article> impl
             throw new LinyiException(ResultCodeEnum.UPDATE_FAIL);
         }
         return "修改成功";
+    }
+
+    @Override
+    public PageResult<Article> getArticleListByIsDelete(long pageNo, long pageSize) {
+        Page<Article> articlePage = new Page<>(pageNo, pageSize);
+        IPage<Article> iPage=articleMapper.getArticleListByIsDelete(articlePage);
+        return new PageResult<>(iPage.getRecords(), iPage.getTotal(), pageNo, pageSize);
     }
 }

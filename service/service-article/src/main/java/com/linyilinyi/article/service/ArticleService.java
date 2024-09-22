@@ -27,4 +27,6 @@ public interface ArticleService extends IService<Article> {
 
     String updateArticle(Article article);
 
+
+    PageResult<Article> getArticleListByIsDelete(long pageNo, long pageSize);
 }
