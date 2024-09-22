@@ -12,11 +12,13 @@ import com.linyilinyi.common.utils.AuthContextUser;
 import com.linyilinyi.model.entity.reviewer.Reviewer;
 import com.linyilinyi.model.entity.user.User;
 import com.linyilinyi.model.entity.video.Video;
+import com.linyilinyi.model.entity.video.VideoData;
 import com.linyilinyi.model.vo.video.VideoAddVo;
 import com.linyilinyi.model.vo.video.VideoQueryVo;
 import com.linyilinyi.model.vo.video.VideoVo;
 import com.linyilinyi.user.client.UserClient;
 import com.linyilinyi.video.mapper.VideoMapper;
+import com.linyilinyi.video.service.VideoDataService;
 import com.linyilinyi.video.service.VideoService;
 import jakarta.annotation.Resource;
 import jakarta.validation.Valid;
@@ -44,6 +46,8 @@ public class VideoServiceImpl extends ServiceImpl<VideoMapper, Video> implements
     @Resource
     private VideoMapper videoMapper;
 
+    @Resource
+    private VideoDataService videoDataService;
     @Resource
     private UserClient userClient;
     @Override
@@ -105,6 +109,11 @@ public class VideoServiceImpl extends ServiceImpl<VideoMapper, Video> implements
         reviewer.setStatus(10001);
         reviewer.setCreateTime(LocalDateTime.now());
         // TODO 2024/9/22 远程调用，将审核信息存入数据库
+
+        VideoData videoData = new VideoData();
+        videoData.setVideoId(videoNew.getId());
+        videoData.setCreateTime(LocalDateTime.now());
+        videoDataService.addVideoData(videoData);
         return videoNew;
     }
 
@@ -122,6 +131,7 @@ public class VideoServiceImpl extends ServiceImpl<VideoMapper, Video> implements
         if(Optional.ofNullable(video).isEmpty()){
             throw new LinyiException(ResultCodeEnum.DATA_ERROR);
         }
+        video.setUpdateTime(LocalDateTime.now());
         int i = videoMapper.updateById(video);
         if (i!=1){
             throw new LinyiException(ResultCodeEnum.UPDATE_FAIL);
