@@ -1,6 +1,8 @@
 package com.linyilinyi.article.service;
 
 import com.baomidou.mybatisplus.extension.service.IService;
+import com.linyilinyi.common.model.PageResult;
+import com.linyilinyi.common.model.ResultCodeEnum;
 import com.linyilinyi.model.entity.article.ArticleData;
 
 /**
@@ -13,4 +15,8 @@ import com.linyilinyi.model.entity.article.ArticleData;
  */
 public interface ArticleDataService extends IService<ArticleData> {
 
+
+    PageResult<ArticleData> getArticleDataList(long pageNo, long pageSize);
+
+    ArticleData getArticleDataById(Integer id);
 }
