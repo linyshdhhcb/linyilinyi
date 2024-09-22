@@ -41,7 +41,7 @@ springdoc:
     path: /v3/api-docs
   group-configs:
     - group: 'default'
-      paths-to-match: '/article/**,/articleData/**'
+      paths-to-match: '/article/**,/articleData/**,/read/**'
       packages-to-scan: com.linyilinyi.article
   default-flat-param-object: false
 knife4j:
