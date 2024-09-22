@@ -103,4 +103,14 @@ public class ArticleServiceImpl extends ServiceImpl<ArticleMapper, Article> impl
         IPage<Article> iPage=articleMapper.getArticleListByIsDelete(articlePage);
         return new PageResult<>(iPage.getRecords(), iPage.getTotal(), pageNo, pageSize);
     }
+
+    @Override
+    public String deleteArticleByPhysical(List<Integer> ids) {
+        for (Integer id:ids){
+            if (id<=0){
+                throw new LinyiException(ResultCodeEnum.VALID_ERROR);
+            }
+        }
+        return articleMapper.deleteArticleByPhysical(ids);
+    }
 }

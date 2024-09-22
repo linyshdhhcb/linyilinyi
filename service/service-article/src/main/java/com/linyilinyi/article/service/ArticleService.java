@@ -29,4 +29,6 @@ public interface ArticleService extends IService<Article> {
 
 
     PageResult<Article> getArticleListByIsDelete(long pageNo, long pageSize);
+
+    String deleteArticleByPhysical(List<Integer> ids);
 }

@@ -6,6 +6,8 @@ import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.linyilinyi.model.entity.article.Article;
 import org.springframework.stereotype.Repository;
 
+import java.util.List;
+
 /**
  * <p>
  * 文章信息表 Mapper 接口
@@ -16,4 +18,6 @@ import org.springframework.stereotype.Repository;
 public interface ArticleMapper extends BaseMapper<Article> {
 
     IPage<Article> getArticleListByIsDelete(Page<Article> articlePage);
+
+    String deleteArticleByPhysical(List<Integer> ids);
 }

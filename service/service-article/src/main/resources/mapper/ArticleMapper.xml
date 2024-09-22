@@ -21,6 +21,12 @@
     <sql id="Base_Column_List">
         id, title, content, url, type, user_id, image_md5, image_status, create_time, update_time, is_delete
     </sql>
+    <delete id="deleteArticleByPhysical">
+        delete from article where id in
+        <foreach collection="ids" item="id" separator="," open="(" close=")">
+            #{id}
+        </foreach>
+    </delete>
     <select id="getArticleListByIsDelete" resultType="com.linyilinyi.model.entity.article.Article">
         select * from article where is_delete = 1
     </select>

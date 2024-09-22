@@ -66,7 +66,14 @@ public class ArticleController {
     @Operation(summary = "获取逻辑删除文章列表")
     @RequestMapping("/getArticleListByIsDelete")
     public Result<PageResult<Article>> getArticleListByIsDelete(@RequestParam(required = false, defaultValue = "1") long pageNo,
-                                                          @RequestParam(required = false, defaultValue = "5") long pageSize) {
+                                                                @RequestParam(required = false, defaultValue = "5") long pageSize) {
         return Result.ok(articleService.getArticleListByIsDelete(pageNo,pageSize));
     }
+
+    @Operation(summary = "物理删除文章")
+    @RequestMapping("/deleteArticleByPhysical/{ids}")
+    public Result<String> deleteArticleByPhysical(@PathVariable List<Integer> ids) {
+        return Result.ok(articleService.deleteArticleByPhysical(ids));
+    }
+
 }
