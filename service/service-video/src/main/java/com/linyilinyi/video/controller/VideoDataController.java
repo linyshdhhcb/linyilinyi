@@ -5,6 +5,7 @@ import com.linyilinyi.common.model.Result;
 import com.linyilinyi.model.entity.video.VideoData;
 import com.linyilinyi.video.service.VideoDataService;
 import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.annotation.Resource;
 import jakarta.validation.constraints.NotNull;
 import org.springframework.web.bind.annotation.*;
@@ -18,8 +19,10 @@ import lombok.extern.slf4j.Slf4j;
  * @author linyi
  */
 @Slf4j
+@Tag(name = "视频数据统计管理")
 @RestController
 @RequestMapping("videoData")
+@SuppressWarnings({"unchecked", "rawtypes"})
 public class VideoDataController {
 
     @Resource

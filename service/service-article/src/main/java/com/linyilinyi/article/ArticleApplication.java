@@ -12,7 +12,7 @@ import org.springframework.cloud.openfeign.EnableFeignClients;
  * @Date 2024/9/20
  * @ClassName: ArticleApplication
  */
-@SpringBootApplication(scanBasePackages = {"com.linyilinyi.common.exception", "com.linyilinyi.common.config","com.linyilinyi.user"})
+@SpringBootApplication(scanBasePackages = {"com.linyilinyi.common.exception", "com.linyilinyi.common.config","com.linyilinyi.article"})
 @EnableDiscoveryClient
 @EnableFeignClients("com.linyilinyi")
 @MapperScan("com.linyilinyi.article.mapper")

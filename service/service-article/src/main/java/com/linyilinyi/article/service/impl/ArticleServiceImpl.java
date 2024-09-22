@@ -90,6 +90,7 @@ public class ArticleServiceImpl extends ServiceImpl<ArticleMapper, Article> impl
         if (Optional.ofNullable(article).isEmpty()){
             throw new LinyiException(ResultCodeEnum.DATA_NULL);
         }
+        article.setUpdateTime(LocalDateTime.now());
         int i = articleMapper.updateById(article);
         if (i!=1){
             throw new LinyiException(ResultCodeEnum.UPDATE_FAIL);
@@ -111,6 +112,9 @@ public class ArticleServiceImpl extends ServiceImpl<ArticleMapper, Article> impl
                 throw new LinyiException(ResultCodeEnum.VALID_ERROR);
             }
         }
-        return articleMapper.deleteArticleByPhysical(ids);
+       articleMapper.deleteArticleByPhysical(ids);
+
+        return "删除成功";
+
     }
 }

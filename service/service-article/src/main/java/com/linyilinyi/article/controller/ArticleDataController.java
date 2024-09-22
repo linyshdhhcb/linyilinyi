@@ -1,6 +1,7 @@
 package com.linyilinyi.article.controller;
 
 import com.linyilinyi.article.service.ArticleDataService;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.annotation.Resource;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
@@ -16,7 +17,9 @@ import org.springframework.beans.factory.annotation.Autowired;
  */
 @Slf4j
 @RestController
+@Tag(name = "文章数据统计表")
 @RequestMapping("articleData")
+@SuppressWarnings({"unchecked", "rawtypes"})
 public class ArticleDataController {
 
     @Resource

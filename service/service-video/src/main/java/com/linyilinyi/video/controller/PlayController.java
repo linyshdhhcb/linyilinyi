@@ -7,6 +7,7 @@ import com.linyilinyi.model.vo.video.PlayAddVo;
 import com.linyilinyi.model.vo.video.PlayQueryVo;
 import com.linyilinyi.video.service.PlayService;
 import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.annotation.Resource;
 import org.springframework.web.bind.annotation.*;
 import lombok.extern.slf4j.Slf4j;
@@ -22,8 +23,10 @@ import java.util.List;
  * @author linyi
  */
 @Slf4j
+@Tag(name = "历史播放管理")
 @RestController
 @RequestMapping("play")
+@SuppressWarnings({"unchecked", "rawtypes"})
 public class PlayController {
 
     @Resource

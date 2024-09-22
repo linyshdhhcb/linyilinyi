@@ -39,8 +39,4 @@ public class ArticleAddVo {
     @Schema(description = "图片审核状态")
     private Integer imageStatus;
 
-
-    @Schema(description = "创建时间")
-    @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
-    private LocalDateTime createTime;
 }

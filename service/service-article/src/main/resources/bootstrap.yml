@@ -2,7 +2,7 @@
 spring:
   # 应用名称
   application:
-    name: service-video
+    name: service-article
   # 激活的配置文件
   profiles:
     active: dev
@@ -29,9 +29,6 @@ spring:
         prefix: ${spring.application.name}
         # 文件扩展名
         file-extension: yaml
-        shared-configs:
-          - data-id: common-account.yaml
-  #        shared-configs[0]:dataId: common-account.yaml
 
   #springdoc-openapi项目配置
 springdoc:
@@ -44,8 +41,8 @@ springdoc:
     path: /v3/api-docs
   group-configs:
     - group: 'default'
-      paths-to-match: '/file/**,/video/**,/videoData/**,/play/**'
-      packages-to-scan: com.linyilinyi.video
+      paths-to-match: '/article/**,/articleData/**'
+      packages-to-scan: com.linyilinyi.article
   default-flat-param-object: false
 knife4j:
   enable: true

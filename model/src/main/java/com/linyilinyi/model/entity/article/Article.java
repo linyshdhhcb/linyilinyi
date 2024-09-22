@@ -31,15 +31,15 @@ public class Article implements Serializable {
 
     private static final long serialVersionUID = 1L;
 
-    @NotNull(message = "id不能为空")
     @Schema(description = "主键ID")
+    @TableId(value = "id", type = IdType.AUTO)
     private Integer id;
 
-    @NotBlank(message = "title不能为空")
+    @NotBlank(message = "文章标题不能为空")
     @Schema(description = "文章标题")
     private String title;
 
-    @NotBlank(message = "content不能为空")
+    @NotBlank(message = "文章内容不能为空")
     @Schema(description = "文章内容")
     private String content;
 
@@ -50,7 +50,7 @@ public class Article implements Serializable {
     @Schema(description = "文章类型")
     private Integer type;
 
-    @NotNull(message = "userId不能为空")
+    @NotNull(message = "作者ID不能为空")
     @Schema(description = "作者ID")
     private Integer userId;
 
