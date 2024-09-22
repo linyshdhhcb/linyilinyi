@@ -4,6 +4,7 @@ import com.linyilinyi.common.model.Result;
 import com.linyilinyi.model.entity.video.VideoData;
 import com.linyilinyi.video.service.VideoDataService;
 import io.swagger.v3.oas.annotations.Operation;
+import jakarta.annotation.Resource;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotNull;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -25,7 +26,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 @RequestMapping("videoData")
 public class VideoDataController {
 
-    @Autowired
+    @Resource
     private VideoDataService videoDataService;
 
     @Operation(summary = "根据视频id查询视频数据")
