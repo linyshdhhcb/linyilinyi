@@ -1,18 +1,14 @@
 package com.linyilinyi.video.controller;
 
+import com.linyilinyi.common.model.PageResult;
 import com.linyilinyi.common.model.Result;
 import com.linyilinyi.model.entity.video.VideoData;
 import com.linyilinyi.video.service.VideoDataService;
 import io.swagger.v3.oas.annotations.Operation;
 import jakarta.annotation.Resource;
-import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotNull;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Autowired;
 
 /**
  * <p>
@@ -28,6 +24,13 @@ public class VideoDataController {
 
     @Resource
     private VideoDataService videoDataService;
+
+    @Operation(summary = "分页获取视频数据列表")
+    @PostMapping("/getVideoDataList")
+    public Result<PageResult<VideoData>> getVideoDataList(@RequestParam(required = false, defaultValue = "1") long pageNo,
+                                               @RequestParam(required = false, defaultValue = "10") long pageSize) {
+        return Result.ok(videoDataService.getVideoDataList(pageNo, pageSize));
+    }
 
     @Operation(summary = "根据视频id查询视频数据")
     @GetMapping("/getVideoDataById/{videoId}")

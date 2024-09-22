@@ -2,8 +2,9 @@ package com.linyilinyi.video.service.impl;
 
 
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
+import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
-import com.linyilinyi.common.model.Result;
+import com.linyilinyi.common.model.PageResult;
 import com.linyilinyi.model.entity.video.VideoData;
 import com.linyilinyi.video.mapper.VideoDataMapper;
 import com.linyilinyi.video.service.VideoDataService;
@@ -24,8 +25,18 @@ public class VideoDataServiceImpl extends ServiceImpl<VideoDataMapper, VideoData
 
     @Resource
     private VideoDataMapper videoDataMapper;
+
     @Override
     public VideoData getVideoDataById(Long videoId) {
         return videoDataMapper.selectOne(new LambdaQueryWrapper<VideoData>().eq(VideoData::getVideoId,videoId));
     }
+
+    @Override
+    public PageResult<VideoData> getVideoDataList(long pageNo, long pageSize) {
+        Page<VideoData> videoDataPage = new Page<>(pageNo, pageSize);
+        Page<VideoData> page = videoDataMapper.selectPage(videoDataPage, null);
+        return new PageResult<>(page.getRecords(), page.getTotal(),pageNo,pageSize);
+    }
+
+
 }

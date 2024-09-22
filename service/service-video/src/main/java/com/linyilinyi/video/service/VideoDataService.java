@@ -1,7 +1,7 @@
 package com.linyilinyi.video.service;
 
 import com.baomidou.mybatisplus.extension.service.IService;
-import com.linyilinyi.common.model.Result;
+import com.linyilinyi.common.model.PageResult;
 import com.linyilinyi.model.entity.video.VideoData;
 
 /**
@@ -15,4 +15,6 @@ import com.linyilinyi.model.entity.video.VideoData;
 public interface VideoDataService extends IService<VideoData> {
 
     VideoData getVideoDataById(Long videoId);
+
+    PageResult<VideoData> getVideoDataList(long pageNo, long pageSize);
 }
