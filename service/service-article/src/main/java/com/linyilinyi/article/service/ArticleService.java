@@ -2,7 +2,6 @@ package com.linyilinyi.article.service;
 
 import com.baomidou.mybatisplus.extension.service.IService;
 import com.linyilinyi.common.model.PageResult;
-import com.linyilinyi.common.model.Result;
 import com.linyilinyi.model.entity.article.Article;
 import com.linyilinyi.model.vo.article.ArticleAddVo;
 import com.linyilinyi.model.vo.article.ArticleQueryVo;
@@ -19,7 +18,13 @@ public interface ArticleService extends IService<Article> {
 
     PageResult<Article> getArticleList(long pageNo, long pageSize, ArticleQueryVo articleQueryVo);
 
+    Article getArticleById(Integer id);
+
     String addArticle(ArticleAddVo articleAddVo);
 
     String deleteArticle(List<Integer> ids);
+
+
+    String updateArticle(Article article);
+
 }

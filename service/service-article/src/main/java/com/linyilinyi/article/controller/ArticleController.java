@@ -6,11 +6,11 @@ import com.linyilinyi.common.model.Result;
 import com.linyilinyi.model.entity.article.Article;
 import com.linyilinyi.model.vo.article.ArticleAddVo;
 import com.linyilinyi.model.vo.article.ArticleQueryVo;
-import com.linyilinyi.model.vo.article.ArticleUpdateAdd;
 import io.swagger.v3.oas.annotations.Operation;
 import jakarta.annotation.Resource;
+import jakarta.validation.Valid;
+import jakarta.validation.constraints.NotNull;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.data.domain.Page;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -38,10 +38,16 @@ public class ArticleController {
         return Result.ok(articleService.getArticleList(pageNo, pageSize, articleQueryVo));
     }
 
+    @Operation(summary = "根据id获取文章信息（回显使用）")
+    @RequestMapping("/getArticleById/{id}")
+    public Result<Article> getArticleById(@NotNull(message = "id不能为空") @PathVariable Integer id) {
+        return Result.ok(articleService.getArticleById(id));
+    }
+
 
     @Operation(summary = "添加文章")
     @RequestMapping("/addArticle")
-    public Result<String> addArticle(@RequestBody ArticleAddVo articleAddVo) {
+    public Result<String> addArticle(@Valid @RequestBody ArticleAddVo articleAddVo) {
         return Result.ok(articleService.addArticle(articleAddVo));
     }
 
@@ -51,9 +57,9 @@ public class ArticleController {
         return Result.ok(articleService.deleteArticle(ids));
     }
 
-//    @Operation(summary = "修改文章")
-//    @RequestMapping("/updateArticle")
-//    public Result<String> updateArticle(@RequestBody ArticleUpdateAdd articleUpdateAdd) {
-//        return Result.ok(articleService.updateArticle(articleUpdateAdd));
-//    }
+    @Operation(summary = "修改文章")
+    @RequestMapping("/updateArticle")
+    public Result<String> updateArticle(@Valid @RequestBody Article article) {
+        return Result.ok(articleService.updateArticle(article));
+    }
 }

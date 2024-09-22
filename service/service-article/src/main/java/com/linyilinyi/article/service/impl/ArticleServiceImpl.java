@@ -8,7 +8,6 @@ import com.linyilinyi.article.mapper.ArticleMapper;
 import com.linyilinyi.article.service.ArticleService;
 import com.linyilinyi.common.exception.LinyiException;
 import com.linyilinyi.common.model.PageResult;
-import com.linyilinyi.common.model.Result;
 import com.linyilinyi.common.model.ResultCodeEnum;
 import com.linyilinyi.common.utils.AuthContextUser;
 import com.linyilinyi.model.entity.article.Article;
@@ -47,6 +46,11 @@ public class ArticleServiceImpl extends ServiceImpl<ArticleMapper, Article> impl
     }
 
     @Override
+    public Article getArticleById(Integer id) {
+        return articleMapper.selectById(id);
+    }
+
+    @Override
     public String addArticle(ArticleAddVo articleAddVo) {
         if (Optional.ofNullable(articleAddVo).isEmpty()){
             throw new LinyiException(ResultCodeEnum.DATA_NULL);
@@ -78,5 +82,17 @@ public class ArticleServiceImpl extends ServiceImpl<ArticleMapper, Article> impl
             throw new LinyiException(ResultCodeEnum.DELETE_FAIL);
         }
         return "删除成功";
+    }
+
+    @Override
+    public String updateArticle(Article article) {
+        if (Optional.ofNullable(article).isEmpty()){
+            throw new LinyiException(ResultCodeEnum.DATA_NULL);
+        }
+        int i = articleMapper.updateById(article);
+        if (i!=1){
+            throw new LinyiException(ResultCodeEnum.UPDATE_FAIL);
+        }
+        return "修改成功";
     }
 }
