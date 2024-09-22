@@ -38,7 +38,7 @@ public class BankCodeGenerator {
 //			"file",
 //			"dictionary_label",
 //			"dictionary_type"
-			"reviewer"
+//			"reviewer"
 	};
 
 	// TODO 默认生成entity，需要生成DTO修改此变量

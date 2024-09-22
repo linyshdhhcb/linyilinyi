@@ -5,6 +5,7 @@ import com.linyilinyi.common.exception.LinyiException;
 import com.linyilinyi.common.model.PageResult;
 import com.linyilinyi.common.model.Result;
 import com.linyilinyi.common.model.ResultCodeEnum;
+import com.linyilinyi.common.utils.AuthContextUser;
 import com.linyilinyi.model.entity.video.Video;
 import com.linyilinyi.model.vo.video.VideoAddVo;
 import com.linyilinyi.model.vo.video.VideoQueryVo;
@@ -75,8 +76,14 @@ public class VideoController {
 
     @Operation(summary = "根据id获取用户的全部视频列表")
     @GetMapping("/getVideoListByUserId/{userId}")
-    public Result<List<Video>> getVideoListByUserId(@NotNull(message = "userId不能为空") @PathVariable Long userId) {
+    public Result<List<Video>> getVideoListByUserId(@NotNull(message = "userId不能为空") @PathVariable Integer userId) {
         return Result.ok(videoService.getVideoListByUserId(userId));
+    }
+
+    @Operation(summary = "获取当前用户的全部视频列表")
+    @GetMapping("/getVideoList")
+    public Result<List<Video>> getVideoList() {
+        return Result.ok(videoService.getVideoListByUserId(AuthContextUser.getUserId()));
     }
 
 }

@@ -130,7 +130,7 @@ public class VideoServiceImpl extends ServiceImpl<VideoMapper, Video> implements
     }
 
     @Override
-    public List<Video> getVideoListByUserId(Long userId) {
+    public List<Video> getVideoListByUserId(Integer userId) {
         LambdaQueryWrapper<Video> queryWrapper = new LambdaQueryWrapper<Video>().eq(Video::getUserId,userId).eq(Video::getVideoStart,10002).eq(Video::getIsDelete,10002);
         return videoMapper.selectList(queryWrapper);
     }
