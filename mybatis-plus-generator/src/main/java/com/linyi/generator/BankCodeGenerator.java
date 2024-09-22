@@ -20,8 +20,8 @@ public class BankCodeGenerator {
 	private static final String DATA_SOURCE_USER_NAME  = "root";
 	private static final String DATA_SOURCE_PASSWORD  = "123456";
 	private static final String[] TABLE_NAMES = new String[]{
-			"article",
-			"article_data",
+//			"article",
+//			"article_data",
 //			"collect",
 //			"collect_group",
 //			"comment",
@@ -38,6 +38,7 @@ public class BankCodeGenerator {
 //			"file",
 //			"dictionary_label",
 //			"dictionary_type"
+			"reviewer"
 	};
 
 	// TODO 默认生成entity，需要生成DTO修改此变量

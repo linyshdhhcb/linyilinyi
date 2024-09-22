@@ -73,4 +73,10 @@ public class VideoController {
         return Result.ok(videoService.updateVideo(video));
     }
 
+    @Operation(summary = "根据id获取用户的全部视频列表")
+    @GetMapping("/getVideoListByUserId/{userId}")
+    public Result<List<Video>> getVideoListByUserId(@NotNull(message = "userId不能为空") @PathVariable Long userId) {
+        return Result.ok(videoService.getVideoListByUserId(userId));
+    }
+
 }

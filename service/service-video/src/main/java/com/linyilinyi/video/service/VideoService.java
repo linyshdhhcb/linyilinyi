@@ -30,4 +30,6 @@ public interface VideoService extends IService<Video> {
     String deleteVideo(List<Long> ids);
 
     String updateVideo(Video video);
+
+    List<Video> getVideoListByUserId(Long userId);
 }

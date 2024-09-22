@@ -9,6 +9,7 @@ import com.linyilinyi.common.model.PageResult;
 import com.linyilinyi.common.model.Result;
 import com.linyilinyi.common.model.ResultCodeEnum;
 import com.linyilinyi.common.utils.AuthContextUser;
+import com.linyilinyi.model.entity.reviewer.Reviewer;
 import com.linyilinyi.model.entity.user.User;
 import com.linyilinyi.model.entity.video.Video;
 import com.linyilinyi.model.vo.video.VideoAddVo;
@@ -23,6 +24,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.BeanUtils;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
 import java.util.List;
@@ -75,6 +77,7 @@ public class VideoServiceImpl extends ServiceImpl<VideoMapper, Video> implements
     }
 
     @Override
+    @Transactional
     public Video addVideo(VideoAddVo video) {
         Result<User> userById = userClient.getUserById(AuthContextUser.getUserId());
         User user = userById.getData();
@@ -96,6 +99,12 @@ public class VideoServiceImpl extends ServiceImpl<VideoMapper, Video> implements
         if(insert!=1){
             throw new LinyiException(ResultCodeEnum.FAIL);
         }
+        Reviewer reviewer = new Reviewer();
+        reviewer.setTargetId(videoNew.getId());
+        reviewer.setType(11102);
+        reviewer.setStatus(10001);
+        reviewer.setCreateTime(LocalDateTime.now());
+        // TODO 2024/9/22 远程调用，将审核信息存入数据库
         return videoNew;
     }
 
@@ -118,5 +127,11 @@ public class VideoServiceImpl extends ServiceImpl<VideoMapper, Video> implements
             throw new LinyiException(ResultCodeEnum.UPDATE_FAIL);
         }
         return "修改成功";
+    }
+
+    @Override
+    public List<Video> getVideoListByUserId(Long userId) {
+        LambdaQueryWrapper<Video> queryWrapper = new LambdaQueryWrapper<Video>().eq(Video::getUserId,userId).eq(Video::getVideoStart,10002).eq(Video::getIsDelete,10002);
+        return videoMapper.selectList(queryWrapper);
     }
 }
