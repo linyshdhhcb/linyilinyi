@@ -7,6 +7,8 @@ import com.linyilinyi.model.entity.article.Article;
 import com.linyilinyi.model.vo.article.ArticleAddVo;
 import com.linyilinyi.model.vo.article.ArticleQueryVo;
 
+import java.util.List;
+
 /**
  * @Description
  * @Author linyi
@@ -18,4 +20,6 @@ public interface ArticleService extends IService<Article> {
     PageResult<Article> getArticleList(long pageNo, long pageSize, ArticleQueryVo articleQueryVo);
 
     String addArticle(ArticleAddVo articleAddVo);
+
+    String deleteArticle(List<Integer> ids);
 }

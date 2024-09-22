@@ -20,6 +20,7 @@ import org.springframework.beans.BeanUtils;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
+import java.util.List;
 import java.util.Optional;
 
 /**
@@ -59,5 +60,23 @@ public class ArticleServiceImpl extends ServiceImpl<ArticleMapper, Article> impl
             throw new LinyiException(ResultCodeEnum.INSERT_FAIL);
         }
         return "添加成功";
+    }
+
+    @Override
+    public String deleteArticle(List<Integer> ids) {
+        if (Optional.ofNullable(ids).isEmpty()){
+            throw new LinyiException(ResultCodeEnum.DATA_NULL);
+        }
+        //判断删除数据是否合法
+        for (Integer id : ids) {
+            if (id <=0){
+                throw new LinyiException(ResultCodeEnum.VALID_ERROR);
+            }
+        }
+        int i = articleMapper.deleteBatchIds(ids);
+        if (i!=ids.size()){
+            throw new LinyiException(ResultCodeEnum.DELETE_FAIL);
+        }
+        return "删除成功";
     }
 }

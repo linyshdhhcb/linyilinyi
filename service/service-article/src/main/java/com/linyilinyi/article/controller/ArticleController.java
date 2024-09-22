@@ -6,14 +6,14 @@ import com.linyilinyi.common.model.Result;
 import com.linyilinyi.model.entity.article.Article;
 import com.linyilinyi.model.vo.article.ArticleAddVo;
 import com.linyilinyi.model.vo.article.ArticleQueryVo;
+import com.linyilinyi.model.vo.article.ArticleUpdateAdd;
 import io.swagger.v3.oas.annotations.Operation;
 import jakarta.annotation.Resource;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
 
 /**
  * @Description
@@ -44,4 +44,16 @@ public class ArticleController {
     public Result<String> addArticle(@RequestBody ArticleAddVo articleAddVo) {
         return Result.ok(articleService.addArticle(articleAddVo));
     }
+
+    @Operation(summary = "删除文章")
+    @RequestMapping("/deleteArticle/{ids}")
+    public Result<String> deleteArticle(@PathVariable List<Integer> ids) {
+        return Result.ok(articleService.deleteArticle(ids));
+    }
+
+//    @Operation(summary = "修改文章")
+//    @RequestMapping("/updateArticle")
+//    public Result<String> updateArticle(@RequestBody ArticleUpdateAdd articleUpdateAdd) {
+//        return Result.ok(articleService.updateArticle(articleUpdateAdd));
+//    }
 }
