@@ -40,4 +40,10 @@ public class VideoDataController {
     public Result<VideoData> getVideoDataById(@NotNull(message = "videoId不能为空") @PathVariable Long videoId) {
         return Result.ok(videoDataService.getVideoDataById(videoId));
     }
+
+    @Operation(summary = "修改视频数据")
+    @PostMapping("updateVideoData")
+    public Result<String> updateVideoData(@RequestBody VideoData videoData) {
+        return Result.ok(videoDataService.updateVideoData(videoData));
+    }
 }

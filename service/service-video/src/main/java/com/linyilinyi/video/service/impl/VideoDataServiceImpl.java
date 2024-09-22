@@ -53,4 +53,16 @@ public class VideoDataServiceImpl extends ServiceImpl<VideoDataMapper, VideoData
             throw new LinyiException(ResultCodeEnum.INSERT_FAIL);
         }
     }
+
+    @Override
+    public String updateVideoData(VideoData videoData) {
+        if (Optional.ofNullable(videoData).isEmpty()){
+            throw new LinyiException(ResultCodeEnum.DATA_NULL);
+        }
+        int update = videoDataMapper.updateById(videoData);
+        if (update != 1){
+            throw new LinyiException(ResultCodeEnum.UPDATE_FAIL);
+        }
+        return "修改成功";
+    }
 }

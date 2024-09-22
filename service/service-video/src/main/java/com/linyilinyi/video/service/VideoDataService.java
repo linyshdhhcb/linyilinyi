@@ -19,4 +19,6 @@ public interface VideoDataService extends IService<VideoData> {
     PageResult<VideoData> getVideoDataList(long pageNo, long pageSize);
 
     void addVideoData(VideoData videoData);
+
+    String updateVideoData(VideoData videoData);
 }
