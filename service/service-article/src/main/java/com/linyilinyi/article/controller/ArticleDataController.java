@@ -40,4 +40,6 @@ public class ArticleDataController {
     public Result<ArticleData> getArticleDataById(@PathVariable Integer id){
         return Result.ok(articleDataService.getArticleDataById(id));
     }
+
+
 }

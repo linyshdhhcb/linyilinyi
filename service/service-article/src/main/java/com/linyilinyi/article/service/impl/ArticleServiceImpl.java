@@ -5,6 +5,7 @@ import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
+import com.linyilinyi.article.mapper.ArticleDataMapper;
 import com.linyilinyi.article.mapper.ArticleMapper;
 import com.linyilinyi.article.service.ArticleService;
 import com.linyilinyi.common.exception.LinyiException;
@@ -12,6 +13,7 @@ import com.linyilinyi.common.model.PageResult;
 import com.linyilinyi.common.model.ResultCodeEnum;
 import com.linyilinyi.common.utils.AuthContextUser;
 import com.linyilinyi.model.entity.article.Article;
+import com.linyilinyi.model.entity.article.ArticleData;
 import com.linyilinyi.model.vo.article.ArticleAddVo;
 import com.linyilinyi.model.vo.article.ArticleQueryVo;
 import jakarta.annotation.Resource;
@@ -33,6 +35,9 @@ import java.util.Optional;
 public class ArticleServiceImpl extends ServiceImpl<ArticleMapper, Article> implements ArticleService {
     @Resource
     private ArticleMapper articleMapper;
+
+    @Resource
+    private ArticleDataMapper articleDataMapper;
     @Override
     public PageResult<Article> getArticleList(long pageNo, long pageSize, ArticleQueryVo articleQueryVo) {
         LambdaQueryWrapper<Article> queryWrapper = new LambdaQueryWrapper<>();
@@ -62,6 +67,14 @@ public class ArticleServiceImpl extends ServiceImpl<ArticleMapper, Article> impl
         article.setCreateTime(LocalDateTime.now());
         int insert = articleMapper.insert(article);
         if (insert != 1){
+            throw new LinyiException(ResultCodeEnum.INSERT_FAIL);
+        }
+        //创建文章信息统计表
+        ArticleData articleData = new ArticleData();
+        articleData.setArticleId(article.getId());
+        articleData.setCreateTime(LocalDateTime.now());
+        int insert1 = articleDataMapper.insert(articleData);
+        if (insert1!=1){
             throw new LinyiException(ResultCodeEnum.INSERT_FAIL);
         }
         return "添加成功";
