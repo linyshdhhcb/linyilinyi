@@ -198,7 +198,7 @@ public class FileController {
         return Result.ok(fileService.mergeChunk(md5, fileName,chunkCount));
     }
 
-    @Operation(summary = "检查分块是否存在（调用上传分块接口是校验）")
+    @Operation(summary = "检查分块是否存在（调用上传分块接口是校验，md5是源文件的）")
     @GetMapping("/checkChunk/{md5}/{chunkNumber}")
     public Result<Boolean> checkChunk(@NotBlank(message = "md5不能为空") @PathVariable String md5,
                                       @NotNull(message = "分块序号不能为空") @PathVariable int chunkNumber) {

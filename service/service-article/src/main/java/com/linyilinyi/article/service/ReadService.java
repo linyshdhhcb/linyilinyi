@@ -1,7 +1,7 @@
-package com.linyilinyi.service;
+package com.linyilinyi.article.service;
 
-import com.linyilinyi.entity.po.Read;
 import com.baomidou.mybatisplus.extension.service.IService;
+import com.linyilinyi.model.entity.article.Read;
 
 /**
  * <p>

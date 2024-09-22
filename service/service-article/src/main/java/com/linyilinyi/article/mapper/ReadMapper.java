@@ -1,8 +1,7 @@
-package com.linyilinyi.mapper;
+package com.linyilinyi.article.mapper;
 
-import com.linyilinyi.entity.po.Read;
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
-import org.springframework.stereotype.Repository;
+import com.linyilinyi.model.entity.article.Read;
 
 /**
  * <p>

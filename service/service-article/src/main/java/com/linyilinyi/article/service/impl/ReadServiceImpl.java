@@ -1,13 +1,12 @@
-package com.linyilinyi.service.impl;
+package com.linyilinyi.article.service.impl;
 
-import com.linyilinyi.entity.po.Read;
-import com.linyilinyi.mapper.ReadMapper;
-import com.linyilinyi.service.ReadService;
+
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
+import com.linyilinyi.article.mapper.ReadMapper;
+import com.linyilinyi.article.service.ReadService;
+import com.linyilinyi.model.entity.article.Read;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
-import org.springframework.beans.factory.annotation.Autowired;
 
 /**
  * <p>

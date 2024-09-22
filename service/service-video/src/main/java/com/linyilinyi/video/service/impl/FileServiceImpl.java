@@ -36,6 +36,7 @@ import java.io.IOException;
 import java.security.InvalidKeyException;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
+import java.text.DecimalFormat;
 import java.time.Instant;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
@@ -341,7 +342,7 @@ public class FileServiceImpl extends ServiceImpl<FileMapper, File> implements Fi
         File file = new File();
         //获取文件类型
         file.setFileType(fileName.substring(fileName.lastIndexOf(".")));
-        String object =minioVo.getBucketName()+"/"+ "video" + getPathTime() + md5 + file.getFileType();
+        String object = "video" + getPathTime() + md5 + file.getFileType();
         try {
             minioClient.composeObject(ComposeObjectArgs.builder().bucket(minioVo.getBucketName()).object(object).sources(sources).build());
         } catch (Exception e) {
@@ -407,7 +408,8 @@ public class FileServiceImpl extends ServiceImpl<FileMapper, File> implements Fi
                 System.out.println(result.get().lastModified() + "\t" + result.get().size() + "\t" + result.get().objectName());
                 sum += result.get().size() / 1024.0;
             }
-            return sum;
+
+            return Double.parseDouble(new DecimalFormat("#.##").format(sum));
         } catch (Exception e) {
             throw new LinyiException("获取文件大小失败" + e.getMessage());
         }
