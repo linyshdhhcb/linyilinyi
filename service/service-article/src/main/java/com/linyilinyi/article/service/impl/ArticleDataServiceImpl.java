@@ -12,6 +12,7 @@ import jakarta.annotation.Resource;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDateTime;
 import java.util.Optional;
 
 /**
@@ -42,5 +43,15 @@ public class ArticleDataServiceImpl extends ServiceImpl<ArticleDataMapper, Artic
             throw new LinyiException(ResultCodeEnum.DATA_ERROR);
         }
         return articleData;
+    }
+
+    @Override
+    public String updateArticleData(ArticleData articleData) {
+        articleData.setUpdateTime(LocalDateTime.now());
+        int i = articleDataMapper.updateById(articleData);
+        if (i!=1){
+            throw new LinyiException(ResultCodeEnum.UPDATE_FAIL);
+        }
+        return "修改成功";
     }
 }

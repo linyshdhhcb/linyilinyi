@@ -41,5 +41,11 @@ public class ArticleDataController {
         return Result.ok(articleDataService.getArticleDataById(id));
     }
 
+    @Operation(summary = "修改文章数据")
+    @PostMapping("updateArticleData")
+    public Result<String> updateArticleData(@RequestBody ArticleData articleData){
+        return Result.ok(articleDataService.updateArticleData(articleData));
+    }
+
 
 }

@@ -19,4 +19,6 @@ public interface ArticleDataService extends IService<ArticleData> {
     PageResult<ArticleData> getArticleDataList(long pageNo, long pageSize);
 
     ArticleData getArticleDataById(Integer id);
+
+    String updateArticleData(ArticleData articleData);
 }
