@@ -4,6 +4,7 @@ import com.linyilinyi.article.service.ArticleService;
 import com.linyilinyi.common.model.PageResult;
 import com.linyilinyi.common.model.Result;
 import com.linyilinyi.model.entity.article.Article;
+import com.linyilinyi.model.vo.article.ArticleAddVo;
 import com.linyilinyi.model.vo.article.ArticleQueryVo;
 import io.swagger.v3.oas.annotations.Operation;
 import jakarta.annotation.Resource;
@@ -35,5 +36,12 @@ public class ArticleController {
                                                       @RequestParam(required = false, defaultValue = "5") long pageSize,
                                                       @RequestBody ArticleQueryVo articleQueryVo) {
         return Result.ok(articleService.getArticleList(pageNo, pageSize, articleQueryVo));
+    }
+
+
+    @Operation(summary = "添加文章")
+    @RequestMapping("/addArticle")
+    public Result<String> addArticle(@RequestBody ArticleAddVo articleAddVo) {
+        return Result.ok(articleService.addArticle(articleAddVo));
     }
 }

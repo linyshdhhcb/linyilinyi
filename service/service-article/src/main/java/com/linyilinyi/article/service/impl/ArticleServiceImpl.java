@@ -6,14 +6,20 @@ import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.linyilinyi.article.mapper.ArticleMapper;
 import com.linyilinyi.article.service.ArticleService;
+import com.linyilinyi.common.exception.LinyiException;
 import com.linyilinyi.common.model.PageResult;
 import com.linyilinyi.common.model.Result;
+import com.linyilinyi.common.model.ResultCodeEnum;
+import com.linyilinyi.common.utils.AuthContextUser;
 import com.linyilinyi.model.entity.article.Article;
+import com.linyilinyi.model.vo.article.ArticleAddVo;
 import com.linyilinyi.model.vo.article.ArticleQueryVo;
 import jakarta.annotation.Resource;
 import org.apache.commons.lang3.StringUtils;
+import org.springframework.beans.BeanUtils;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDateTime;
 import java.util.Optional;
 
 /**
@@ -37,5 +43,21 @@ public class ArticleServiceImpl extends ServiceImpl<ArticleMapper, Article> impl
         Page<Article> articlePage = new Page<>(pageNo, pageSize);
         Page<Article> page = articleMapper.selectPage(articlePage, queryWrapper);
         return new PageResult<>(page.getRecords(), page.getTotal(), pageNo, pageSize);
+    }
+
+    @Override
+    public String addArticle(ArticleAddVo articleAddVo) {
+        if (Optional.ofNullable(articleAddVo).isEmpty()){
+            throw new LinyiException(ResultCodeEnum.DATA_NULL);
+        }
+        Article article = new Article();
+        BeanUtils.copyProperties(articleAddVo,article);
+        article.setUserId(AuthContextUser.getUserId());
+        article.setCreateTime(LocalDateTime.now());
+        int insert = articleMapper.insert(article);
+        if (insert != 1){
+            throw new LinyiException(ResultCodeEnum.INSERT_FAIL);
+        }
+        return "添加成功";
     }
 }
