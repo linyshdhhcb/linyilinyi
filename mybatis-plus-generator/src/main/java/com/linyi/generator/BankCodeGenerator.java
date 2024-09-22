@@ -28,6 +28,7 @@ public class BankCodeGenerator {
 //			"comment_notice",
 //			"danmaku",
 //			"play",
+//			"read",
 //			"privilege",
 //			"user",
 //			"user_home",

@@ -45,7 +45,7 @@ public class VideoController {
     @PostMapping("/list")
     public Result<PageResult> list(@RequestParam(required = false, defaultValue = "1") long pageNo,
                                    @RequestParam(required = false, defaultValue = "5") long pageSize,
-                                   @Valid @RequestBody VideoQueryVo videoQueryVo) {
+                                    @RequestBody VideoQueryVo videoQueryVo) {
 
         return Result.ok(videoService.getList(pageNo, pageSize, videoQueryVo));
     }
