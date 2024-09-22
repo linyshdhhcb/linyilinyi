@@ -1,9 +1,17 @@
 package com.linyilinyi.article.controller;
 
 import com.linyilinyi.article.service.ArticleService;
+import com.linyilinyi.common.model.PageResult;
+import com.linyilinyi.common.model.Result;
+import com.linyilinyi.model.entity.article.Article;
+import com.linyilinyi.model.vo.article.ArticleQueryVo;
+import io.swagger.v3.oas.annotations.Operation;
 import jakarta.annotation.Resource;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.domain.Page;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 /**
@@ -20,4 +28,12 @@ public class ArticleController {
 
     @Resource
     private ArticleService articleService;
+
+    @Operation(summary = "分页获取文章列表")
+    @RequestMapping("/getArticleList")
+    public Result<PageResult<Article>> getArticleList(@RequestParam(required = false, defaultValue = "1") long pageNo,
+                                                      @RequestParam(required = false, defaultValue = "5") long pageSize,
+                                                      @RequestBody ArticleQueryVo articleQueryVo) {
+        return Result.ok(articleService.getArticleList(pageNo, pageSize, articleQueryVo));
+    }
 }

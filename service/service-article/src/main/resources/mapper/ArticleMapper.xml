@@ -7,7 +7,11 @@
         <id column="id" property="id" />
         <result column="title" property="title" />
         <result column="content" property="content" />
+        <result column="url" property="url" />
+        <result column="type" property="type" />
         <result column="user_id" property="userId" />
+        <result column="image_md5" property="imageMd5" />
+        <result column="image_status" property="imageStatus" />
         <result column="create_time" property="createTime" />
         <result column="update_time" property="updateTime" />
         <result column="is_delete" property="isDelete" />
@@ -15,7 +19,7 @@
 
     <!-- 通用查询结果列 -->
     <sql id="Base_Column_List">
-        id, title, content, user_id, create_time, update_time, is_delete
+        id, title, content, url, type, user_id, image_md5, image_status, create_time, update_time, is_delete
     </sql>
 
 </mapper>
