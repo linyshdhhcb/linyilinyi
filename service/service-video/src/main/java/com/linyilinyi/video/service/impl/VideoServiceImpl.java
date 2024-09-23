@@ -17,6 +17,7 @@ import com.linyilinyi.model.vo.video.VideoAddVo;
 import com.linyilinyi.model.vo.video.VideoQueryVo;
 import com.linyilinyi.model.vo.video.VideoVo;
 import com.linyilinyi.user.client.UserClient;
+import com.linyilinyi.video.mapper.VideoDataMapper;
 import com.linyilinyi.video.mapper.VideoMapper;
 import com.linyilinyi.video.service.VideoDataService;
 import com.linyilinyi.video.service.VideoService;
@@ -50,19 +51,23 @@ public class VideoServiceImpl extends ServiceImpl<VideoMapper, Video> implements
     private VideoDataService videoDataService;
     @Resource
     private UserClient userClient;
+
+    @Resource
+    private VideoDataMapper videoDataMapper;
+
     @Override
     public PageResult getList(long pageNo, long pageSize, VideoQueryVo videoQueryVo) {
         LambdaQueryWrapper<Video> queryWrapper = new LambdaQueryWrapper<>();
-        queryWrapper.like(StringUtils.isNotBlank(videoQueryVo.getName()), Video::getName,videoQueryVo.getName());
-        queryWrapper.like(StringUtils.isNotBlank(videoQueryVo.getTag()), Video::getTag,videoQueryVo.getTag());
-        queryWrapper.like(StringUtils.isNotBlank(videoQueryVo.getIntro()), Video::getIntro,videoQueryVo.getIntro());
-        queryWrapper.eq(videoQueryVo.getUserId() != null, Video::getUserId,videoQueryVo.getUserId());
-        queryWrapper.like(StringUtils.isNotBlank(videoQueryVo.getNickname()), Video::getNickname,videoQueryVo.getNickname());
-        queryWrapper.like(StringUtils.isNotBlank(videoQueryVo.getUsername()), Video::getUsername,videoQueryVo.getUsername());
-        queryWrapper.eq(videoQueryVo.getIsDelete() != null, Video::getIsDelete,videoQueryVo.getIsDelete());
-        queryWrapper.gt(videoQueryVo.getStartTime() != null , Video::getCreateTime,videoQueryVo.getStartTime());
-        queryWrapper.lt(videoQueryVo.getEndTime()!=null, Video::getCreateTime,videoQueryVo.getEndTime());
-        Page<Video> videoPage = new Page<>(pageNo,pageSize);
+        queryWrapper.like(StringUtils.isNotBlank(videoQueryVo.getName()), Video::getName, videoQueryVo.getName());
+        queryWrapper.like(StringUtils.isNotBlank(videoQueryVo.getTag()), Video::getTag, videoQueryVo.getTag());
+        queryWrapper.like(StringUtils.isNotBlank(videoQueryVo.getIntro()), Video::getIntro, videoQueryVo.getIntro());
+        queryWrapper.eq(videoQueryVo.getUserId() != null, Video::getUserId, videoQueryVo.getUserId());
+        queryWrapper.like(StringUtils.isNotBlank(videoQueryVo.getNickname()), Video::getNickname, videoQueryVo.getNickname());
+        queryWrapper.like(StringUtils.isNotBlank(videoQueryVo.getUsername()), Video::getUsername, videoQueryVo.getUsername());
+        queryWrapper.eq(videoQueryVo.getIsDelete() != null, Video::getIsDelete, videoQueryVo.getIsDelete());
+        queryWrapper.gt(videoQueryVo.getStartTime() != null, Video::getCreateTime, videoQueryVo.getStartTime());
+        queryWrapper.lt(videoQueryVo.getEndTime() != null, Video::getCreateTime, videoQueryVo.getEndTime());
+        Page<Video> videoPage = new Page<>(pageNo, pageSize);
         Page<Video> page = videoMapper.selectPage(videoPage, queryWrapper);
         List<Video> records = page.getRecords();
         long total = page.getTotal();
@@ -76,7 +81,7 @@ public class VideoServiceImpl extends ServiceImpl<VideoMapper, Video> implements
             throw new LinyiException(ResultCodeEnum.DATA_NULL);
         }
         VideoVo videoVo = new VideoVo();
-        BeanUtils.copyProperties(video,videoVo);
+        BeanUtils.copyProperties(video, videoVo);
         return videoVo;
     }
 
@@ -85,7 +90,7 @@ public class VideoServiceImpl extends ServiceImpl<VideoMapper, Video> implements
     public Video addVideo(VideoAddVo video) {
         Result<User> userById = userClient.getUserById(AuthContextUser.getUserId());
         User user = userById.getData();
-        if(Optional.ofNullable(user).isEmpty()){
+        if (Optional.ofNullable(user).isEmpty()) {
             throw new LinyiException(ResultCodeEnum.ACCOUNT_NULL);
         }
         Video videoNew = new Video();
@@ -98,9 +103,9 @@ public class VideoServiceImpl extends ServiceImpl<VideoMapper, Video> implements
         videoNew.setVideoMd5(video.getVideoMd5());
         videoNew.setImageStart(video.getImageStart());
         videoNew.setImageMd5(video.getImageMd5());
-        BeanUtils.copyProperties(video,videoNew);
+        BeanUtils.copyProperties(video, videoNew);
         int insert = videoMapper.insert(videoNew);
-        if(insert!=1){
+        if (insert != 1) {
             throw new LinyiException(ResultCodeEnum.FAIL);
         }
         Reviewer reviewer = new Reviewer();
@@ -118,9 +123,16 @@ public class VideoServiceImpl extends ServiceImpl<VideoMapper, Video> implements
     }
 
     @Override
-    public String deleteVideo(List<Long> ids) {
+    @Transactional
+    public String deleteVideo(List<Integer> ids) {
+        for (Integer id : ids) {
+            if (id <= 0) {
+                throw new LinyiException(ResultCodeEnum.DATA_ERROR);
+            }
+        }
         int i = videoMapper.deleteBatchIds(ids);
-        if(i!= ids.size()){
+        int i1 = videoDataMapper.deleteBatchIds(ids);
+        if (i != ids.size() && i1 != ids.size()) {
             throw new LinyiException(ResultCodeEnum.DELETE_FAIL);
         }
         return "删除成功";
@@ -128,12 +140,12 @@ public class VideoServiceImpl extends ServiceImpl<VideoMapper, Video> implements
 
     @Override
     public String updateVideo(Video video) {
-        if(Optional.ofNullable(video).isEmpty()){
+        if (Optional.ofNullable(video).isEmpty()) {
             throw new LinyiException(ResultCodeEnum.DATA_ERROR);
         }
         video.setUpdateTime(LocalDateTime.now());
         int i = videoMapper.updateById(video);
-        if (i!=1){
+        if (i != 1) {
             throw new LinyiException(ResultCodeEnum.UPDATE_FAIL);
         }
         return "修改成功";
@@ -141,7 +153,7 @@ public class VideoServiceImpl extends ServiceImpl<VideoMapper, Video> implements
 
     @Override
     public List<Video> getVideoListByUserId(Integer userId) {
-        LambdaQueryWrapper<Video> queryWrapper = new LambdaQueryWrapper<Video>().eq(Video::getUserId,userId).eq(Video::getVideoStart,10002).eq(Video::getIsDelete,10002);
+        LambdaQueryWrapper<Video> queryWrapper = new LambdaQueryWrapper<Video>().eq(Video::getUserId, userId).eq(Video::getVideoStart, 10002).eq(Video::getIsDelete, 10002);
         return videoMapper.selectList(queryWrapper);
     }
 }

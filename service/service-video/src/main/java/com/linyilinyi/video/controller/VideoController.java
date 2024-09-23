@@ -64,7 +64,7 @@ public class VideoController {
 
     @Operation(summary = "删除视频")
     @DeleteMapping("/deleteVideo/{ids}")
-    public Result<String> deleteVideo(@NotNull(message = "ids不能为空") @PathVariable List<Long> ids) {
+    public Result<String> deleteVideo(@NotNull(message = "ids不能为空") @PathVariable List<Integer> ids) {
         return Result.ok(videoService.deleteVideo(ids));
     }
 
