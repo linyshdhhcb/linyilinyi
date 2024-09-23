@@ -20,6 +20,7 @@ import jakarta.annotation.Resource;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.BeanUtils;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
 import java.util.List;
@@ -38,6 +39,7 @@ public class ArticleServiceImpl extends ServiceImpl<ArticleMapper, Article> impl
 
     @Resource
     private ArticleDataMapper articleDataMapper;
+
     @Override
     public PageResult<Article> getArticleList(long pageNo, long pageSize, ArticleQueryVo articleQueryVo) {
         LambdaQueryWrapper<Article> queryWrapper = new LambdaQueryWrapper<>();
@@ -58,15 +60,15 @@ public class ArticleServiceImpl extends ServiceImpl<ArticleMapper, Article> impl
 
     @Override
     public String addArticle(ArticleAddVo articleAddVo) {
-        if (Optional.ofNullable(articleAddVo).isEmpty()){
+        if (Optional.ofNullable(articleAddVo).isEmpty()) {
             throw new LinyiException(ResultCodeEnum.DATA_NULL);
         }
         Article article = new Article();
-        BeanUtils.copyProperties(articleAddVo,article);
+        BeanUtils.copyProperties(articleAddVo, article);
         article.setUserId(AuthContextUser.getUserId());
         article.setCreateTime(LocalDateTime.now());
         int insert = articleMapper.insert(article);
-        if (insert != 1){
+        if (insert != 1) {
             throw new LinyiException(ResultCodeEnum.INSERT_FAIL);
         }
         //创建文章信息统计表
@@ -74,25 +76,27 @@ public class ArticleServiceImpl extends ServiceImpl<ArticleMapper, Article> impl
         articleData.setArticleId(article.getId());
         articleData.setCreateTime(LocalDateTime.now());
         int insert1 = articleDataMapper.insert(articleData);
-        if (insert1!=1){
+        if (insert1 != 1) {
             throw new LinyiException(ResultCodeEnum.INSERT_FAIL);
         }
         return "添加成功";
     }
 
     @Override
+    @Transactional
     public String deleteArticle(List<Integer> ids) {
-        if (Optional.ofNullable(ids).isEmpty()){
+        if (Optional.ofNullable(ids).isEmpty()) {
             throw new LinyiException(ResultCodeEnum.DATA_NULL);
         }
         //判断删除数据是否合法
         for (Integer id : ids) {
-            if (id <=0){
+            if (id <= 0) {
                 throw new LinyiException(ResultCodeEnum.VALID_ERROR);
             }
         }
         int i = articleMapper.deleteBatchIds(ids);
-        if (i!=ids.size()){
+        int i1 = articleDataMapper.deleteBatchIds(ids);
+        if (i != ids.size() && i1 != ids.size()) {
             throw new LinyiException(ResultCodeEnum.DELETE_FAIL);
         }
         return "删除成功";
@@ -100,12 +104,12 @@ public class ArticleServiceImpl extends ServiceImpl<ArticleMapper, Article> impl
 
     @Override
     public String updateArticle(Article article) {
-        if (Optional.ofNullable(article).isEmpty()){
+        if (Optional.ofNullable(article).isEmpty()) {
             throw new LinyiException(ResultCodeEnum.DATA_NULL);
         }
         article.setUpdateTime(LocalDateTime.now());
         int i = articleMapper.updateById(article);
-        if (i!=1){
+        if (i != 1) {
             throw new LinyiException(ResultCodeEnum.UPDATE_FAIL);
         }
         return "修改成功";
@@ -114,18 +118,18 @@ public class ArticleServiceImpl extends ServiceImpl<ArticleMapper, Article> impl
     @Override
     public PageResult<Article> getArticleListByIsDelete(long pageNo, long pageSize) {
         Page<Article> articlePage = new Page<>(pageNo, pageSize);
-        IPage<Article> iPage=articleMapper.getArticleListByIsDelete(articlePage);
+        IPage<Article> iPage = articleMapper.getArticleListByIsDelete(articlePage);
         return new PageResult<>(iPage.getRecords(), iPage.getTotal(), pageNo, pageSize);
     }
 
     @Override
     public String deleteArticleByPhysical(List<Integer> ids) {
-        for (Integer id:ids){
-            if (id<=0){
+        for (Integer id : ids) {
+            if (id <= 0) {
                 throw new LinyiException(ResultCodeEnum.VALID_ERROR);
             }
         }
-       articleMapper.deleteArticleByPhysical(ids);
+        articleMapper.deleteArticleByPhysical(ids);
 
         return "删除成功";
 
