@@ -32,27 +32,31 @@ public class CollectGroupController {
     private CollectGroupService collectGroupService;
 
     @Operation(summary = "获取收藏夹列表")
-    public Result<List<CollectGroup>> getCollectGroupList(){
+    public Result<List<CollectGroup>> getCollectGroupList() {
         return Result.ok(collectGroupService.getCollectGroupList());
     }
 
     @Operation(summary = "添加收藏夹")
     @PostMapping("/addCollectGroup")
-    public Result<String> addCollectGroup(@NotBlank(message = "名称不能为空") @RequestParam String name,@RequestParam(required = false) Integer status){
-        return Result.ok(collectGroupService.addCollectGroup(name,status));
+    public Result<String> addCollectGroup(@NotBlank(message = "名称不能为空") @RequestParam String name, @RequestParam(required = false) Integer status) {
+        return Result.ok(collectGroupService.addCollectGroup(name, status));
     }
 
     @Operation(summary = "删除收藏夹")
     @DeleteMapping("/deleteCollectGroup/{id}")
-    public Result<String> deleteCollectGroup(@NotNull(message = "id不能为空") @PathVariable Integer id){
+    public Result<String> deleteCollectGroup(@NotNull(message = "id不能为空") @PathVariable Integer id) {
         return Result.ok(collectGroupService.deleteCollectGroup(id));
     }
 
     @Operation(summary = "修改收藏夹")
     @PutMapping("/updateCollectGroup")
-    public Result<String> updateCollectGroup(@Valid @RequestBody CollectGroup collectGroup){
+    public Result<String> updateCollectGroup(@Valid @RequestBody CollectGroup collectGroup) {
         return Result.ok(collectGroupService.updateCollectGroup(collectGroup));
     }
 
-
+    @Operation(summary = "根据id获取收藏夹信息")
+    @GetMapping("/getCollectGroup/{id}")
+    public Result<CollectGroup> getCollectGroup(@NotNull(message = "id不能为空") @PathVariable Integer id) {
+        return Result.ok(collectGroupService.getById(id));
+    }
 }
