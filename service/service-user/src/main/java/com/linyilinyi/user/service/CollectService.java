@@ -21,8 +21,9 @@ public interface CollectService extends IService<Collect> {
     String addCollect(Integer collectGroupId, Integer targetId);
 
 
-    String deleteCollectList(List<Integer> targetIdList, Integer collectGroupId);
+    String deleteCollectList(List<Integer> ids);
 
     String updateCollect(Collect collect);
 
+    Boolean isCollect(Integer targetId);
 }

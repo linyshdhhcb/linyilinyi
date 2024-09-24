@@ -32,7 +32,7 @@ public class CollectController {
     private CollectService collectService;
 
     @Operation(summary = "根据收藏夹ID获取收藏夹里全部收藏列表")
-    @GetMapping("getCollectList/{id}")
+    @GetMapping("getCollectList/{collectGroupId}")
     public Result<List<VideoVo>> getCollectList(@NotNull(message = "收藏夹ID不能为空") @PathVariable Integer collectGroupId) {
         return Result.ok(collectService.getCollectList(collectGroupId));
     }
@@ -44,9 +44,9 @@ public class CollectController {
     }
 
     @Operation(summary = "根据收藏对象ID删除收藏")
-    @DeleteMapping("/deleteCollectList")
-    public Result<String> deleteCollectList(@NotNull(message = "收藏对象id不能为空") @RequestParam List<Integer> targetIdList, @NotNull(message = "收藏夹ID不能为空") @RequestParam Integer collectGroupId) {
-        return Result.ok(collectService.deleteCollectList(targetIdList, collectGroupId));
+    @DeleteMapping("/deleteCollectList/{ids}")
+    public Result<String> deleteCollectList(@NotNull(message = "收藏对象id不能为空") @PathVariable List<Integer> ids) {
+        return Result.ok(collectService.deleteCollectList(ids));
     }
 
     @Operation(summary = "修改收藏对象")
@@ -59,5 +59,11 @@ public class CollectController {
     @GetMapping("/getCollectById/{id}")
     public Result<Collect> getCollectById(@PathVariable Integer id) {
         return Result.ok(collectService.getById(id));
+    }
+
+    @Operation(summary = "判读该对象是否收藏")
+    @GetMapping("/isCollect/{targetId}")
+    public Result<Boolean> isCollect(@NotNull(message = "收藏对象id不能为空") @PathVariable Integer targetId) {
+        return Result.ok(collectService.isCollect(targetId));
     }
 }

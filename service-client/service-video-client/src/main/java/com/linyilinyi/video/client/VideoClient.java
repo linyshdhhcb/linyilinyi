@@ -23,7 +23,7 @@ public interface VideoClient {
                                    @RequestParam(required = false ,defaultValue = "5") long pageSize,
                                    @RequestBody VideoQueryVo videoQueryVo);
 
-    @Operation(summary = "根据id查询视频")
-    @GetMapping("/getVideoById/{id}")
+
+    @GetMapping("/video/getVideoById/{id}")
     public Result<VideoVo> getVideoById(@Valid @PathVariable Integer id);
 }
