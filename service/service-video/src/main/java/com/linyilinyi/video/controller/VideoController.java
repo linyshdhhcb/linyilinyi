@@ -52,7 +52,7 @@ public class VideoController {
 
     @Operation(summary = "根据id查询视频")
     @GetMapping("/getVideoById/{id}")
-    public Result<VideoVo> getVideoById(@Valid @PathVariable Long id) {
+    public Result<VideoVo> getVideoById(@Valid @PathVariable Integer id) {
         return Result.ok(videoService.getVideoById(id));
     }
 

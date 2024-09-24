@@ -3,10 +3,11 @@ package com.linyilinyi.video.client;
 import com.linyilinyi.common.model.PageResult;
 import com.linyilinyi.common.model.Result;
 import com.linyilinyi.model.vo.video.VideoQueryVo;
+import com.linyilinyi.model.vo.video.VideoVo;
+import io.swagger.oas.annotations.Operation;
+import jakarta.validation.Valid;
 import org.springframework.cloud.openfeign.FeignClient;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.*;
 
 /**
  * @Description
@@ -21,4 +22,8 @@ public interface VideoClient {
      Result<PageResult> list(@RequestParam(required = false ,defaultValue = "1") long pageNo,
                                    @RequestParam(required = false ,defaultValue = "5") long pageSize,
                                    @RequestBody VideoQueryVo videoQueryVo);
+
+    @Operation(summary = "根据id查询视频")
+    @GetMapping("/getVideoById/{id}")
+    public Result<VideoVo> getVideoById(@Valid @PathVariable Integer id);
 }

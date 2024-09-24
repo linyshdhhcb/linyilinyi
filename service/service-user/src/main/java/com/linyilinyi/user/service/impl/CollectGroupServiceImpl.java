@@ -10,7 +10,9 @@ import com.linyilinyi.user.mapper.CollectGroupMapper;
 import com.linyilinyi.user.service.CollectGroupService;
 import jakarta.annotation.Resource;
 import lombok.extern.slf4j.Slf4j;
+import org.redisson.mapreduce.CollectionMapperTask;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
 import java.util.List;
@@ -30,6 +32,7 @@ public class CollectGroupServiceImpl extends ServiceImpl<CollectGroupMapper, Col
 
     @Resource
     private CollectGroupMapper collectGroupMapper;
+
     @Override
     public List<CollectGroup> getCollectGroupList() {
         LambdaQueryWrapper<CollectGroup> queryWrapper = new LambdaQueryWrapper<>();
@@ -53,7 +56,9 @@ public class CollectGroupServiceImpl extends ServiceImpl<CollectGroupMapper, Col
     }
 
     @Override
+    @Transactional
     public String deleteCollectGroup(Integer id) {
+        // TODO 2024/9/24 远程调用，根据id删除文件夹中所有的收藏视频
         int i = collectGroupMapper.deleteById(id);
         if (i!=1){
             throw new LinyiException(ResultCodeEnum.DELETE_FAIL);
@@ -63,6 +68,7 @@ public class CollectGroupServiceImpl extends ServiceImpl<CollectGroupMapper, Col
 
     @Override
     public String updateCollectGroup(CollectGroup collectGroup) {
+        collectGroup.setUpdateTime(LocalDateTime.now());
         int i = collectGroupMapper.updateById(collectGroup);
         if (i!=1){
             throw new LinyiException(ResultCodeEnum.UPDATE_ERROR);

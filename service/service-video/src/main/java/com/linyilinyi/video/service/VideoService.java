@@ -6,7 +6,6 @@ import com.linyilinyi.model.entity.video.Video;
 import com.linyilinyi.model.vo.video.VideoAddVo;
 import com.linyilinyi.model.vo.video.VideoQueryVo;
 import com.linyilinyi.model.vo.video.VideoVo;
-import jakarta.validation.Valid;
 
 import java.util.List;
 
@@ -23,7 +22,7 @@ public interface VideoService extends IService<Video> {
 
     PageResult getList(long pageNo, long pageSize, VideoQueryVo videoQueryVo);
 
-    VideoVo getVideoById(Long id);
+    VideoVo getVideoById(Integer id);
 
     Video addVideo(VideoAddVo video);
 

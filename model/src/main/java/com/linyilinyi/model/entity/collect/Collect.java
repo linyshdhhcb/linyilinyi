@@ -33,7 +33,7 @@ public class Collect implements Serializable {
     private Integer id;
 
     @Schema(description = "收藏的视频ID")
-    private Integer videoId;
+    private Integer targetId;
 
     @Schema(description = "所属收藏夹ID")
     private Integer collectGroupId;

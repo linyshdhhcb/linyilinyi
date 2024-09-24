@@ -22,7 +22,6 @@ import com.linyilinyi.video.mapper.VideoMapper;
 import com.linyilinyi.video.service.VideoDataService;
 import com.linyilinyi.video.service.VideoService;
 import jakarta.annotation.Resource;
-import jakarta.validation.Valid;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.BeanUtils;
@@ -75,7 +74,7 @@ public class VideoServiceImpl extends ServiceImpl<VideoMapper, Video> implements
     }
 
     @Override
-    public VideoVo getVideoById(Long id) {
+    public VideoVo getVideoById(Integer id) {
         Video video = videoMapper.selectById(id);
         if (Optional.ofNullable(video).isEmpty()) {
             throw new LinyiException(ResultCodeEnum.DATA_NULL);

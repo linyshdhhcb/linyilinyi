@@ -17,6 +17,7 @@ import lombok.Data;
 import lombok.AllArgsConstructor;
 import lombok.NoArgsConstructor;
 import com.baomidou.mybatisplus.annotation.TableName;
+import org.springframework.data.redis.connection.Message;
 
 /**
  * <p>
@@ -41,6 +42,7 @@ public class CollectGroup implements Serializable {
     @NotNull(message = "收藏夹所属用户ID不能为空")
     @Schema(description = "收藏夹所属用户ID")
     private Integer userId;
+
 
     @Schema(description = "收藏夹状态")
     private Integer status;

@@ -32,6 +32,7 @@ public class CollectGroupController {
     private CollectGroupService collectGroupService;
 
     @Operation(summary = "获取收藏夹列表")
+    @GetMapping("/getCollectGroupList")
     public Result<List<CollectGroup>> getCollectGroupList() {
         return Result.ok(collectGroupService.getCollectGroupList());
     }
