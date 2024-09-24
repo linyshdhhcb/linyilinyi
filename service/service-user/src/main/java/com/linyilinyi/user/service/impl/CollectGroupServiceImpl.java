@@ -2,6 +2,9 @@ package com.linyilinyi.user.service.impl;
 
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
+import com.linyilinyi.common.exception.LinyiException;
+import com.linyilinyi.common.model.ResultCodeEnum;
+import com.linyilinyi.common.utils.AuthContextUser;
 import com.linyilinyi.model.entity.collect.CollectGroup;
 import com.linyilinyi.user.mapper.CollectGroupMapper;
 import com.linyilinyi.user.service.CollectGroupService;
@@ -9,7 +12,9 @@ import jakarta.annotation.Resource;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Optional;
 
 /**
  * <p>
@@ -29,5 +34,39 @@ public class CollectGroupServiceImpl extends ServiceImpl<CollectGroupMapper, Col
     public List<CollectGroup> getCollectGroupList() {
         LambdaQueryWrapper<CollectGroup> queryWrapper = new LambdaQueryWrapper<>();
         return collectGroupMapper.selectList(queryWrapper.orderByDesc(CollectGroup::getCreateTime));
+    }
+
+    @Override
+    public String addCollectGroup(String name, Integer status) {
+        CollectGroup collectGroup = new CollectGroup();
+        collectGroup.setName(name);
+        collectGroup.setCreateTime(LocalDateTime.now());
+        collectGroup.setUserId(AuthContextUser.getUserId());
+        if (Optional.ofNullable(status).isPresent()){
+            collectGroup.setStatus(status);
+        }
+        int insert = collectGroupMapper.insert(collectGroup);
+        if (insert!=1){
+            throw new LinyiException(ResultCodeEnum.INSERT_FAIL);
+        }
+        return "添加成功";
+    }
+
+    @Override
+    public String deleteCollectGroup(Integer id) {
+        int i = collectGroupMapper.deleteById(id);
+        if (i!=1){
+            throw new LinyiException(ResultCodeEnum.DELETE_FAIL);
+        }
+        return "删除成功";
+    }
+
+    @Override
+    public String updateCollectGroup(CollectGroup collectGroup) {
+        int i = collectGroupMapper.updateById(collectGroup);
+        if (i!=1){
+            throw new LinyiException(ResultCodeEnum.UPDATE_ERROR);
+        }
+        return "修改成功";
     }
 }

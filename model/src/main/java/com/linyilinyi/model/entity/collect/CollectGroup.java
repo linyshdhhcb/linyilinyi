@@ -11,6 +11,8 @@ import java.io.Serializable;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
 import io.swagger.v3.oas.annotations.media.Schema;
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
 import lombok.Data;
 import lombok.AllArgsConstructor;
 import lombok.NoArgsConstructor;
@@ -32,11 +34,16 @@ public class CollectGroup implements Serializable {
     @Schema(description = "主键ID")
     private Integer id;
 
+    @NotBlank(message = "收藏夹名称不能为空")
     @Schema(description = "收藏夹名称")
     private String name;
 
+    @NotNull(message = "收藏夹所属用户ID不能为空")
     @Schema(description = "收藏夹所属用户ID")
     private Integer userId;
+
+    @Schema(description = "收藏夹状态")
+    private Integer status;
 
     @Schema(description = "收藏夹创建时间")
     @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")

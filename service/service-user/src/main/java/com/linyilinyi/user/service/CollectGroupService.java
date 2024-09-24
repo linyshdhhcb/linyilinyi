@@ -17,4 +17,9 @@ public interface CollectGroupService extends IService<CollectGroup> {
 
     List<CollectGroup> getCollectGroupList();
 
+    String addCollectGroup(String name, Integer status);
+
+    String deleteCollectGroup(Integer id);
+
+    String updateCollectGroup(CollectGroup collectGroup);
 }
