@@ -3,6 +3,7 @@ package com.linyilinyi.user.controller;
 import com.linyilinyi.common.model.PageResult;
 import com.linyilinyi.common.model.Result;
 import com.linyilinyi.model.entity.user.User;
+import com.linyilinyi.model.vo.user.UserAddVo;
 import com.linyilinyi.model.vo.user.UserQueryVo;
 import com.linyilinyi.model.vo.user.UserUpdateVo;
 import com.linyilinyi.user.service.UserService;
@@ -41,6 +42,12 @@ public class UserController {
     @PostMapping("/updateUser")
     public Result<String> updateUser(@RequestBody UserUpdateVo user){
         return Result.ok(userService.updateUser(user));
+    }
+
+    @Operation(summary = "添加用户")
+    @PostMapping("addUser")
+    public Result<String> addUser(@Valid @RequestBody UserAddVo userAddVo){
+        return Result.ok(userService.addUser(userAddVo));
     }
 
     @Operation(summary = "查询用户列表")

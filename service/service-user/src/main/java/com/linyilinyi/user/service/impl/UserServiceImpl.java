@@ -1,24 +1,32 @@
 package com.linyilinyi.user.service.impl;
 
+import ch.qos.logback.core.testUtil.RandomUtil;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.linyilinyi.common.exception.LinyiException;
 import com.linyilinyi.common.model.PageResult;
 import com.linyilinyi.common.model.ResultCodeEnum;
+import com.linyilinyi.common.utils.PasswordEncoder;
 import com.linyilinyi.model.entity.user.User;
+import com.linyilinyi.model.vo.user.UserAddVo;
 import com.linyilinyi.model.vo.user.UserQueryVo;
 import com.linyilinyi.model.vo.user.UserUpdateVo;
 import com.linyilinyi.user.mapper.UserMapper;
 import com.linyilinyi.user.service.UserService;
 import jakarta.annotation.Resource;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.lang3.RandomStringUtils;
+import org.apache.commons.lang3.RandomUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.BeanUtils;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
+import java.util.Random;
+import java.util.UUID;
 
 /**
  * <p>
@@ -81,4 +89,24 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements Us
         return "修改成功";
     }
 
+    @Override
+    public String addUser(UserAddVo userAddVo) {
+        if (!userAddVo.getPassword().equals(userAddVo.getPasswords())){
+            throw new LinyiException(ResultCodeEnum.PASSWORDS_ERROR);
+        }
+        User user = new User();
+        BeanUtils.copyProperties(userAddVo,user);
+        String salt = RandomStringUtils.randomAlphanumeric(20);
+        String password = PasswordEncoder.encode(user.getPassword(), salt);
+        user.setPassword(password);
+        user.setSalt(salt);
+        user.setCreateTime(LocalDateTime.now());
+        user.setNickname("user_"+String.valueOf(System.currentTimeMillis())+RandomStringUtils.randomAlphanumeric(5));
+        int insert = userMapper.insert(user);
+        if (insert != 1){
+            throw new LinyiException(ResultCodeEnum.INSERT_FAIL);
+        }
+        return "添加成功";
+
+    }
 }
