@@ -25,6 +25,7 @@ public class UserHome implements Serializable {
     private static final long serialVersionUID = 1L;
 
     @Schema(description = "主键ID")
+    @TableId(value = "id", type = IdType.AUTO)
     private Integer id;
 
     @Schema(description = "用户id")

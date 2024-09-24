@@ -30,6 +30,7 @@ public class Likes implements Serializable {
     private static final long serialVersionUID = 1L;
 
     @Schema(description = "主键ID")
+    @TableId(value = "id", type = IdType.AUTO)
     private Integer id;
 
     @Schema(description = "点赞者用户ID")

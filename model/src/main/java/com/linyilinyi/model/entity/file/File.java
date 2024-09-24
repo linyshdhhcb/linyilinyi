@@ -2,6 +2,7 @@ package com.linyilinyi.model.entity.file;
 
 import com.baomidou.mybatisplus.annotation.IdType;
 import com.baomidou.mybatisplus.annotation.TableField;
+import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableLogic;
 import com.linyilinyi.common.model.ResultCodeEnum;
 import io.swagger.v3.oas.annotations.media.Schema;
@@ -29,6 +30,7 @@ public class File implements Serializable {
 
 
     @Schema(description = "主键id")
+    @TableId(value = "id", type = IdType.AUTO)
     private Long id;
 
     @NotBlank(message = "文件名称不能为空")

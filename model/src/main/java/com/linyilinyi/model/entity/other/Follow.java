@@ -29,6 +29,8 @@ public class Follow implements Serializable {
 
     private static final long serialVersionUID = 1L;
 
+    @TableId(value = "id", type = IdType.AUTO)
+    @Schema(description = "主键ID")
     private Integer id;
 
     @Schema(description = "关注者id")

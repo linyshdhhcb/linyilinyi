@@ -29,6 +29,7 @@ public class Reviewer implements Serializable {
     private static final long serialVersionUID = 1L;
 
     @Schema(description = "主键id")
+    @TableId(value = "id", type = IdType.AUTO)
     private Integer id;
 
     @Schema(description = "审核对象id")

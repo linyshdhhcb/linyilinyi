@@ -3,7 +3,7 @@
 <mapper namespace="com.linyilinyi.user.mapper.FollowMapper">
 
     <!-- 通用查询映射结果 -->
-    <resultMap id="BaseResultMap" type="com.linyilinyi.entity.po.Follow">
+    <resultMap id="BaseResultMap" type="com.linyilinyi.model.entity.other.Follow">
         <id column="id" property="id" />
         <result column="fans_id" property="fansId" />
         <result column="idol_id" property="idolId" />

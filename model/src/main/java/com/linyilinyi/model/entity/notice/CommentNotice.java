@@ -30,6 +30,7 @@ public class CommentNotice implements Serializable {
     private static final long serialVersionUID = 1L;
 
     @Schema(description = "主键ID")
+    @TableId(value = "id", type = IdType.AUTO)
     private Integer id;
 
     @Schema(description = "评论消息的发送者ID")

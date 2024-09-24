@@ -6,6 +6,7 @@ import com.linyilinyi.model.entity.collect.CollectGroup;
 import com.linyilinyi.user.service.CollectGroupService;
 import com.mysql.cj.protocol.Message;
 import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.annotation.Resource;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotBlank;
@@ -24,8 +25,10 @@ import java.util.List;
  * @author linyi
  */
 @Slf4j
+@Tag(name = "收藏夹管理模块")
 @RestController
 @RequestMapping("collectGroup")
+@SuppressWarnings({"unchecked", "rawtypes"})
 public class CollectGroupController {
 
     @Resource

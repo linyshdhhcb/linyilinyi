@@ -41,7 +41,7 @@ springdoc:
     path: /v3/api-docs
   group-configs:
     - group: 'default'
-      paths-to-match: '/user/**'
+      paths-to-match: '/user/**,/collect/**,/collectGroup/**,/comment/**,/follow/**,/likes/**,/userHome/**'
       packages-to-scan: com.linyilinyi.user
   default-flat-param-object: false
 knife4j:
