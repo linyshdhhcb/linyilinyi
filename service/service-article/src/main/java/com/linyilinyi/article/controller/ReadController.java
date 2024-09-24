@@ -7,6 +7,7 @@ import com.linyilinyi.model.entity.article.Read;
 import com.linyilinyi.model.vo.article.ReadAddVo;
 import com.linyilinyi.model.vo.article.ReadQueryVo;
 import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.annotation.Resource;
 import org.springframework.web.bind.annotation.*;
 import lombok.extern.slf4j.Slf4j;
@@ -21,8 +22,10 @@ import java.util.List;
  * @author linyi
  */
 @Slf4j
+@Tag(name = "文章历史记录")
 @RestController
 @RequestMapping("read")
+@SuppressWarnings({"unchecked", "rawtypes"})
 public class ReadController {
 
     @Resource

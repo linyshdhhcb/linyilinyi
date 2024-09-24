@@ -40,6 +40,8 @@ public class ReadServiceImpl extends ServiceImpl<ReadMapper, Read> implements Re
         LambdaQueryWrapper<Read> queryWrapper = new LambdaQueryWrapper<>();
         queryWrapper.eq(Optional.ofNullable(readQueryVo.getArticleId()).isPresent(), Read::getArticleId, readQueryVo.getArticleId());
         queryWrapper.eq(Optional.ofNullable(readQueryVo.getUserId()).isPresent(), Read::getUserId, readQueryVo.getUserId());
+        queryWrapper.gt(Optional.ofNullable(readQueryVo.getStartTime()).isPresent(), Read::getCreateTime,readQueryVo.getStartTime());
+        queryWrapper.lt(Optional.ofNullable(readQueryVo.getEndTime()).isPresent(), Read::getCreateTime,readQueryVo.getEndTime());
         Page<Read> readPage = new Page<>(pageNo, pageSize);
         Page<Read> page = readMapper.selectPage(readPage, queryWrapper);
         return new PageResult<>(page.getRecords(),page.getTotal(),pageNo,pageSize);

@@ -1,6 +1,7 @@
 package com.linyilinyi.model.vo.article;
 
 import com.baomidou.mybatisplus.annotation.TableLogic;
+import com.linyilinyi.common.model.FrameTime;
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Data;
 
@@ -11,7 +12,7 @@ import lombok.Data;
  * @ClassName: ReadQueryVo
  */
 @Data
-public class ReadQueryVo {
+public class ReadQueryVo extends FrameTime {
 
     @Schema(description = "文章id")
     private Integer articleId;
