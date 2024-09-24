@@ -33,6 +33,7 @@ spring:
           - data-id: common-account.yaml
   #        shared-configs[0]:dataId: common-account.yaml
 
+
   #springdoc-openapi项目配置
 springdoc:
   swagger-ui:

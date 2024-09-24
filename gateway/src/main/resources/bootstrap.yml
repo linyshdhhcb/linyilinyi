@@ -10,7 +10,7 @@ spring:
   # 主配置项，允许覆盖bean定义
   main:
     allow-bean-definition-overriding: true
-    web-application-type: reactive
+#    web-application-type: reactive
   # 云服务配置
   cloud:
     # Nacos服务发现与配置中心地址
@@ -31,24 +31,35 @@ spring:
         prefix: ${spring.application.name}
         # 文件扩展名
         file-extension: yaml
-#knife4j:
-#  gateway:
-#    enabled: true
-#    # 指定服务发现的模式聚合微服务文档，并且是默认`default`分组
-#    strategy: discover
-#    discover:
-#      enabled: true
-#      # 指定版本号(Swagger2|OpenAPI3)
-#      version : openapi3
-#      # 需要排除的微服务(eg:网关服务)
+logging:
+  level:
+    org.springframework.cloud.gateway: DEBUG
+management:
+  endpoints:
+    web:
+      exposure:
+        include: '*' #对外暴露actuator所有监控指标，便于监控系统收集跟踪
+knife4j:
+  gateway:
+    enabled: true
+    # 指定服务发现的模式聚合微服务文档，并且是默认`default`分组
+    strategy: discover
+    discover:
+      enabled: true
+      # 指定版本号(Swagger2|OpenAPI3)
+      version : openapi3
+      # 需要排除的微服务(eg:网关服务)
 #      excluded-services: ${spring.application.name}
-#      service-config:
-#        service-video:
-#          - group-name: "视频服务"
-#            order: 1
-#        service-user:
-#          - group-name: "用户服务"
-#            order: 2
-#        tags-sorter: order
-#        operations-sorter: order
+      service-config:
+        service-video:
+          - group-name: "视频服务"
+            order: 1
+        service-user:
+          - group-name: "用户服务"
+            order: 2
+        service-article:
+          - group-name: "视频服务"
+            order: 1
+        tags-sorter: order
+        operations-sorter: order
 

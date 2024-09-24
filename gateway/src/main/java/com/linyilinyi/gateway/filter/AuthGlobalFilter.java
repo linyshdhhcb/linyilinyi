@@ -1,6 +1,5 @@
 package com.linyilinyi.gateway.filter;
 
-import lombok.extern.slf4j.Slf4j;
 import org.springframework.cloud.gateway.filter.GatewayFilterChain;
 import org.springframework.cloud.gateway.filter.GlobalFilter;
 import org.springframework.core.Ordered;
@@ -17,14 +16,15 @@ import java.time.format.DateTimeFormatter;
  * </p>
  *
  */
-@Slf4j
+
 @Component
 public class AuthGlobalFilter implements GlobalFilter, Ordered {
     @Override
     public Mono<Void> filter(ServerWebExchange exchange, GatewayFilterChain chain) {
 
         String now = LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss"));
-        System.out.println("GatewayFilter执行 " + now);
+        System.out.println("*******************GatewayFilter执行 " + now);
+        System.out.println("*******************服务调用请求："+exchange.getRequest().getURI());
         return chain.filter(exchange);
     }
 
