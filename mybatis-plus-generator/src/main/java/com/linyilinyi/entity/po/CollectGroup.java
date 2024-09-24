@@ -13,30 +13,30 @@ import com.baomidou.mybatisplus.annotation.TableName;
 
 /**
  * <p>
- * 历史播放表
+ * 收藏夹表
  * </p>
  *
  * @author linyi
  */
 @Data
-    @Schema(name="Play",description = "历史播放表")
-public class Play implements Serializable {
+    @Schema(name="CollectGroup",description = "收藏夹表")
+public class CollectGroup implements Serializable {
 
     private static final long serialVersionUID = 1L;
 
         @Schema(description = "主键ID")
     private Integer id;
 
-        @Schema(description = "播放的视频ID")
-    private Integer videoId;
+        @Schema(description = "收藏夹名称")
+    private String name;
 
-        @Schema(description = "播放视频的用户ID")
+        @Schema(description = "收藏夹所属用户ID")
     private Integer userId;
 
-        @Schema(description = "播放的创建时间")
+        @Schema(description = "收藏夹创建时间")
     private LocalDateTime createTime;
 
-        @Schema(description = "播放的修改时间")
+        @Schema(description = "收藏夹修改时间")
     private LocalDateTime updateTime;
 
         @Schema(description = "逻辑删除标识（0：未删除；1：已删除）")
