@@ -8,6 +8,8 @@ import com.linyilinyi.user.service.CommentService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
+
 /**
  * <p>
  * 评论表 服务实现类
@@ -17,6 +19,11 @@ import org.springframework.stereotype.Service;
  */
 @Slf4j
 @Service
+@SuppressWarnings({"unchecked", "rawtypes"})
 public class CommentServiceImpl extends ServiceImpl<CommentMapper, Comment> implements CommentService {
 
+    @Override
+    public List<Comment> getTargetCommentList(Integer targetId, Integer targetType) {
+        return null;
+    }
 }

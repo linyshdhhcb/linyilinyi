@@ -8,6 +8,7 @@
         <result column="target_id" property="targetId" />
         <result column="user_id" property="userId" />
         <result column="parent_id" property="parentId" />
+        <result column="target_type" property="targetType" />
         <result column="top_id" property="topId" />
         <result column="content" property="content" />
         <result column="create_time" property="createTime" />
@@ -17,7 +18,7 @@
 
     <!-- 通用查询结果列 -->
     <sql id="Base_Column_List">
-        id, target_id, user_id, parent_id, top_id, content, create_time, update_time, is_delete
+        id, target_id, user_id, target_type,parent_id, top_id, content, create_time, update_time, is_delete
     </sql>
 
 </mapper>

@@ -39,6 +39,9 @@ public class Comment implements Serializable {
     @Schema(description = "发表评论的用户ID")
     private Integer userId;
 
+    @Schema(description = "评论类型")
+    private Integer targetType;
+
     @Schema(description = "父级评论ID")
     private Integer parentId;
 
