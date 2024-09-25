@@ -11,6 +11,7 @@ import com.linyilinyi.user.mapper.LikesMapper;
 import com.linyilinyi.user.service.LikesService;
 import jakarta.annotation.Resource;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
@@ -28,6 +29,9 @@ public class LikesServiceImpl extends ServiceImpl<LikesMapper, Likes> implements
 
     @Resource
     private LikesMapper likesMapper;
+
+    @Resource
+    private RedisTemplate<String,Integer> redisTemplate;
     @Override
     public String addLikes(Integer id, Integer targetType) {
         if (isLikes(id,targetType)){
@@ -47,12 +51,17 @@ public class LikesServiceImpl extends ServiceImpl<LikesMapper, Likes> implements
             if (insert!=1){
                 throw new LinyiException(ResultCodeEnum.INSERT_FAIL);
             }
+            redisTemplate.opsForValue().set("isLikes:"+id.toString()+":"+targetType.toString(),id);
             return "点赞成功";
         }
         }
 
     @Override
     public Boolean isLikes(Integer id, Integer targetType) {
+        Integer i = redisTemplate.opsForValue().get("isLikes:" + id + ":" + targetType);
+        if (i==id){
+            return true;
+        }
         LambdaQueryWrapper<Likes> queryWrapper = new LambdaQueryWrapper<Likes>()
                 .eq(Likes::getTargetId,id).eq(Likes::getTargetType,targetType)
                 .eq(Likes::getUserId,AuthContextUser.getUserId());
