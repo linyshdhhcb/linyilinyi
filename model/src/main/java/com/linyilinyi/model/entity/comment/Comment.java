@@ -33,7 +33,7 @@ public class Comment implements Serializable {
     @TableId(value = "id", type = IdType.AUTO)
     private Integer id;
 
-    @Schema(description = "评论所在的对象ID（1.视频 2.文章）")
+    @Schema(description = "评论所在的对象ID")
     private Integer targetId;
 
     @Schema(description = "发表评论的用户ID")
@@ -42,10 +42,10 @@ public class Comment implements Serializable {
     @Schema(description = "评论类型")
     private Integer targetType;
 
-    @Schema(description = "父级评论ID")
+    @Schema(description = "父级评论ID(顶层评论默认：0)")
     private Integer parentId;
 
-    @Schema(description = "顶层评论ID")
+    @Schema(description = "顶层评论ID(顶层评论默认：0)")
     private Integer topId;
 
     @Schema(description = "评论内容")
