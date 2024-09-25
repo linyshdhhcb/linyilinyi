@@ -40,25 +40,26 @@ public class LikesServiceImpl extends ServiceImpl<LikesMapper, Likes> implements
             if (delete!=1){
                 throw new RuntimeException("删除失败");
             }
+            redisTemplate.delete("isLikes:userId:"+AuthContextUser.getUserId().toString()+":"+id.toString()+":"+targetType.toString());
             return "取消点赞成功";
         }else {
             Likes likes = new Likes();
             likes.setCreateTime(LocalDateTime.now());
             likes.setTargetId(id);
-            likes.setTargetId(targetType);
+            likes.setTargetType(targetType);
             likes.setUserId(AuthContextUser.getUserId());
             int insert = likesMapper.insert(likes);
             if (insert!=1){
                 throw new LinyiException(ResultCodeEnum.INSERT_FAIL);
             }
-            redisTemplate.opsForValue().set("isLikes:"+id.toString()+":"+targetType.toString(),id);
+            redisTemplate.opsForValue().set("isLikes:userId:"+AuthContextUser.getUserId().toString()+":"+id.toString()+":"+targetType.toString(),id);
             return "点赞成功";
         }
         }
 
     @Override
     public Boolean isLikes(Integer id, Integer targetType) {
-        Integer i = redisTemplate.opsForValue().get("isLikes:" + id + ":" + targetType);
+        Integer i = redisTemplate.opsForValue().get("isLikes:userId:"+AuthContextUser.getUserId().toString()+":"+id.toString()+":"+targetType.toString());
         if (i==id){
             return true;
         }

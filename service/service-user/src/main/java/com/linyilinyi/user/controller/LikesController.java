@@ -35,13 +35,13 @@ public class LikesController {
     private LikesService likesService;
 
     @Operation(summary = "点赞/取消")
-    @GetMapping("/addLikes/{targetId}")
+    @GetMapping("/addLikes/{targetId}/{targetType}")
     public Result<String> addLikes(@NotNull(message = "targetId不能为空") @PathVariable Integer targetId,@NotNull(message = "targetType不能为空") @PathVariable Integer targetType) {
         return Result.ok(likesService.addLikes(targetId,targetType));
     }
 
     @Operation(summary = "判断是否点赞过")
-    @GetMapping("/isLikes/{targetId}/{target_type}")
+    @GetMapping("/isLikes/{targetId}/{targetType}")
     public Result<Boolean> isLikes(@NotNull(message = "targetId不能为空") @PathVariable Integer targetId,@NotNull(message = "targetType不能为空") @PathVariable Integer targetType) {
         return Result.ok(likesService.isLikes(targetId,targetType));
     }
