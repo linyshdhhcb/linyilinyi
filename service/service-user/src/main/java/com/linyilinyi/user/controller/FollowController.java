@@ -1,12 +1,21 @@
 package com.linyilinyi.user.controller;
 
+import com.linyilinyi.common.model.Result;
+import com.linyilinyi.model.vo.user.FanVo;
+import com.linyilinyi.model.vo.user.FollowVo;
 import com.linyilinyi.user.service.FollowService;
+import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.annotation.Resource;
+import jakarta.validation.constraints.NotNull;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+
+import java.util.List;
 
 /**
  * <p>
@@ -24,4 +33,30 @@ public class FollowController {
 
     @Resource
     private FollowService followService;
+
+    @Operation(summary = "获取该用户所有粉丝")
+    @GetMapping("/getFansList")
+    public Result<List<FanVo>> getFansList() {
+        return Result.ok(followService.getFansList());
+    }
+
+    @Operation(summary = "获取该用户关注")
+    @GetMapping("/getFollowList")
+    public Result<List<FollowVo>> getFollowList() {
+        return Result.ok(followService.getFollowList());
+    }
+
+    @Operation(summary = "关注/取消用户")
+    @GetMapping("/addFollow/{id}")
+    public Result<String> addFollow(@NotNull(message = "id不能为空") @PathVariable Integer id) {
+        return Result.ok(followService.addFollow(id));
+    }
+
+    @Operation(summary = "判断是否关注了")
+    @GetMapping("/isFollow/{id}")
+    public Result<Boolean> isFollow(@NotNull(message = "id不能为空") @PathVariable Integer id) {
+        return Result.ok(followService.isFollow(id));
+    }
+
+
 }

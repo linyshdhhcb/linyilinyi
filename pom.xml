@@ -59,11 +59,23 @@
         <spring-boot-starter-webflux>3.3.0</spring-boot-starter-webflux>
         <knife4j.gateway.versiom>4.3.0</knife4j.gateway.versiom>
         <springdoc-openapi-starter-common>2.3.0</springdoc-openapi-starter-common>
+        <spring-boot-starter-cache>3.2.0</spring-boot-starter-cache>
+        <jackson-datatype-jsr310>2.13.0</jackson-datatype-jsr310>
     </properties>
 
     <!--配置dependencyManagement锁定依赖的版本-->
     <dependencyManagement>
         <dependencies>
+            <dependency>
+                <groupId>com.fasterxml.jackson.datatype</groupId>
+                <artifactId>jackson-datatype-jsr310</artifactId>
+                <version>${jackson-datatype-jsr310}</version> <!-- 确保使用与你当前使用的 Jackson 版本相匹配的版本 -->
+            </dependency>
+            <dependency>
+                <groupId>org.springframework.boot</groupId>
+                <artifactId>spring-boot-starter-cache</artifactId>
+                <version>${spring-boot-starter-cache}</version>
+            </dependency>
             <dependency>
                 <groupId>com.github.xiaoymin</groupId>
                 <artifactId>knife4j-openapi3-spring-boot-starter</artifactId>

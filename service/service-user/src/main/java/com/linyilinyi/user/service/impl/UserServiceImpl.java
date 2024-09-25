@@ -91,6 +91,7 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements Us
 
     @Override
     public String addUser(UserAddVo userAddVo) {
+        userAddVo.setImage("http://192.168.85.129:9000/linyilinyi/image/moren/1111.webp");
         if (!userAddVo.getPassword().equals(userAddVo.getPasswords())){
             throw new LinyiException(ResultCodeEnum.PASSWORDS_ERROR);
         }

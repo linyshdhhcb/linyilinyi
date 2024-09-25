@@ -25,6 +25,7 @@ public enum ResultCodeEnum {
     ILLEGAL_REQUEST(205, "非法请求"),
     REPEAT_SUBMIT(206, "重复提交"),
     EXISTED(206, "已经存在"),
+    FOLLOW_ERROR(206, "已经关注了"),
     REPEAT_SUBMIT_FILE(207,"该文件已经提交过，请勿重复提交"),
     FEIGN_FAIL(207, "远程调用失败"),
     UPDATE_ERROR(204, "数据更新失败"),

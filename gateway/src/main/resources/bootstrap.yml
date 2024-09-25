@@ -1,4 +1,3 @@
-
 # Spring环境配置
 spring:
   # 应用名称
@@ -59,7 +58,7 @@ knife4j:
             order: 2
         service-article:
           - group-name: "视频服务"
-            order: 1
+            order: 3
         tags-sorter: order
         operations-sorter: order
 

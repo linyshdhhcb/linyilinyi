@@ -11,6 +11,7 @@ import com.linyilinyi.user.service.CollectGroupService;
 import jakarta.annotation.Resource;
 import lombok.extern.slf4j.Slf4j;
 import org.redisson.mapreduce.CollectionMapperTask;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -34,6 +35,7 @@ public class CollectGroupServiceImpl extends ServiceImpl<CollectGroupMapper, Col
     private CollectGroupMapper collectGroupMapper;
 
     @Override
+    @Cacheable(cacheNames = "collectGroupList")
     public List<CollectGroup> getCollectGroupList() {
         LambdaQueryWrapper<CollectGroup> queryWrapper = new LambdaQueryWrapper<>();
         return collectGroupMapper.selectList(queryWrapper.orderByDesc(CollectGroup::getCreateTime));

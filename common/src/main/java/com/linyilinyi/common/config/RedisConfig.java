@@ -1,89 +1,151 @@
 package com.linyilinyi.common.config;
+
 import com.fasterxml.jackson.annotation.JsonAutoDetect;
 import com.fasterxml.jackson.annotation.PropertyAccessor;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import org.springframework.cache.CacheManager;
+import com.fasterxml.jackson.databind.SerializationFeature;
+import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
+import com.fasterxml.jackson.datatype.jsr310.deser.LocalDateDeserializer;
+import com.fasterxml.jackson.datatype.jsr310.deser.LocalDateTimeDeserializer;
+import com.fasterxml.jackson.datatype.jsr310.ser.LocalDateSerializer;
+import com.fasterxml.jackson.datatype.jsr310.ser.LocalDateTimeSerializer;
+import lombok.extern.slf4j.Slf4j;
+import org.springframework.cache.Cache;
+import org.springframework.cache.annotation.CachingConfigurerSupport;
 import org.springframework.cache.annotation.EnableCaching;
-import org.springframework.cache.interceptor.KeyGenerator;
+import org.springframework.cache.interceptor.CacheErrorHandler;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.context.annotation.Primary;
 import org.springframework.data.redis.cache.RedisCacheConfiguration;
 import org.springframework.data.redis.cache.RedisCacheManager;
 import org.springframework.data.redis.connection.RedisConnectionFactory;
 import org.springframework.data.redis.core.RedisTemplate;
-import org.springframework.data.redis.serializer.*;
+import org.springframework.data.redis.serializer.Jackson2JsonRedisSerializer;
+import org.springframework.data.redis.serializer.RedisSerializationContext;
+import org.springframework.data.redis.serializer.RedisSerializer;
+import org.springframework.data.redis.serializer.StringRedisSerializer;
 
-import java.lang.reflect.Method;
 import java.time.Duration;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 
-/**
- * Redis配置类
- *
- */
-@Configuration
+@Slf4j
 @EnableCaching
-public class RedisConfig {
+@Configuration
+public class RedisConfig extends CachingConfigurerSupport {
 
-    // 使用默认标签做缓存
+    //过期时间 1 小时
+    private Duration timeToLive = Duration.ofHours(1L);
+
+    /**
+     * RedisTemplate 相关配置
+     *
+     * @param factory
+     * @return
+     */
     @Bean
-    public KeyGenerator keyGenerator() {
-        return new KeyGenerator() {
+    public RedisTemplate<String, Object> redisTemplate(RedisConnectionFactory factory) {
+        RedisTemplate<String, Object> template = new RedisTemplate<String, Object>();
+        template.setConnectionFactory(factory);
+        // key采用String的序列化方式
+        template.setKeySerializer(keySerializer());
+        // hash的key也采用String的序列化方式
+        template.setHashKeySerializer(keySerializer());
+        // value序列化方式采用jackson
+        template.setValueSerializer(valueSerializer());
+        // hash的value序列化方式采用jackson
+        template.setHashValueSerializer(valueSerializer());
+        template.afterPropertiesSet();
+        return template;
+    }
+
+
+    @Bean
+    public RedisCacheManager cacheManager(RedisConnectionFactory connectionFactory) {
+        //配置 key value 序列化器，过期时间
+        RedisCacheConfiguration config = RedisCacheConfiguration.defaultCacheConfig()
+                .entryTtl(timeToLive)
+                .serializeKeysWith(RedisSerializationContext.SerializationPair.fromSerializer(keySerializer()))
+                .serializeValuesWith(RedisSerializationContext.SerializationPair.fromSerializer(valueSerializer()))
+                .disableCachingNullValues();
+
+        RedisCacheManager redisCacheManager = RedisCacheManager.builder(connectionFactory)
+                .cacheDefaults(config)
+                .transactionAware()
+                .build();
+        return redisCacheManager;
+    }
+
+    /**
+     * key 序列化
+     *
+     * @return
+     */
+    private RedisSerializer<String> keySerializer() {
+        return new StringRedisSerializer();
+    }
+
+    /**
+     * 值采用JSON序列化
+     *
+     * @return
+     */
+    private RedisSerializer<Object> valueSerializer() {
+        Jackson2JsonRedisSerializer jackson2JsonRedisSerializer = new Jackson2JsonRedisSerializer(Object.class);
+        ObjectMapper om = new ObjectMapper();
+        om.setVisibility(PropertyAccessor.ALL, JsonAutoDetect.Visibility.ANY);
+        om.enableDefaultTyping(ObjectMapper.DefaultTyping.NON_FINAL);
+
+        //LocalDate、LocalDateTime序列化器
+        JavaTimeModule timeModule = new JavaTimeModule();
+        timeModule.addDeserializer(LocalDate.class,
+                new LocalDateDeserializer(DateTimeFormatter.ofPattern("yyyy-MM-dd")));
+        timeModule.addDeserializer(LocalDateTime.class,
+                new LocalDateTimeDeserializer(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss")));
+        timeModule.addSerializer(LocalDate.class,
+                new LocalDateSerializer(DateTimeFormatter.ofPattern("yyyy-MM-dd")));
+        timeModule.addSerializer(LocalDateTime.class,
+                new LocalDateTimeSerializer(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss")));
+
+        om.disable(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS);
+        om.registerModule(timeModule);
+
+        jackson2JsonRedisSerializer.setObjectMapper(om);
+        return jackson2JsonRedisSerializer;
+    }
+
+    /**
+     * 处理缓存异常，不能影响正常业务
+     *
+     * @return
+     */
+    @Override
+    public CacheErrorHandler errorHandler() {
+        return new CacheErrorHandler() {
             @Override
-            public Object generate(Object target, Method method, Object... params) {
-                StringBuilder sb = new StringBuilder();
-                sb.append(target.getClass().getName());
-                sb.append(method.getName());
-                for (Object obj : params) {
-                    sb.append(obj.toString());
-                }
-                return sb.toString();
+            public void handleCacheGetError(RuntimeException exception, Cache cache, Object key) {
+                handleRedisCacheErrorException(exception, key);
+            }
+
+            @Override
+            public void handleCachePutError(RuntimeException exception, Cache cache, Object key, Object value) {
+                handleRedisCacheErrorException(exception, key);
+            }
+
+            @Override
+            public void handleCacheEvictError(RuntimeException exception, Cache cache, Object key) {
+                handleRedisCacheErrorException(exception, key);
+            }
+
+            @Override
+            public void handleCacheClearError(RuntimeException exception, Cache cache) {
+                handleRedisCacheErrorException(exception, null);
             }
         };
     }
 
-    @Bean
-    @Primary
-    public RedisTemplate<Object, Object> redisTemplate(RedisConnectionFactory redisConnectionFactory) {
-        RedisTemplate<Object, Object> redisTemplate = new RedisTemplate<>();
-        redisTemplate.setConnectionFactory(redisConnectionFactory);
-
-        //String的序列化方式
-        StringRedisSerializer stringRedisSerializer = new StringRedisSerializer();
-        // 使用GenericJackson2JsonRedisSerializer 替换默认序列化(默认采用的是JDK序列化)
-        GenericJackson2JsonRedisSerializer genericJackson2JsonRedisSerializer = new GenericJackson2JsonRedisSerializer();
-
-        //序列号key value
-        redisTemplate.setKeySerializer(stringRedisSerializer);
-        redisTemplate.setValueSerializer(genericJackson2JsonRedisSerializer);
-        redisTemplate.setHashKeySerializer(stringRedisSerializer);
-        redisTemplate.setHashValueSerializer(genericJackson2JsonRedisSerializer);
-
-        redisTemplate.afterPropertiesSet();
-        return redisTemplate;
-    }
-
-    @Bean
-    public CacheManager cacheManager(RedisConnectionFactory factory) {
-        RedisSerializer<String> redisSerializer = new StringRedisSerializer();
-        Jackson2JsonRedisSerializer jackson2JsonRedisSerializer = new Jackson2JsonRedisSerializer(Object.class);
-
-        //解决查询缓存转换异常的问题
-        ObjectMapper om = new ObjectMapper();
-        om.setVisibility(PropertyAccessor.ALL, JsonAutoDetect.Visibility.ANY);
-        om.enableDefaultTyping(ObjectMapper.DefaultTyping.NON_FINAL);
-        jackson2JsonRedisSerializer.setObjectMapper(om);
-
-        // 配置序列化（解决乱码的问题）,过期时间600秒
-        RedisCacheConfiguration config = RedisCacheConfiguration.defaultCacheConfig()
-                .entryTtl(Duration.ofSeconds(600000))
-                .serializeKeysWith(RedisSerializationContext.SerializationPair.fromSerializer(redisSerializer))
-                .serializeValuesWith(RedisSerializationContext.SerializationPair.fromSerializer(jackson2JsonRedisSerializer))
-                .disableCachingNullValues();
-
-        RedisCacheManager cacheManager = RedisCacheManager.builder(factory)
-                .cacheDefaults(config)
-                .build();
-        return cacheManager;
+    protected void handleRedisCacheErrorException(RuntimeException exception, Object key) {
+        log.error("redis exception ：key=[{}]", key, exception);
     }
 }

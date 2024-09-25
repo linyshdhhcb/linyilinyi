@@ -13,4 +13,8 @@ import com.linyilinyi.model.entity.likes.Likes;
  */
 public interface LikesService extends IService<Likes> {
 
+
+    String addLikes(Integer id, Integer targetType);
+
+    Boolean isLikes(Integer id, Integer targetType);
 }

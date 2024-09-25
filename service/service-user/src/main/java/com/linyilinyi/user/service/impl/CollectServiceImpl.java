@@ -15,6 +15,7 @@ import com.linyilinyi.user.service.CollectService;
 import com.linyilinyi.video.client.VideoClient;
 import jakarta.annotation.Resource;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
@@ -44,6 +45,7 @@ public class CollectServiceImpl extends ServiceImpl<CollectMapper, Collect> impl
     private CollectGroupService collectGroupService;
 
     @Override
+    @Cacheable(cacheNames = "collectList", key = "#collectGroupId")
     public List<VideoVo> getCollectList(Integer collectGroupId) {
         List<Collect> collectList = collectMapper.selectList(new LambdaQueryWrapper<Collect>().eq(Collect::getCollectGroupId, collectGroupId).orderByDesc(Collect::getCreateTime));
         ArrayList<VideoVo> videoVos = new ArrayList<>();
