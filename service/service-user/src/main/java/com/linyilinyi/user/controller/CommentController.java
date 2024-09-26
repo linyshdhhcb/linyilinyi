@@ -45,9 +45,22 @@ public class CommentController {
     @Operation(summary = "获取评论列表")
     @PostMapping("/getCommentList")
     public Result<PageResult<CommentsVo>> getCommentList(@NotNull(message = "targetId不能为空") @RequestParam Integer targetId,
-                                             @NotNull(message = "targetType不能为空") @RequestParam Integer targetType,
-                                             @RequestParam(required = false, defaultValue = "1") long pageNo,
-                                             @RequestParam(required = false, defaultValue = "2") long pageSize) {
-        return Result.ok(commentService.getCommentList(targetId,targetType,pageNo,pageSize));
+                                                         @NotNull(message = "targetType不能为空") @RequestParam Integer targetType,
+                                                         @RequestParam(required = false, defaultValue = "0") Integer topId,
+                                                         @RequestParam(required = false, defaultValue = "1") long pageNo,
+                                                         @RequestParam(required = false, defaultValue = "50") long pageSize) {
+        return Result.ok(commentService.getCommentList(targetId, targetType, topId, pageNo, pageSize));
+    }
+
+    @Operation(summary = "删除评论")
+    @DeleteMapping("/deleteComment/{id}")
+    public Result<String> deleteComment(@PathVariable Integer id) {
+        return Result.ok(commentService.deleteComment(id));
+    }
+
+    @Operation(summary = "根据id获取评论信息")
+    @GetMapping("/getComment/{id}")
+    public Result<Comment> getComment(@NotNull(message = "id不能为空")@PathVariable Integer id) {
+        return Result.ok(commentService.getComment(id));
     }
 }

@@ -1,24 +1,40 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.linyilinyi.user.mapper.CommentMapper">
-
     <!-- 通用查询映射结果 -->
     <resultMap id="BaseResultMap" type="com.linyilinyi.model.entity.comment.Comment">
-        <id column="id" property="id" />
-        <result column="target_id" property="targetId" />
-        <result column="user_id" property="userId" />
-        <result column="parent_id" property="parentId" />
-        <result column="target_type" property="targetType" />
-        <result column="top_id" property="topId" />
-        <result column="content" property="content" />
-        <result column="create_time" property="createTime" />
-        <result column="update_time" property="updateTime" />
-        <result column="is_delete" property="isDelete" />
+        <id column="id" property="id"/>
+        <result column="target_id" property="targetId"/>
+        <result column="user_id" property="userId"/>
+        <result column="parent_id" property="parentId"/>
+        <result column="target_type" property="targetType"/>
+        <result column="top_id" property="topId"/>
+        <result column="content" property="content"/>
+        <result column="create_time" property="createTime"/>
+        <result column="update_time" property="updateTime"/>
+        <result column="is_delete" property="isDelete"/>
     </resultMap>
 
     <!-- 通用查询结果列 -->
     <sql id="Base_Column_List">
         id, target_id, user_id, target_type,parent_id, top_id, content, create_time, update_time, is_delete
     </sql>
+
+    <select id="getCommentChild" resultType="com.linyilinyi.model.entity.comment.Comment">
+        WITH RECURSIVE a AS (SELECT *
+                             FROM comment
+                             WHERE top_id = #{topId}
+                               AND target_id = #{targetId}
+                               AND target_type = #{targetType}
+                               AND is_delete = 0
+                             UNION ALL
+                             SELECT b.*
+                             FROM comment b
+                                      INNER JOIN a ON b.parent_id = a.id)
+
+        SELECT *
+        FROM a
+        ORDER BY a.top_id DESC
+    </select>
 
 </mapper>

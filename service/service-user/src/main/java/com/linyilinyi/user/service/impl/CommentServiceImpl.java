@@ -2,8 +2,6 @@ package com.linyilinyi.user.service.impl;
 
 
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
-import com.baomidou.mybatisplus.core.metadata.IPage;
-import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.linyilinyi.common.exception.LinyiException;
 import com.linyilinyi.common.model.PageResult;
@@ -15,11 +13,13 @@ import com.linyilinyi.model.vo.comment.CommentAddVo;
 import com.linyilinyi.model.vo.comment.CommentVo;
 import com.linyilinyi.model.vo.comment.CommentsVo;
 import com.linyilinyi.user.mapper.CommentMapper;
+import com.linyilinyi.user.mapper.LikesMapper;
 import com.linyilinyi.user.service.CommentService;
 import com.linyilinyi.user.service.UserService;
 import jakarta.annotation.Resource;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.BeanUtils;
+import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
@@ -40,9 +40,14 @@ public class CommentServiceImpl extends ServiceImpl<CommentMapper, Comment> impl
 
     @Resource
     private CommentMapper commentMapper;
-
     @Resource
     private UserService userService;
+
+    @Resource
+    private LikesMapper likesMapper;
+    @Resource
+    private RedisTemplate<String, Object> redisTemplate;
+
     @Override
     public CommentsVo addComment(CommentAddVo commentAddVo) {
         CommentsVo commentsVo = new CommentsVo();
@@ -63,33 +68,93 @@ public class CommentServiceImpl extends ServiceImpl<CommentMapper, Comment> impl
     }
 
     @Override
-    public PageResult<CommentsVo> getCommentList(Integer targetId, Integer targetType, long pageNo, long pageSize) {
-        LambdaQueryWrapper<Comment> queryWrapper = new LambdaQueryWrapper<Comment>().eq(Comment::getTargetId, targetId).eq(Comment::getTargetType, targetType).orderByDesc(Comment::getCreateTime);
-        List<Comment> comments = commentMapper.selectList(queryWrapper);
-        ArrayList<CommentsVo> commentsVoArrayList = new ArrayList<>();
+    public PageResult<CommentsVo> getCommentList(Integer targetId, Integer targetType, Integer topId, long pageNo, long pageSize) {
+        List<Comment> children = commentMapper.getCommentChild(targetId, targetType, topId);
+        children.add(commentMapper.selectOne(new LambdaQueryWrapper<Comment>().eq(Comment::getId, topId)));
+        //使用HashSet去重
+        List<Comment> comments = new ArrayList<>(new HashSet<>(children));
+        List<CommentsVo> commentsVoArrayList = new ArrayList<>();
         for (Comment comment : comments) {
-            CommentsVo commentsVo = new CommentsVo();
-            BeanUtils.copyProperties(comment, commentsVo);
-            User user = userService.getUserById(comment.getUserId());
-
-            commentsVo.setNickName(user.getNickname());
-            commentsVo.setImage(user.getImage());
-            commentsVoArrayList.add(commentsVo);
-        }
-        //获取顶层评论
-        List<CommentsVo> topList = new ArrayList<>();
-        for (CommentsVo commentsVo : commentsVoArrayList) {
-            if (commentsVo.getParentId() == 0 && commentsVo.getTopId() == 0) {
-                topList.add(commentsVo);
+            if (comment != null) {
+                CommentsVo commentsVo = new CommentsVo();
+                BeanUtils.copyProperties(comment, commentsVo);
+                User user = userService.getUserById(comment.getUserId());
+                commentsVo.setNickName(user.getNickname());
+                commentsVo.setImage(user.getImage());
+                commentsVoArrayList.add(commentsVo);
             }
         }
-        int total = topList.size();
-        //获取子评论
-        topList.stream().forEach(e -> {
-            e.setChildren(commentsVoArrayList.stream().filter(f -> f.getTopId().equals(e.getId())).collect(Collectors.toList()));
+        //将list转map，以备使用
+        Map<Integer, CommentsVo> commentsVoMap = commentsVoArrayList.stream().collect(Collectors.toMap(k -> k.getId(), v -> v, (k1, k2) -> k2));
+        //最终返回list
+        List<CommentsVo> topList = new ArrayList<>();
+
+        Integer finalTopId = topId;
+        commentsVoArrayList.stream().forEach(e -> {
+            if (e.getId().equals(finalTopId)) {
+
+                topList.add(e);
+            }
+            CommentsVo commentsVoParent = commentsVoMap.get(e.getParentId());
+            if (commentsVoParent != null) {
+                if (commentsVoParent.getChildren() == null) {
+                    commentsVoParent.setChildren(new ArrayList<CommentsVo>());
+                }
+                commentsVoParent.getChildren().add(e);
+            }
         });
+
         List<CommentsVo> collect = topList.stream().skip((pageNo - 1) * pageSize).limit(pageSize).collect(Collectors.toList());
-        return new PageResult<>(collect, total, pageNo, pageSize);
+        return new PageResult<>(collect, 10, pageNo, pageSize);
 
     }
+
+    @Override
+    public String deleteComment(Integer id) {
+        Comment comment = getComment(id);
+        if (Optional.ofNullable(comment).isEmpty()){
+            throw new LinyiException(ResultCodeEnum.DATA_NULL);
+        }
+        if (comment.getTopId()==0){
+            // 防止commentList为null的情况
+            List<CommentsVo> commentList = getCommentList(comment.getTargetId(), comment.getTargetType(), id, 1L, 100L).getItems();
+            if (commentList == null) {
+                return "删除失败";
+            }
+           deleteTree(commentList);
+            return "删除成功";
+        }else {
+            int i = commentMapper.deleteById(id);
+            if (i !=1){
+                throw new LinyiException(ResultCodeEnum.DELETE_FAIL);
+            }
+            return "删除成功";
+        }
+
+    }
+
+    private void deleteTree(List<CommentsVo> commentList) {
+        for (CommentsVo commentsVo : commentList) {
+            if (commentsVo.getChildren() != null){
+                deleteTree(commentsVo.getChildren());
+                int i = commentMapper.deleteById(commentsVo.getId());
+                if (i !=1){
+                    throw new LinyiException(ResultCodeEnum.DELETE_FAIL);
+                }
+            }else {
+                int i = commentMapper.deleteById(commentsVo.getId());
+                if (i !=1){
+                    throw new LinyiException(ResultCodeEnum.DELETE_FAIL);
+                }
+            }
+        }
+    }
+
+
+    @Override
+    public Comment getComment(Integer id) {
+        return commentMapper.selectOne(new LambdaQueryWrapper<Comment>().eq(Comment::getId, id));
+    }
+
+
 }
