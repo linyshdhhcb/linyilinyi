@@ -8,6 +8,7 @@ import com.linyilinyi.common.model.PageResult;
 import com.linyilinyi.common.model.ResultCodeEnum;
 import com.linyilinyi.common.utils.AuthContextUser;
 import com.linyilinyi.model.entity.comment.Comment;
+import com.linyilinyi.model.entity.likes.Likes;
 import com.linyilinyi.model.entity.user.User;
 import com.linyilinyi.model.vo.comment.CommentAddVo;
 import com.linyilinyi.model.vo.comment.CommentVo;
@@ -17,10 +18,12 @@ import com.linyilinyi.user.mapper.LikesMapper;
 import com.linyilinyi.user.service.CommentService;
 import com.linyilinyi.user.service.UserService;
 import jakarta.annotation.Resource;
+import jakarta.validation.Valid;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.BeanUtils;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
 import java.util.*;
@@ -42,7 +45,6 @@ public class CommentServiceImpl extends ServiceImpl<CommentMapper, Comment> impl
     private CommentMapper commentMapper;
     @Resource
     private UserService userService;
-
     @Resource
     private LikesMapper likesMapper;
     @Resource
@@ -78,9 +80,13 @@ public class CommentServiceImpl extends ServiceImpl<CommentMapper, Comment> impl
             if (comment != null) {
                 CommentsVo commentsVo = new CommentsVo();
                 BeanUtils.copyProperties(comment, commentsVo);
+                //获取用户信息
                 User user = userService.getUserById(comment.getUserId());
                 commentsVo.setNickName(user.getNickname());
                 commentsVo.setImage(user.getImage());
+                //获取评论点赞数
+                Long l = likesMapper.selectCount(new LambdaQueryWrapper<Likes>().eq(Likes::getTargetId, 11203).eq(Likes::getId, comment.getId()));
+                commentsVo.setLikesCount(l);
                 commentsVoArrayList.add(commentsVo);
             }
         }
@@ -110,22 +116,25 @@ public class CommentServiceImpl extends ServiceImpl<CommentMapper, Comment> impl
     }
 
     @Override
+    @Transactional
     public String deleteComment(Integer id) {
         Comment comment = getComment(id);
-        if (Optional.ofNullable(comment).isEmpty()){
+        if (Optional.ofNullable(comment).isEmpty()) {
             throw new LinyiException(ResultCodeEnum.DATA_NULL);
         }
-        if (comment.getTopId()==0){
+        if (comment.getTopId() == 0) {
             // 防止commentList为null的情况
             List<CommentsVo> commentList = getCommentList(comment.getTargetId(), comment.getTargetType(), id, 1L, 100L).getItems();
             if (commentList == null) {
                 return "删除失败";
             }
-           deleteTree(commentList);
+            deleteTree(commentList);
             return "删除成功";
-        }else {
+        } else {
             int i = commentMapper.deleteById(id);
-            if (i !=1){
+            //删除评论点赞信息
+            deleteCommentLikes(comment.getId());
+            if (i != 1) {
                 throw new LinyiException(ResultCodeEnum.DELETE_FAIL);
             }
             return "删除成功";
@@ -133,19 +142,31 @@ public class CommentServiceImpl extends ServiceImpl<CommentMapper, Comment> impl
 
     }
 
+    private void deleteCommentLikes(Integer id) {
+        List<Likes> likes = likesMapper.selectList(new LambdaQueryWrapper<Likes>().eq(Likes::getTargetId, 11203).eq(Likes::getId, id));
+        int i = likesMapper.deleteBatchIds(likes.stream().map(Likes::getId).collect(Collectors.toList()));
+        if (i != likes.size()) {
+            throw new LinyiException(ResultCodeEnum.DELETE_FAIL);
+        }
+    }
+
     private void deleteTree(List<CommentsVo> commentList) {
         for (CommentsVo commentsVo : commentList) {
-            if (commentsVo.getChildren() != null){
+            if (commentsVo.getChildren() != null) {
                 deleteTree(commentsVo.getChildren());
                 int i = commentMapper.deleteById(commentsVo.getId());
-                if (i !=1){
+                if (i != 1) {
                     throw new LinyiException(ResultCodeEnum.DELETE_FAIL);
                 }
-            }else {
+                //删除评论点赞
+                deleteCommentLikes(commentsVo.getId());
+            } else {
                 int i = commentMapper.deleteById(commentsVo.getId());
-                if (i !=1){
+                if (i != 1) {
                     throw new LinyiException(ResultCodeEnum.DELETE_FAIL);
                 }
+                //删除评论点赞
+                deleteCommentLikes(commentsVo.getId());
             }
         }
     }

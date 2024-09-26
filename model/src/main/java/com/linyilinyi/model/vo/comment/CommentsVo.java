@@ -30,6 +30,9 @@ public class CommentsVo extends CommentAddVo{
     @Schema(description = "评论人头像")
     private String image;
 
+    @Schema(description = "点赞数")
+    private Long likesCount;
+
     @Schema(description = "评论创建时间")
     @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
     private LocalDateTime createTime;
