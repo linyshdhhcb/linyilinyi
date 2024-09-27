@@ -90,6 +90,7 @@ public class CommentServiceImpl extends ServiceImpl<CommentMapper, Comment> impl
                 commentsVoArrayList.add(commentsVo);
             }
         }
+
         //将list转map，以备使用
         Map<Integer, CommentsVo> commentsVoMap = commentsVoArrayList.stream().collect(Collectors.toMap(k -> k.getId(), v -> v, (k1, k2) -> k2));
         //最终返回list
@@ -97,8 +98,7 @@ public class CommentServiceImpl extends ServiceImpl<CommentMapper, Comment> impl
 
         Integer finalTopId = topId;
         commentsVoArrayList.stream().forEach(e -> {
-            if (e.getId().equals(finalTopId)) {
-
+            if (e.getId().equals(finalTopId) || finalTopId == 0) {
                 topList.add(e);
             }
             CommentsVo commentsVoParent = commentsVoMap.get(e.getParentId());
@@ -111,7 +111,7 @@ public class CommentServiceImpl extends ServiceImpl<CommentMapper, Comment> impl
         });
 
         List<CommentsVo> collect = topList.stream().skip((pageNo - 1) * pageSize).limit(pageSize).collect(Collectors.toList());
-        return new PageResult<>(collect, 10, pageNo, pageSize);
+        return new PageResult<>(collect, commentsVoArrayList.size(), pageNo, pageSize);
 
     }
 
