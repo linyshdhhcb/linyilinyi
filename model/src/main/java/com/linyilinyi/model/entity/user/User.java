@@ -42,6 +42,9 @@ public class User implements Serializable {
     @Schema(description = "盐")
     private String salt;
 
+    @Schema(description = "用户状态")
+    private Integer status;
+
     @Schema(description = "头像")
     private String image;
 

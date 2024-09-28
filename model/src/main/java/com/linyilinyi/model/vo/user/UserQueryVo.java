@@ -23,6 +23,9 @@ public class UserQueryVo extends FrameTime {
     @Schema(description = "性别（1：男；2：女）")
     private Integer gender;
 
+    @Schema(description = "用户状态")
+    private Integer status;
+
     @Schema(description = "昵称")
     private String nickname;
 

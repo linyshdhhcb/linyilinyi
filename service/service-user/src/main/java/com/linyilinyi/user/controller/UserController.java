@@ -49,7 +49,6 @@ public class UserController {
     public Result<String> addUser(@Valid @RequestBody UserAddVo userAddVo){
         return Result.ok(userService.addUser(userAddVo));
     }
-
     @Operation(summary = "查询用户列表")
     @GetMapping("/getUserList")
     public Result<PageResult<User>> getUserList(@RequestParam(required = false,defaultValue = "1") long pageNo,

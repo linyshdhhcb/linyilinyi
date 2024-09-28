@@ -7,6 +7,8 @@ import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import io.swagger.v3.oas.annotations.tags.Tags;
 import jakarta.annotation.Resource;
+import jakarta.validation.constraints.Max;
+import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotNull;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -45,6 +47,4 @@ public class LikesController {
     public Result<Boolean> isLikes(@NotNull(message = "targetId不能为空") @PathVariable Integer targetId,@NotNull(message = "targetType不能为空") @PathVariable Integer targetType) {
         return Result.ok(likesService.isLikes(targetId,targetType));
     }
-
-
 }

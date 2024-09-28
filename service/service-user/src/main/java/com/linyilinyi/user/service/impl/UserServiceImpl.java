@@ -64,10 +64,10 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements Us
         queryWrapper.like(StringUtils.isNotBlank(userQueryVo.getNickname()),User::getNickname,userQueryVo.getNickname());
         queryWrapper.like(StringUtils.isNotBlank(userQueryVo.getIntro()),User::getIntro,userQueryVo.getIntro());
         queryWrapper.eq(StringUtils.isNotBlank(userQueryVo.getPhone()),User::getPhone,userQueryVo.getPhone());
+        queryWrapper.eq(Optional.ofNullable(userQueryVo.getStatus()).isPresent(),User::getStatus,userQueryVo.getStatus());
         queryWrapper.eq(StringUtils.isNotBlank(userQueryVo.getMail()),User::getMail,userQueryVo.getMail());
         queryWrapper.gt(Optional.ofNullable(userQueryVo.getStartTime()).isPresent(),User::getCreateTime,userQueryVo.getStartTime());
         queryWrapper.lt(Optional.ofNullable(userQueryVo.getEndTime()).isPresent(),User::getCreateTime,userQueryVo.getEndTime());
-
         Page<User> userPage = new Page<>(pageNo,pageSize);
         Page<User> userPage1 = userMapper.selectPage(userPage, queryWrapper);
         return new PageResult<>(userPage1.getRecords(),userPage1.getTotal(),pageNo,pageSize);
