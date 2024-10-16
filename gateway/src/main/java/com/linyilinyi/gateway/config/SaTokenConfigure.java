@@ -29,7 +29,7 @@ import java.util.stream.Collectors;
  */
 @Slf4j
 @Configuration
-public class SaTokenConfigure{
+public class SaTokenConfigure {
 
     @Bean
     public SaReactorFilter getSaReactorFilter() {
@@ -38,36 +38,44 @@ public class SaTokenConfigure{
                 .addInclude("/**")    /* 拦截全部path */
                 // 开放地址
                 .addExclude("/favicon.ico")
-                .addExclude("/user/login")
-                .addExclude("/user/doLogin")
-                .addExclude("/user/register")
-                .addExclude("/user/logout")
-                .addExclude("/user/getUserPermissions")
-                //swagger和knife4j
+                .addExclude("/*/*/user/login")
+                .addExclude("/*/*/user/register")
+                .addExclude("/*/*/user/logout")
+                .addExclude("/*/*/user/isLogin")
+                //swagger和knife4j白名单
+                //各服务接口文档
                 .addExclude("/swagger-ui/**")
                 .addExclude("/swagger-resources/**")
                 .addExclude("/v3/**")
                 .addExclude("/webjars/**")
                 .addExclude("/doc.html")
-                //gateway聚合API接口文档
-                .addExclude("/lyly/**")
+                //gateway聚合API接口文档（跟你路径相关）
+                .addExclude("/*/*/v3/**")
+                .addExclude("/*/*/swagger-ui/**")
+                .addExclude("/*/*/swagger-resources/**")
+                .addExclude("/*/*/webjars/**")
+                .addExclude("/*/*/doc.html")
+
 
                 // 鉴权方法：每次访问进入
                 .setAuth(obj -> {
-                    // 登录校验 -- 拦截所有路由，并排除/user/doLogin 用于开放登录
-                    SaRouter.match("/**", "/user/doLogin", r -> StpUtil.checkLogin());
-                    // 校验 Id-Token 身份凭证
-                    StpUtil.getTokenSessionByToken(SaHolder.getRequest().getHeader("satoken"));
-                    // 权限认证 -- 不同模块, 校验不同权限
-                    SaRouter.match("/**/*", r -> StpUtil.checkPermission("admin"));
-                    SaRouter.match("/user/**", r -> StpUtil.checkPermission("user"));
+                    // 登录校验
+                    //白名单（排除）
+                    SaRouter.match("/*/*/user/login", r -> {
+                                log.info("调用登录接口");
+                            })
+                            // 拦截所有路由（判断是否登录）
+                            .match("/**", r -> StpUtil.checkLogin())
+                    ;
+
                 })
                 // 异常处理方法：每次setAuth函数出现异常时进入
                 .setError(e -> {
+                    log.info("------ 全局异常，e={}", e.getMessage());
                     return SaResult.error(e.getMessage());
                 })
                 .setBeforeAuth(r -> {
-                    // ---------- 设置一些安全响应头 ----------
+                    //设置一些安全响应头
                     SaHolder.getResponse()
                             // 允许指定域访问跨域资源
                             .setHeader("Access-Control-Allow-Origin", "*")
@@ -80,13 +88,14 @@ public class SaTokenConfigure{
                     ;
                     // 如果是预检请求，则立即返回到前端
                     SaRouter.match(SaHttpMethod.OPTIONS)
-                            .free(s -> log.info("*******OPTIONS预检请求，不做处理"))
+                            .free(s -> log.info("OPTIONS预检请求，不做处理"))
                             .back();
                 });
     }
 
     /**
      * 由于网关没有引入springMVC依赖，所以使用feign的时候需要手动装配messageConverters
+     *
      * @param converters
      * @return
      */

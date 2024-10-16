@@ -23,7 +23,7 @@ import java.util.List;
  * @author linyi
  */
 @Slf4j
-@Tag(name = "角色管理接口")
+@Tag(name = "角色管理模块")
 @RestController
 @RequestMapping("role")
 public class RoleController {
@@ -34,34 +34,34 @@ public class RoleController {
     @Operation(summary = "新增角色")
     @PostMapping("addRole")
     public Result<String> addRole(@RequestParam String name, @RequestParam String code) {
-        roleService.addRole(name,code);
+        roleService.addRole(name, code);
         return Result.success(ResultCodeEnum.SUCCESS);
     }
 
     @Operation(summary = "删除角色")
-    @DeleteMapping("deleteRoleById")
-    public Result<String> deleteRoleById(List<Integer> ids) {
+    @DeleteMapping("deleteRoleById/{ids}")
+    public Result<String> deleteRoleById(@PathVariable List<Long> ids) {
         return Result.ok(roleService.deleteRoleById(ids));
     }
 
     @Operation(summary = "获取角色列表")
     @PostMapping("getRoleList")
-    public Result<PageResult<Role>> getRoleList(@RequestParam(required = false,defaultValue = "1") long pageNo,
-                                                    @RequestParam(required = false,defaultValue = "5") long pageSize,
-                                                    RoleQueryVo roleQueryVo) {
+    public Result<PageResult<Role>> getRoleList(@RequestParam(required = false, defaultValue = "1") long pageNo,
+                                                @RequestParam(required = false, defaultValue = "5") long pageSize,
+                                                RoleQueryVo roleQueryVo) {
         return Result.ok(roleService.getRoleList(pageNo, pageSize, roleQueryVo));
     }
 
     @Operation(summary = "修改角色")
     @PutMapping("updateRole")
-    public Result updateRole(Role role) {
+    public Result updateRole(@RequestBody Role role) {
         roleService.updateRole(role);
         return Result.ok();
     }
 
     @Operation(summary = "根据id获取角色详情（回显）")
-    @GetMapping("getRoleById")
-    public Result<Role> getRoleById(Integer id) {
+    @GetMapping("getRoleById/{id}")
+    public Result<Role> getRoleById(@PathVariable Integer id) {
         return Result.ok(roleService.getById(id));
     }
 
@@ -100,8 +100,6 @@ public class RoleController {
 //    public List<RoleTreeVo> getRoleTreeByUserId(Integer userId) {
 //        return roleService.getRoleTreeByUserId(userId);
 //    }
-
-
 
 
 }

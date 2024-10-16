@@ -49,9 +49,12 @@ public class RoleServiceImpl extends ServiceImpl<RoleMapper, Role> implements Ro
     }
 
     @Override
-    public String deleteRoleById(List<Integer> ids) {
-         ids = ids.stream().filter(id -> id <= 0).collect(Collectors.toList());
-        int i = roleMapper.deleteBatchIds(ids);
+    public String deleteRoleById(List<Long> ids) {
+        List<Long> collect = ids.stream().filter(id -> id > 0).collect(Collectors.toList());
+        if (collect.isEmpty()){
+            throw new LinyiException("请输入合法的id");
+        }
+        int i = roleMapper.deleteBatchIds(collect);
         return i + "条数据删除成功";
     }
 

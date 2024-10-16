@@ -23,7 +23,7 @@ import com.baomidou.mybatisplus.annotation.TableName;
  * @author linyi
  */
 @Data
-@Schema(name = "Role", description = "角色表")
+@Schema(name = "Role 角色表", description = "角色表")
 public class Role implements Serializable {
 
     private static final long serialVersionUID = 1L;

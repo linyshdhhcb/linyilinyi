@@ -17,7 +17,15 @@ public class LinyiException extends RuntimeException{
 
     private String message;
 
-
+    /**
+     * 通过错误消息创建异常对象
+     * @param message
+     */
+    public LinyiException(String message) {
+        super(message);
+        this.code = 201;
+        this.message = message;
+    }
 
     /**
      * 通过状态码和错误消息创建异常对象
@@ -40,9 +48,6 @@ public class LinyiException extends RuntimeException{
         this.message = resultCodeEnum.getMessage();
     }
 
-    public LinyiException(String resultCodeEnum) {
-        this.message = resultCodeEnum;
-    }
 
     @Override
     public String toString() {

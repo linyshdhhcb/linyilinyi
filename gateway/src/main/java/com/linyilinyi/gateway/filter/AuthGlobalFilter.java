@@ -25,7 +25,7 @@ public class AuthGlobalFilter implements GlobalFilter, Ordered {
     @Override
     public Mono<Void> filter(ServerWebExchange exchange, GatewayFilterChain chain) {
         //请求添加satoken
-        ServerHttpRequest satoken = exchange.getRequest().mutate().header("satoken", StpUtil.getTokenValue()).build();
+        ServerHttpRequest satoken = exchange.getRequest().mutate().header("token", StpUtil.getTokenValue()).build();
         ServerWebExchange build = exchange.mutate().request(satoken).build();
 
         String now = LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss"));

@@ -19,7 +19,7 @@ public interface RoleService extends IService<Role> {
 
     void addRole(String name, String code);
 
-    String deleteRoleById(List<Integer> ids);
+    String deleteRoleById(List<Long> ids);
 
     PageResult<Role> getRoleList(long pageNo, long pageSize, RoleQueryVo roleQueryVo);
 
