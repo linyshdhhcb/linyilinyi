@@ -1,7 +1,11 @@
 package com.linyilinyi.user.service;
 
 import com.baomidou.mybatisplus.extension.service.IService;
+import com.linyilinyi.common.model.PageResult;
 import com.linyilinyi.model.entity.user.Role;
+import com.linyilinyi.model.vo.user.RoleQueryVo;
+
+import java.util.List;
 
 /**
  * <p>
@@ -13,4 +17,9 @@ import com.linyilinyi.model.entity.user.Role;
  */
 public interface RoleService extends IService<Role> {
 
+    void addRole(String name, String code);
+
+    String deleteRoleById(List<Integer> ids);
+
+    PageResult<PageResult<Role>> getRoleList(long pageNo, long pageSize, RoleQueryVo roleQueryVo);
 }
