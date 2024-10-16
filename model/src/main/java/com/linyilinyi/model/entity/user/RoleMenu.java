@@ -9,6 +9,7 @@ import com.baomidou.mybatisplus.annotation.TableLogic;
 
 import java.io.Serializable;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Data;
 import lombok.AllArgsConstructor;
@@ -38,9 +39,11 @@ public class RoleMenu implements Serializable {
     private Long menuId;
 
     @Schema(description = "创建时间")
+    @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
     private LocalDateTime createTime;
 
     @Schema(description = "更新时间")
+    @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
     private LocalDateTime updateTime;
 
     @Schema(description = "逻辑删除标识（0：未删除；1：已删除）")

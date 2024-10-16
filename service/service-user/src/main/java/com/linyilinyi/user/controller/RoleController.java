@@ -48,7 +48,7 @@ public class RoleController {
     @PostMapping("getRoleList")
     public Result<PageResult<Role>> getRoleList(@RequestParam(required = false, defaultValue = "1") long pageNo,
                                                 @RequestParam(required = false, defaultValue = "5") long pageSize,
-                                                RoleQueryVo roleQueryVo) {
+                                                @RequestBody RoleQueryVo roleQueryVo) {
         return Result.ok(roleService.getRoleList(pageNo, pageSize, roleQueryVo));
     }
 
@@ -65,11 +65,12 @@ public class RoleController {
         return Result.ok(roleService.getById(id));
     }
 
-//    @Operation(summary = "获取角色下拉列表")
-//    @RequestMapping("getRoleSelectList")
-//    public List<RoleSelectVo> getRoleSelectList() {
-//        return roleService.getRoleSelectList();
-//    }
+    @Operation(summary = "获取角色列表")
+    @GetMapping("getRoleList")
+    public Result<List<Role>> getRoleList() {
+        return Result.ok(roleService.getList());
+    }
+
 //
 //    @Operation(summary = "获取角色菜单树")
 //    @RequestMapping("getRoleMenuTree")

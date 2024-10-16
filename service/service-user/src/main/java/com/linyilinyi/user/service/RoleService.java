@@ -24,4 +24,7 @@ public interface RoleService extends IService<Role> {
     PageResult<Role> getRoleList(long pageNo, long pageSize, RoleQueryVo roleQueryVo);
 
     void updateRole(Role role);
+
+    List<Role> getList();
+
 }
