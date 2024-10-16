@@ -9,10 +9,7 @@ import com.linyilinyi.user.service.RoleService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.annotation.Resource;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 
@@ -42,13 +39,13 @@ public class RoleController {
     }
 
     @Operation(summary = "删除角色")
-    @RequestMapping("deleteRoleById")
+    @DeleteMapping("deleteRoleById")
     public Result<String> deleteRoleById(List<Integer> ids) {
         return Result.ok(roleService.deleteRoleById(ids));
     }
 
     @Operation(summary = "获取角色列表")
-    @RequestMapping("getRoleList")
+    @PostMapping("getRoleList")
     public Result<PageResult<Role>> getRoleList(@RequestParam(required = false,defaultValue = "1") long pageNo,
                                                     @RequestParam(required = false,defaultValue = "5") long pageSize,
                                                     RoleQueryVo roleQueryVo) {
@@ -56,14 +53,14 @@ public class RoleController {
     }
 
     @Operation(summary = "修改角色")
-    @RequestMapping("updateRole")
+    @PutMapping("updateRole")
     public Result updateRole(Role role) {
         roleService.updateRole(role);
         return Result.ok();
     }
 
     @Operation(summary = "根据id获取角色详情（回显）")
-    @RequestMapping("getRoleById")
+    @GetMapping("getRoleById")
     public Result<Role> getRoleById(Integer id) {
         return Result.ok(roleService.getById(id));
     }
