@@ -21,5 +21,7 @@ public interface RoleService extends IService<Role> {
 
     String deleteRoleById(List<Integer> ids);
 
-    PageResult<PageResult<Role>> getRoleList(long pageNo, long pageSize, RoleQueryVo roleQueryVo);
+    PageResult<Role> getRoleList(long pageNo, long pageSize, RoleQueryVo roleQueryVo);
+
+    void updateRole(Role role);
 }

@@ -48,17 +48,24 @@ public class RoleController {
 
     @Operation(summary = "获取角色列表")
     @RequestMapping("getRoleList")
-    public PageResult<PageResult<Role>> getRoleList(@RequestParam(required = false,defaultValue = "1") long pageNo,
+    public Result<PageResult<Role>> getRoleList(@RequestParam(required = false,defaultValue = "1") long pageNo,
                                                     @RequestParam(required = false,defaultValue = "5") long pageSize,
                                                     RoleQueryVo roleQueryVo) {
-        return roleService.getRoleList(pageNo, pageSize, roleQueryVo);
+        return Result.ok(roleService.getRoleList(pageNo, pageSize, roleQueryVo));
     }
-//
-//    @Operation(summary = "修改角色")
-//    @RequestMapping("updateRole")
-//    public String updateRole(RoleUpdateVo role) {
-//        return roleService.updateRole(role);
-//    }
+
+    @Operation(summary = "修改角色")
+    @RequestMapping("updateRole")
+    public Result updateRole(Role role) {
+        roleService.updateRole(role);
+        return Result.ok();
+    }
+
+    @Operation(summary = "根据id获取角色详情（回显）")
+    @RequestMapping("getRoleById")
+    public Result<Role> getRoleById(Integer id) {
+        return Result.ok(roleService.getById(id));
+    }
 
 //    @Operation(summary = "获取角色下拉列表")
 //    @RequestMapping("getRoleSelectList")
