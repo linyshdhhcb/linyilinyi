@@ -9,6 +9,7 @@ import com.linyilinyi.user.service.RoleService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.annotation.Resource;
+import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
@@ -34,7 +35,7 @@ public class RoleController {
     private RoleService roleService;
 
     @Operation(summary = "新增角色")
-    @RequestMapping("addRole")
+    @PostMapping("addRole")
     public Result<String> addRole(@RequestParam String name, @RequestParam String code) {
         roleService.addRole(name,code);
         return Result.success(ResultCodeEnum.SUCCESS);
