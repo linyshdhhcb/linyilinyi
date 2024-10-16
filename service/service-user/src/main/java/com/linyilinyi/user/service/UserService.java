@@ -3,6 +3,7 @@ package com.linyilinyi.user.service;
 import com.baomidou.mybatisplus.extension.service.IService;
 import com.linyilinyi.common.model.PageResult;
 import com.linyilinyi.model.entity.user.User;
+import com.linyilinyi.model.vo.user.LoginVo;
 import com.linyilinyi.model.vo.user.UserAddVo;
 import com.linyilinyi.model.vo.user.UserQueryVo;
 import com.linyilinyi.model.vo.user.UserUpdateVo;
@@ -28,4 +29,8 @@ public interface UserService extends IService<User> {
     String updateUser(UserUpdateVo user);
 
     String addUser(UserAddVo userAddVo);
+
+    User getByUsername(String username);
+
+    String login(LoginVo loginVo);
 }

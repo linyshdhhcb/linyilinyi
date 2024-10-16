@@ -22,7 +22,6 @@
         <module>service-user</module>
         <module>service-video</module>
         <module>service-article</module>
-        <module>service-auth</module>
     </modules>
     <dependencies>
         <dependency>

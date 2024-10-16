@@ -1,6 +1,7 @@
 package com.linyilinyi.user.service.impl;
 
 import ch.qos.logback.core.testUtil.RandomUtil;
+import cn.dev33.satoken.stp.StpUtil;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
@@ -9,6 +10,7 @@ import com.linyilinyi.common.model.PageResult;
 import com.linyilinyi.common.model.ResultCodeEnum;
 import com.linyilinyi.common.utils.PasswordEncoder;
 import com.linyilinyi.model.entity.user.User;
+import com.linyilinyi.model.vo.user.LoginVo;
 import com.linyilinyi.model.vo.user.UserAddVo;
 import com.linyilinyi.model.vo.user.UserQueryVo;
 import com.linyilinyi.model.vo.user.UserUpdateVo;
@@ -109,5 +111,29 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements Us
         }
         return "添加成功";
 
+    }
+
+    @Override
+    public User getByUsername(String username) {
+        LambdaQueryWrapper<User> queryWrapper = new LambdaQueryWrapper<User>().eq(User::getUsername,username);
+        return userMapper.selectOne(queryWrapper);
+    }
+
+    @Override
+    public String login(LoginVo loginVo) {
+        String username = loginVo.getUsername();
+        User byUsername = getByUsername(username);
+        if (byUsername == null){
+            throw new LinyiException(ResultCodeEnum.ACCOUNT_NULL);
+        }
+
+        if(PasswordEncoder.encode(loginVo.getPassword(), byUsername.getPassword(),byUsername.getSalt())){
+            //satoken登录
+            StpUtil.login(byUsername.getId());
+            //获取登录信息
+            String tokenValue = StpUtil.getTokenValue();
+            return tokenValue;
+        }
+        throw new LinyiException(ResultCodeEnum.PASSWORD_ERROR);
     }
 }

@@ -1,20 +1,17 @@
 package com.linyilinyi.model.entity.user;
 
-import com.baomidou.mybatisplus.annotation.IdType;
-import com.baomidou.mybatisplus.annotation.TableId;
+import com.baomidou.mybatisplus.annotation.*;
 
 import java.time.LocalDateTime;
 
-import com.baomidou.mybatisplus.annotation.TableLogic;
-
 import java.io.Serializable;
+import java.util.List;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Data;
 import lombok.AllArgsConstructor;
 import lombok.NoArgsConstructor;
-import com.baomidou.mybatisplus.annotation.TableName;
 
 /**
  * <p>
@@ -74,6 +71,10 @@ public class User implements Serializable {
     @Schema(description = "逻辑删除标识（0：未删除；1：已删除）")
     @TableLogic
     private Integer isDelete;
+
+    @TableField(exist = false)
+    @Schema(description = "用户权限列表")
+    private List<String> userPermsList;
 
 
 }

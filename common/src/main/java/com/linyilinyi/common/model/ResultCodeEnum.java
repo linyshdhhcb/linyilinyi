@@ -21,6 +21,7 @@ public enum ResultCodeEnum {
     SERVICE_ERROR(2012, "服务异常"),
     DATA_ERROR(204, "数据异常"),
     DATA_JSON_ERROR(204, "上传的json格式数据异常"),
+    JSON_PARSE_ERROR(204, "json解析失败"),
     DATA_NULL(204, "数据为空"),
     ILLEGAL_REQUEST(205, "非法请求"),
     REPEAT_SUBMIT(206, "重复提交"),
@@ -38,6 +39,7 @@ public enum ResultCodeEnum {
 
     LOGIN_AUTH(208, "未登陆"),
     PERMISSION(209, "没有权限"),
+    LOGIN_OTHER_TERMINAL(210, "账号已在其他地方登录"),
     ACCOUNT_ERROR(214, "账号不正确"),
     PASSWORD_ERROR(215, "密码不正确"),
     PASSWORDS_ERROR(215, "两次密码不相同"),
@@ -53,6 +55,7 @@ public enum ResultCodeEnum {
     COUPON_EXPIRE( 250, "优惠券已过期"),
     COUPON_LESS( 250, "优惠券库存不足"),
     COUPON_USER_LIMIT( 250, "超出领取数量"),
+    TOKEN_NULL(401, "token为空"),
     ;
 
     private Integer code;

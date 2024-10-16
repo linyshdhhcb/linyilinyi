@@ -38,27 +38,13 @@ management:
     web:
       exposure:
         include: '*' #对外暴露actuator所有监控指标，便于监控系统收集跟踪
+# knife4j 网关聚合
 knife4j:
   gateway:
     enabled: true
-    # 指定服务发现的模式聚合微服务文档，并且是默认`default`分组
+    # 指定服务发现的模式聚合微服务文档，并且是默认 default 分组
     strategy: discover
     discover:
+      # OpenAPI 3.0 规范
+      version: openapi3
       enabled: true
-      # 指定版本号(Swagger2|OpenAPI3)
-      version : openapi3
-      # 需要排除的微服务(eg:网关服务)
-#      excluded-services: ${spring.application.name}
-      service-config:
-        service-video:
-          - group-name: "视频服务"
-            order: 1
-        service-user:
-          - group-name: "用户服务"
-            order: 2
-        service-article:
-          - group-name: "视频服务"
-            order: 3
-        tags-sorter: order
-        operations-sorter: order
-
