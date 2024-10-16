@@ -1,8 +1,10 @@
 package com.linyilinyi.gateway.filter;
 
+import cn.dev33.satoken.stp.StpUtil;
 import org.springframework.cloud.gateway.filter.GatewayFilterChain;
 import org.springframework.cloud.gateway.filter.GlobalFilter;
 import org.springframework.core.Ordered;
+import org.springframework.http.server.reactive.ServerHttpRequest;
 import org.springframework.stereotype.Component;
 import org.springframework.web.server.ServerWebExchange;
 import reactor.core.publisher.Mono;
@@ -22,11 +24,14 @@ import java.time.format.DateTimeFormatter;
 public class AuthGlobalFilter implements GlobalFilter, Ordered {
     @Override
     public Mono<Void> filter(ServerWebExchange exchange, GatewayFilterChain chain) {
+        //请求添加satoken
+        ServerHttpRequest satoken = exchange.getRequest().mutate().header("satoken", StpUtil.getTokenValue()).build();
+        ServerWebExchange build = exchange.mutate().request(satoken).build();
 
         String now = LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss"));
         System.out.println("*******************GatewayFilter执行 " + now);
         System.out.println("*******************服务调用请求："+exchange.getRequest().getURI());
-        return chain.filter(exchange);
+        return chain.filter(build);
     }
 
     @Override

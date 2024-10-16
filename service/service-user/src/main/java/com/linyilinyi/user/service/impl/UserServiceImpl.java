@@ -2,6 +2,7 @@ package com.linyilinyi.user.service.impl;
 
 import ch.qos.logback.core.testUtil.RandomUtil;
 import cn.dev33.satoken.stp.StpUtil;
+import com.alibaba.fastjson2.JSON;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
@@ -132,6 +133,7 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements Us
             StpUtil.login(byUsername.getId());
             //获取登录信息
             String tokenValue = StpUtil.getTokenValue();
+            StpUtil.getSession().set("USER_INFO", JSON.toJSONString(byUsername));
             return tokenValue;
         }
         throw new LinyiException(ResultCodeEnum.PASSWORD_ERROR);

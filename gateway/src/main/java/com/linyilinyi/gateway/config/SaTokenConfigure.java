@@ -6,6 +6,7 @@ import cn.dev33.satoken.router.SaHttpMethod;
 import cn.dev33.satoken.router.SaRouter;
 import cn.dev33.satoken.stp.StpUtil;
 import cn.dev33.satoken.util.SaResult;
+import com.linyilinyi.gateway.filter.AuthGlobalFilter;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
@@ -13,6 +14,8 @@ import org.springframework.boot.autoconfigure.http.HttpMessageConverters;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.converter.HttpMessageConverter;
+import org.springframework.web.servlet.config.annotation.InterceptorRegistry;
+import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 
 import java.util.Arrays;
 import java.util.List;
@@ -26,7 +29,7 @@ import java.util.stream.Collectors;
  */
 @Slf4j
 @Configuration
-public class SaTokenConfigure {
+public class SaTokenConfigure{
 
     @Bean
     public SaReactorFilter getSaReactorFilter() {
@@ -53,7 +56,8 @@ public class SaTokenConfigure {
                 .setAuth(obj -> {
                     // 登录校验 -- 拦截所有路由，并排除/user/doLogin 用于开放登录
                     SaRouter.match("/**", "/user/doLogin", r -> StpUtil.checkLogin());
-
+                    // 校验 Id-Token 身份凭证
+                    StpUtil.getTokenSessionByToken(SaHolder.getRequest().getHeader("satoken"));
                     // 权限认证 -- 不同模块, 校验不同权限
                     SaRouter.match("/**/*", r -> StpUtil.checkPermission("admin"));
                     SaRouter.match("/user/**", r -> StpUtil.checkPermission("user"));

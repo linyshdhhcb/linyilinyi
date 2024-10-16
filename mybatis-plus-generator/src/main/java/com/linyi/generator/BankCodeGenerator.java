@@ -22,9 +22,9 @@ public class BankCodeGenerator {
 	private static final String[] TABLE_NAMES = new String[]{
 //			"article",
 //			"article_data",
-			"collect",
+//			"collect",
 //			"collect_group",
-			"comment",
+//			"comment",
 //			"comment_notice",
 //			"danmaku",
 //			"play",
@@ -34,12 +34,16 @@ public class BankCodeGenerator {
 //			"user_home",
 //			"video",
 //			"video_data",
-			"likes",
-			"follow",
+//			"likes",
+//			"follow",
 //			"file",
 //			"dictionary_label",
 //			"dictionary_type"
 //			"reviewer"
+			"role",
+			"role_menu",
+			"menu",
+			"user_role"
 	};
 
 	// TODO 默认生成entity，需要生成DTO修改此变量
