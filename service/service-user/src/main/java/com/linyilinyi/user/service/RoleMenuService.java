@@ -1,7 +1,10 @@
 package com.linyilinyi.user.service;
 
 import com.baomidou.mybatisplus.extension.service.IService;
+import com.linyilinyi.model.entity.user.Menu;
 import com.linyilinyi.model.entity.user.RoleMenu;
+
+import java.util.List;
 
 /**
  * <p>
@@ -13,4 +16,7 @@ import com.linyilinyi.model.entity.user.RoleMenu;
  */
 public interface RoleMenuService extends IService<RoleMenu> {
 
+    String addRoleMenu(Long roleId, List<Long> menuId);
+
+    String deleteRoleMenu(List<Long> ids);
 }

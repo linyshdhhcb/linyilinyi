@@ -1,20 +1,17 @@
 package com.linyilinyi.model.entity.user;
 
-import com.baomidou.mybatisplus.annotation.IdType;
-import com.baomidou.mybatisplus.annotation.TableId;
+import com.baomidou.mybatisplus.annotation.*;
 
 import java.time.LocalDateTime;
 
-import com.baomidou.mybatisplus.annotation.TableLogic;
-
 import java.io.Serializable;
+import java.util.List;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Data;
 import lombok.AllArgsConstructor;
 import lombok.NoArgsConstructor;
-import com.baomidou.mybatisplus.annotation.TableName;
 
 /**
  * <p>
@@ -24,7 +21,7 @@ import com.baomidou.mybatisplus.annotation.TableName;
  * @author linyi
  */
 @Data
-@Schema(name = "Menu", description = "菜单表")
+@Schema(name = "Menu 菜单表", description = "菜单表")
 public class Menu implements Serializable {
 
     private static final long serialVersionUID = 1L;
@@ -35,14 +32,10 @@ public class Menu implements Serializable {
     @Schema(description = "菜单名称")
     private String name;
 
-    @Schema(description = "菜单图标")
-    private String icon;
 
     @Schema(description = "父菜单ID")
     private Long parentId;
 
-    @Schema(description = "显示顺序")
-    private Integer orderNum;
 
     @Schema(description = "路由地址")
     private String path;
@@ -67,9 +60,16 @@ public class Menu implements Serializable {
     @Schema(description = "备注")
     private String remark;
 
+    @Schema(description = "状态")
+    private Integer status;
+
     @Schema(description = "逻辑删除标识（0：未删除；1：已删除）")
     @TableLogic
     private Integer isDelete;
+
+    @Schema(description = "子菜单")
+    @TableField(exist = false)
+    private List<Menu> children;
 
 
 }

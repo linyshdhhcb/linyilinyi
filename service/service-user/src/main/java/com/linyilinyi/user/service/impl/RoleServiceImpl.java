@@ -73,6 +73,7 @@ public class RoleServiceImpl extends ServiceImpl<RoleMapper, Role> implements Ro
 
     @Override
     public void updateRole(Role role) {
+        role.setUpdateTime(LocalDateTime.now());
         int i = roleMapper.updateById(role);
         if (i != 1){
             throw new LinyiException(ResultCodeEnum.UPDATE_FAIL);
