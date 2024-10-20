@@ -7,9 +7,12 @@ import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.linyilinyi.common.exception.LinyiException;
 import com.linyilinyi.common.model.ResultCodeEnum;
 import com.linyilinyi.model.entity.user.Menu;
+import com.linyilinyi.model.entity.user.Role;
 import com.linyilinyi.model.entity.user.RoleMenu;
 import com.linyilinyi.model.vo.user.MenuAdd;
+import com.linyilinyi.user.client.UserClient;
 import com.linyilinyi.user.mapper.MenuMapper;
+import com.linyilinyi.user.mapper.RoleMapper;
 import com.linyilinyi.user.mapper.RoleMenuMapper;
 import com.linyilinyi.user.service.MenuService;
 import jakarta.annotation.Resource;
@@ -39,6 +42,9 @@ public class MenuServiceImpl extends ServiceImpl<MenuMapper, Menu> implements Me
 
     @Resource
     private RoleMenuMapper roleMenuMapper;
+
+    @Resource
+    private RoleMapper roleMapper;
 
     @Override
     public void addMenu(MenuAdd menuAdd) {
@@ -93,6 +99,12 @@ public class MenuServiceImpl extends ServiceImpl<MenuMapper, Menu> implements Me
         List<RoleMenu> roleMenus = roleMenuMapper.selectList(new LambdaQueryWrapper<RoleMenu>().eq(RoleMenu::getRoleId, roleId));
         List<Long> menuIds = roleMenus.stream().map(RoleMenu::getMenuId).collect(Collectors.toList());
         return this.listByIds(menuIds);
+    }
+
+    @Override
+    public List<Menu> getMenuListByRoleCode(String roleCode) {
+        Long id = roleMapper.selectOne(new LambdaQueryWrapper<Role>().eq(Role::getCode, roleCode)).getId();
+        return getMenuListByRoleId(id);
     }
 
     /**

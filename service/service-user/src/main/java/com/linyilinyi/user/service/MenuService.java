@@ -29,4 +29,5 @@ public interface MenuService extends IService<Menu> {
 
     List<Menu> getMenuListByRoleId(Long roleId);
 
+    List<Menu> getMenuListByRoleCode(String roleCode);
 }

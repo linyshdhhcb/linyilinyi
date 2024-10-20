@@ -10,6 +10,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Component;
 
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.concurrent.*;
@@ -37,19 +38,37 @@ public class StpInterfaceImpl implements StpInterface {
      */
     @Override
     public List<String> getPermissionList(Object loginId, String loginType) {
-        return null;
+        List<String> roleList = getRoleList(loginId, loginType);
+        List<String> paths = new ArrayList<>();
+
+        CompletableFuture<List<String>> arrayListCompletableFuture = CompletableFuture.supplyAsync(() -> {
+            for (String role : roleList) {
+                userClient.getMenuListByRoleCode(role).getData().stream().forEach(menu -> {
+                    if (menu.getMenuType().equals("1003")) {
+                        paths.add(menu.getPath());
+                    }
+                });
+            }
+            return paths;
+        });
+        try {
+            if (arrayListCompletableFuture.get(1, TimeUnit.MINUTES) == null) {
+                return Collections.emptyList();
+            }
+            return arrayListCompletableFuture.get(1, TimeUnit.MINUTES);
+        } catch (TimeoutException e) {
+            throw new LinyiException("获取用户权限超时" + e.getMessage());
+        } catch (Exception e) {
+            throw new LinyiException("获取用户权限失败" + e.getMessage());
+        }
     }
 
     @Override
     public List<String> getRoleList(Object loginId, String loginType) {
-        Long longLoginId =Long.valueOf((String) loginId);
+        Long longLoginId = Long.valueOf((String) loginId);
         CompletableFuture<List<String>> listCompletableFuture =
                 CompletableFuture.supplyAsync(() -> {
-                    try {
-                        return userClient.getUserRoleList(longLoginId).getData().stream().map(Role::getCode).collect(Collectors.toList());
-                    } catch (Exception e) {
-                        throw new LinyiException("获取用户角色列表失败"+ e.getMessage());
-                    }
+                    return userClient.getUserRoleList(longLoginId).getData().stream().map(Role::getCode).collect(Collectors.toList());
                 });
         try {
             //判断是否为null
@@ -58,9 +77,9 @@ public class StpInterfaceImpl implements StpInterface {
             }
             return listCompletableFuture.get(1, TimeUnit.MINUTES);
         } catch (TimeoutException e) {
-            throw new LinyiException("获取用户角色超时"+e.getMessage());
-        }catch (Exception e){
-            throw new LinyiException("获取用户角色失败"+e.getMessage());
+            throw new LinyiException("获取用户角色超时" + e.getMessage());
+        } catch (Exception e) {
+            throw new LinyiException("获取用户角色失败" + e.getMessage());
         }
     }
 

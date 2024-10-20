@@ -8,15 +8,19 @@ import com.linyilinyi.common.exception.LinyiException;
 import com.linyilinyi.common.model.PageResult;
 import com.linyilinyi.common.model.ResultCodeEnum;
 import com.linyilinyi.model.entity.user.Role;
+import com.linyilinyi.model.entity.user.UserRole;
 import com.linyilinyi.model.vo.user.RoleQueryVo;
 import com.linyilinyi.user.mapper.RoleMapper;
+import com.linyilinyi.user.mapper.UserRoleMapper;
 import com.linyilinyi.user.service.RoleService;
+import com.linyilinyi.user.service.UserRoleService;
 import jakarta.annotation.Resource;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -35,6 +39,9 @@ public class RoleServiceImpl extends ServiceImpl<RoleMapper, Role> implements Ro
     @Resource
     private RoleMapper roleMapper;
 
+    @Resource
+    private UserRoleMapper userRoleMapper;
+
     @Override
     public void addRole(String name, String code) {
         Role role = new Role();
@@ -50,12 +57,22 @@ public class RoleServiceImpl extends ServiceImpl<RoleMapper, Role> implements Ro
 
     @Override
     public String deleteRoleById(List<Long> ids) {
-        List<Long> collect = ids.stream().filter(id -> id > 0).collect(Collectors.toList());
+        List<Long> collect = new ArrayList<>();
+        ArrayList<Long> longs = new ArrayList<>();
+        ids.stream().filter(id -> id > 0).forEach(id -> {
+            UserRole userRole = userRoleMapper.selectOne(new LambdaQueryWrapper<UserRole>().eq(UserRole::getRoleId, id));
+            if (Optional.ofNullable(userRole).isEmpty()){
+                collect.add(id);
+            }
+        });
         if (collect.isEmpty()){
             throw new LinyiException("请输入合法的id");
+        }else {
+            longs.addAll(collect);
         }
+
         int i = roleMapper.deleteBatchIds(collect);
-        return i + "条数据删除成功";
+        return i + "条数据删除成功。\n"+longs.toString()+"有用户拥有该角色，删除失败";
     }
 
     @Override
@@ -78,7 +95,6 @@ public class RoleServiceImpl extends ServiceImpl<RoleMapper, Role> implements Ro
         if (i != 1){
             throw new LinyiException(ResultCodeEnum.UPDATE_FAIL);
         }
-
     }
 
     @Override

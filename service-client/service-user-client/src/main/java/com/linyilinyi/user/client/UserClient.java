@@ -1,6 +1,7 @@
 package com.linyilinyi.user.client;
 
 import com.linyilinyi.common.model.Result;
+import com.linyilinyi.model.entity.user.Menu;
 import com.linyilinyi.model.entity.user.Role;
 import com.linyilinyi.model.entity.user.User;
 import com.linyilinyi.model.vo.user.LoginVo;
@@ -51,5 +52,15 @@ public interface UserClient {
     @GetMapping("/userRole/getUserRoleList")
     public Result<List<Role>> getUserRoleList(@RequestParam Long userId);
 
+    /**
+     * 根据角色id获取菜单列表
+     * @param roleId
+     * @return
+     */
+    @GetMapping("/menu/getMenuListByRoleId/{roleId}")
+    public Result<List<Menu>> getMenuListByRoleId(@PathVariable Long roleId);
+
+    @GetMapping("/menu/getMenuListByRoleCode/{roleCode}")
+    public Result<List<Menu>> getMenuListByRoleCode(@PathVariable String roleCode);
 
 }
