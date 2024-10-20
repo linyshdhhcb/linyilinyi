@@ -3,6 +3,7 @@ package com.linyilinyi.model.vo.user;
 import com.baomidou.mybatisplus.annotation.TableLogic;
 import com.fasterxml.jackson.annotation.JsonFormat;
 import io.swagger.v3.oas.annotations.media.Schema;
+import lombok.Data;
 
 import java.time.LocalDateTime;
 
@@ -14,6 +15,7 @@ import java.time.LocalDateTime;
  */
 
 @Schema(name = "MenuAdd 菜单新增对象", description = "菜单新增对象")
+@Data
 public class MenuAdd {
 
     @Schema(description = "菜单名称")

@@ -42,7 +42,7 @@ public class UserRoleServiceImpl extends ServiceImpl<UserRoleMapper, UserRole> i
         userRole.setRoleId(roleId);
         userRole.setCreateTime(LocalDateTime.now());
         int i = userRoleMapper.insert(userRole);
-        if (i != 0){
+        if (i != 1){
             throw new LinyiException(ResultCodeEnum.INSERT_FAIL);
         }
         return "添加用户角色成功";

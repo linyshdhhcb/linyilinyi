@@ -2,6 +2,7 @@ package com.linyilinyi.user.controller;
 
 import com.linyilinyi.common.model.Result;
 import com.linyilinyi.model.entity.user.Menu;
+import com.linyilinyi.model.vo.user.AddRoleMenu;
 import com.linyilinyi.user.service.RoleMenuService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -30,8 +31,8 @@ public class RoleMenuController {
 
     @Operation(summary = "给角色分配权限")
     @PostMapping("addRoleMenu")
-    public Result<String> addRoleMenu(@RequestParam Long roleId, @RequestParam List<Long> menuId) {
-        return Result.ok(roleMenuService.addRoleMenu(roleId, menuId));
+    public Result<String> addRoleMenu(@RequestBody AddRoleMenu addRoleMenu) {
+        return Result.ok(roleMenuService.addRoleMenu(addRoleMenu));
     }
 
     @Operation(summary = "删除角色菜单")

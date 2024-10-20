@@ -13,6 +13,7 @@
     <version>1.0</version>
 
     <dependencies>
+
         <dependency>
             <groupId>io.jsonwebtoken</groupId>
             <artifactId>jjwt</artifactId>

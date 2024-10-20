@@ -2,7 +2,10 @@ package com.linyilinyi.user.service.impl;
 
 
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
+import com.linyilinyi.common.exception.LinyiException;
+import com.linyilinyi.common.model.ResultCodeEnum;
 import com.linyilinyi.model.entity.user.RoleMenu;
+import com.linyilinyi.model.vo.user.AddRoleMenu;
 import com.linyilinyi.user.mapper.RoleMenuMapper;
 import com.linyilinyi.user.service.MenuService;
 import com.linyilinyi.user.service.RoleMenuService;
@@ -33,13 +36,18 @@ public class RoleMenuServiceImpl extends ServiceImpl<RoleMenuMapper, RoleMenu> i
     @Resource
     private MenuService menuService;
     @Override
-    public String addRoleMenu(Long roleId, List<Long> menuId) {
+    public String addRoleMenu(AddRoleMenu addRoleMenu) {
+        Long roleId = addRoleMenu.getRoleId();
+        List<Long> menuIds = addRoleMenu.getMenuIds();
         List<RoleMenu> roleMenus = new ArrayList<>();
-        menuId.stream().map(item ->{
-            return roleMenus.add(new RoleMenu(roleId, item, LocalDateTime.now(), LocalDateTime.now()));
-        });
+        menuIds.stream().forEach(item ->
+             roleMenus.add(new RoleMenu(roleId, item, LocalDateTime.now(), LocalDateTime.now()))
+        );
         boolean b = this.saveBatch(roleMenus);
-        return b ? "添加成功" : "添加失败";
+        if (!b) {
+            throw new LinyiException(ResultCodeEnum.DELETE_FAIL);
+        }
+        return "添加成功";
 
     }
 
@@ -47,6 +55,9 @@ public class RoleMenuServiceImpl extends ServiceImpl<RoleMenuMapper, RoleMenu> i
     public String deleteRoleMenu(List<Long> ids) {
          ids = ids.stream().filter(id -> id > 0).collect(Collectors.toList());
         int i = roleMenuMapper.deleteBatchIds(ids);
-        return i > 0 ? i+"条数据删除成功" : "删除失败";
+        if (i>0){
+            return i+"条数据删除成功";
+        }
+       throw new LinyiException(ResultCodeEnum.DELETE_FAIL);
     }
 }

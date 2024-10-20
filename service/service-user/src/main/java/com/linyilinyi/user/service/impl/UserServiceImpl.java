@@ -134,6 +134,7 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements Us
             //获取登录信息
             String tokenValue = StpUtil.getTokenValue();
             //StpUtil.getSession().set("USER_INFO", JSON.toJSONString(byUsername));
+            StpUtil.getSession().setToken(tokenValue);
             return tokenValue;
         }
         throw new LinyiException(ResultCodeEnum.PASSWORD_ERROR);

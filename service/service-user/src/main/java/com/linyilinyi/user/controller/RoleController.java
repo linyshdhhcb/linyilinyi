@@ -44,7 +44,7 @@ public class RoleController {
         return Result.ok(roleService.deleteRoleById(ids));
     }
 
-    @Operation(summary = "获取角色列表")
+    @Operation(summary = "分页条件查询角色列表")
     @PostMapping("getRoleList")
     public Result<PageResult<Role>> getRoleList(@RequestParam(required = false, defaultValue = "1") long pageNo,
                                                 @RequestParam(required = false, defaultValue = "5") long pageSize,
@@ -61,7 +61,7 @@ public class RoleController {
 
     @Operation(summary = "根据id获取角色详情（回显）")
     @GetMapping("getRoleById/{id}")
-    public Result<Role> getRoleById(@PathVariable Integer id) {
+    public Result<Role> getRoleById(@PathVariable Long id) {
         return Result.ok(roleService.getById(id));
     }
 
@@ -70,37 +70,5 @@ public class RoleController {
     public Result<List<Role>> getRoleList() {
         return Result.ok(roleService.getList());
     }
-
-//
-//    @Operation(summary = "获取角色菜单树")
-//    @RequestMapping("getRoleMenuTree")
-//    public List<MenuTreeVo> getRoleMenuTree(Integer roleId) {
-//        return roleService.getRoleMenuTree(roleId);
-//    }
-//
-//    @Operation(summary = "获取角色权限树")
-//    @RequestMapping("getRolePermissionTree")
-//    public List<PermissionTreeVo> getRolePermissionTree(Integer roleId) {
-//        return roleService.getRolePermissionTree(roleId);
-//    }
-//
-//    @Operation(summary = "获取角色菜单权限树")
-//    @RequestMapping("getRoleMenuPermissionTree")
-//    public List<MenuPermissionTreeVo> getRoleMenuPermissionTree(Integer roleId) {
-//        return roleService.getRoleMenuPermissionTree(roleId);
-//    }
-//
-//    @Operation(summary = "获取角色下拉树")
-//    @RequestMapping("getRoleTree")
-//    public List<RoleTreeVo> getRoleTree() {
-//        return roleService.getRoleTree();
-//    }
-//
-//    @Operation(summary = "获取角色下拉树")
-//    @RequestMapping("getRoleTreeByUserId")
-//    public List<RoleTreeVo> getRoleTreeByUserId(Integer userId) {
-//        return roleService.getRoleTreeByUserId(userId);
-//    }
-
 
 }

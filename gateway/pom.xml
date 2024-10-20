@@ -20,7 +20,17 @@
     </properties>
 
     <dependencies>
-        <!-- httpClient依赖,缺少此依赖api网关转发请求时可能发生503错误 -->
+        <!-- Sa-Token 整合 Redis （使用 jdk 默认序列化方式） -->
+        <dependency>
+            <groupId>cn.dev33</groupId>
+            <artifactId>sa-token-redis</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>mysql</groupId>
+            <artifactId>mysql-connector-java</artifactId>
+        </dependency>
+
+        <!--httpClient依赖,缺少此依赖api网关转发请求时可能发生503错误 -->
         <dependency>
             <groupId>org.apache.httpcomponents</groupId>
             <artifactId>httpclient</artifactId>
@@ -30,12 +40,6 @@
             <groupId>cn.dev33</groupId>
             <artifactId>sa-token-reactor-spring-boot3-starter</artifactId>
         </dependency>
-
-<!--        &lt;!&ndash; Sa-Token 整合 Redis （使用 jdk 默认序列化方式） &ndash;&gt;-->
-<!--        <dependency>-->
-<!--            <groupId>cn.dev33</groupId>-->
-<!--            <artifactId>sa-token-redis</artifactId>-->
-<!--        </dependency>-->
 
         <dependency>
             <groupId>com.github.xiaoymin</groupId>
@@ -87,16 +91,19 @@
             <artifactId>lombok</artifactId>
             <scope>provided</scope>
         </dependency>
+
         <dependency>
-            <groupId>org.springframework</groupId>
-            <artifactId>spring-webmvc</artifactId>
+            <groupId>com.linyilinyi</groupId>
+            <artifactId>service-user-client</artifactId>
+            <version>1.0</version>
+            <exclusions>
+                <exclusion>
+                    <groupId>org.springframework.boot</groupId>
+                    <artifactId>spring-boot-starter-web</artifactId>
+                </exclusion>
+            </exclusions>
         </dependency>
-        <!--        <dependency>-->
-        <!--            <groupId>io.springfox</groupId>-->
-        <!--            <artifactId>springfox-swagger-common</artifactId>-->
-        <!--            <version>3.0.0</version>-->
-        <!--            <scope>compile</scope>-->
-        <!--        </dependency>-->
+
     </dependencies>
 
 

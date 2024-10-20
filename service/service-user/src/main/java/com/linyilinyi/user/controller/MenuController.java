@@ -24,6 +24,7 @@ import java.util.List;
 @Tag(name = "菜单管理模块")
 @RestController
 @RequestMapping("menu")
+@SuppressWarnings({"unchecked", "rawtypes"})
 public class MenuController {
 
     @Resource

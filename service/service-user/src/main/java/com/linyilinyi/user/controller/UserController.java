@@ -1,7 +1,9 @@
 package com.linyilinyi.user.controller;
 
+import cn.dev33.satoken.exception.NotLoginException;
 import cn.dev33.satoken.stp.StpUtil;
 import cn.dev33.satoken.util.SaResult;
+import com.linyilinyi.common.exception.LinyiException;
 import com.linyilinyi.common.model.PageResult;
 import com.linyilinyi.common.model.Result;
 import com.linyilinyi.model.entity.user.User;
@@ -55,7 +57,7 @@ public class UserController {
         return Result.ok(userService.addUser(userAddVo));
     }
     @Operation(summary = "查询用户列表")
-    @GetMapping("/getUserList")
+    @PostMapping("/getUserList")
     public Result<PageResult<User>> getUserList(@RequestParam(required = false,defaultValue = "1") long pageNo,
                                                      @RequestParam(required = false,defaultValue = "5") long pageSize,
                                                      @RequestBody UserQueryVo userQueryVo){
@@ -105,5 +107,13 @@ public class UserController {
     public Result<String> logout() {
         StpUtil.logout();
         return Result.ok("退出成功");
+    }
+
+    @Operation(summary = "获取当前用户信息")
+    @GetMapping("/getCurrentUser")
+    public void getCurrentUser() {
+        log.info("------ 全局鉴权，当前登录账号id=" + StpUtil.getLoginId());
+        log.info("------ 全局鉴权，当前登录权限集合=" +StpUtil.getPermissionList());
+        log.info("------ 全局鉴权，当前登录角色集合=" +StpUtil.getRoleList());
     }
 }
