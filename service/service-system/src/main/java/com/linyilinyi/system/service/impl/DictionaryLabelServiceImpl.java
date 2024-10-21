@@ -2,6 +2,7 @@ package com.linyilinyi.system.service.impl;
 
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
+import com.linyilinyi.common.exception.LinyiException;
 import com.linyilinyi.common.model.PageResult;
 import com.linyilinyi.model.entity.dictionary.DictionaryLabel;
 import com.linyilinyi.model.vo.dictionary.DictionaryLabelAddVo;
@@ -61,7 +62,12 @@ public class DictionaryLabelServiceImpl extends ServiceImpl<DictionaryLabelMappe
 
     @Override
     public String deleteDictionaryLabel(List<Integer> ids) {
-
+        ids=ids.stream().filter(id -> id > 0).toList();
+        int i = dictionaryLabelMapper.deleteBatchIds(ids);
+        if (i<=0){
+            throw new LinyiException("删除失败");
+        }
+        return i+"条数据删除成功";
     }
 
 
