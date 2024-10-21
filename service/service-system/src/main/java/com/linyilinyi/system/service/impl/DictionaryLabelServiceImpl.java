@@ -4,6 +4,7 @@ import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.linyilinyi.common.model.PageResult;
 import com.linyilinyi.model.entity.dictionary.DictionaryLabel;
+import com.linyilinyi.model.vo.dictionary.DictionaryLabelAddVo;
 import com.linyilinyi.model.vo.dictionary.DictionaryLabelQueryVo;
 import com.linyilinyi.system.mapper.DictionaryLabelMapper;
 import com.linyilinyi.system.service.DictionaryLabelService;
@@ -11,8 +12,11 @@ import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import jakarta.annotation.Resource;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
+import org.springframework.beans.BeanUtils;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDateTime;
+import java.util.List;
 import java.util.Optional;
 
 /**
@@ -42,6 +46,22 @@ public class DictionaryLabelServiceImpl extends ServiceImpl<DictionaryLabelMappe
         Page<DictionaryLabel> dictionaryLabelPage = new Page<>(pageNo, pageSize);
         Page<DictionaryLabel> labelPage = dictionaryLabelMapper.selectPage(dictionaryLabelPage, queryWrapper);
         return new PageResult<>(labelPage.getRecords(), labelPage.getTotal(), pageNo, pageSize);
+    }
+
+    @Override
+    public String addDictionaryLabel(DictionaryLabelAddVo dictionaryLabelAddVo) {
+        DictionaryLabel dictionaryLabel = new DictionaryLabel();
+        BeanUtils.copyProperties(dictionaryLabelAddVo, dictionaryLabel);
+        dictionaryLabel.setCreateTime(LocalDateTime.now());
+        if (dictionaryLabelMapper.insert(dictionaryLabel) != 1) {
+            throw new RuntimeException("添加失败");
+        }
+        return "添加成功";
+    }
+
+    @Override
+    public String deleteDictionaryLabel(List<Integer> ids) {
+
     }
 
 
