@@ -1,0 +1,15 @@
+package com.linyilinyi.system.mapper;
+
+import com.baomidou.mybatisplus.core.mapper.BaseMapper;
+import com.linyilinyi.model.entity.dictionary.DictionaryLabel;
+
+/**
+ * <p>
+ * 数据字典内容表 Mapper 接口
+ * </p>
+ *
+ * @author linyi
+ */
+public interface DictionaryLabelMapper extends BaseMapper<DictionaryLabel> {
+
+}
