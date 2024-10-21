@@ -52,5 +52,21 @@ public class DictionaryTypeServiceImpl extends ServiceImpl<DictionaryTypeMapper,
         return i+"条数据删除成功";
     }
 
+    @Override
+    public String updateDictionaryType(DictionaryType dictionaryType) {
+        dictionaryType.setUpdateTime(LocalDateTime.now());
+        dictionaryType.setUpdateUserId(AuthContextUser.getUserId());
+        int i = dictionaryTypeMapper.updateById(dictionaryType);
+        if (i!=1){
+            throw new LinyiException("修改失败");
+        }
+        return "修改成功";
+    }
+
+    @Override
+    public List<DictionaryType> getDictionaryTypeList() {
+        return dictionaryTypeMapper.selectList(null);
+    }
+
 
 }

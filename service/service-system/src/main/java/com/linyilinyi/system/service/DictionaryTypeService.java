@@ -20,4 +20,9 @@ public interface DictionaryTypeService extends IService<DictionaryType> {
 
     String deleteDictionaryType(List<Integer> ids);
 
+    String updateDictionaryType(DictionaryType dictionaryType);
+
+    List<DictionaryType> getDictionaryTypeList();
+
+
 }

@@ -46,4 +46,16 @@ public class DictionaryTypeController {
     public Result<DictionaryType> getDictionaryTypeById(@PathVariable Integer id) {
         return Result.ok(dictionaryTypeService.getById(id));
     }
+
+    @Operation(summary = "修改数据字典类型")
+    @PutMapping("updateDictionaryType")
+    public Result<String> updateDictionaryType(@RequestBody DictionaryType dictionaryType) {
+        return Result.ok(dictionaryTypeService.updateDictionaryType(dictionaryType));
+    }
+
+    @Operation(summary = "获取全部数据类型列表")
+    @GetMapping("getDictionaryTypeList")
+    public Result<List<DictionaryType>> getDictionaryTypeList() {
+        return Result.ok(dictionaryTypeService.getDictionaryTypeList());
+    }
 }
