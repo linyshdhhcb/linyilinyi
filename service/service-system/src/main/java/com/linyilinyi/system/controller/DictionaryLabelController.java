@@ -59,4 +59,10 @@ public class DictionaryLabelController {
     public Result<String> updateDictionaryLabel(@RequestBody DictionaryLabel dictionaryLabel) {
         return Result.ok(dictionaryLabelService.updateDictionaryLabel(dictionaryLabel));
     }
+
+    @Operation(summary = "根据id获取数据字典内容")
+    @GetMapping("getDictionaryLabelById/{id}")
+    public Result<DictionaryLabel> getDictionaryLabelById(@PathVariable Integer id) {
+        return Result.ok(dictionaryLabelService.getById(id));
+    }
 }
