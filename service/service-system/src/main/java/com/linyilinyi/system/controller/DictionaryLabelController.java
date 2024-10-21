@@ -65,4 +65,5 @@ public class DictionaryLabelController {
     public Result<DictionaryLabel> getDictionaryLabelById(@PathVariable Integer id) {
         return Result.ok(dictionaryLabelService.getById(id));
     }
+
 }

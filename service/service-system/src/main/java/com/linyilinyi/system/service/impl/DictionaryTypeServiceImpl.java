@@ -1,11 +1,19 @@
 package com.linyilinyi.system.service.impl;
 
+import com.linyilinyi.common.exception.LinyiException;
+import com.linyilinyi.common.model.Result;
+import com.linyilinyi.common.model.ResultCodeEnum;
+import com.linyilinyi.common.utils.AuthContextUser;
 import com.linyilinyi.model.entity.dictionary.DictionaryType;
 import com.linyilinyi.system.mapper.DictionaryTypeMapper;
 import com.linyilinyi.system.service.DictionaryTypeService;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
+import jakarta.annotation.Resource;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
+
+import java.time.LocalDateTime;
+import java.util.List;
 
 /**
  * <p>
@@ -17,5 +25,32 @@ import org.springframework.stereotype.Service;
 @Slf4j
 @Service
 public class DictionaryTypeServiceImpl extends ServiceImpl<DictionaryTypeMapper, DictionaryType> implements DictionaryTypeService {
+
+    @Resource
+    private DictionaryTypeMapper dictionaryTypeMapper;
+    @Override
+    public String addDictionaryType(String type, String name) {
+        DictionaryType dictionaryType = new DictionaryType();
+        dictionaryType.setType(type);
+        dictionaryType.setName(name);
+        dictionaryType.setCreateTime(LocalDateTime.now());
+        dictionaryType.setCreateUserId(AuthContextUser.getUserId());
+        int insert = dictionaryTypeMapper.insert(dictionaryType);
+        if (insert != 1) {
+            throw new LinyiException(ResultCodeEnum.INSERT_FAIL);
+        }
+        return "新增字典类型成功";
+    }
+
+    @Override
+    public String deleteDictionaryType(List<Integer> ids) {
+        ids = ids.stream().filter(id -> id > 0).toList();
+        int i = dictionaryTypeMapper.deleteBatchIds(ids);
+        if (i<=0){
+            throw new LinyiException("删除失败");
+        }
+        return i+"条数据删除成功";
+    }
+
 
 }
