@@ -1,4 +1,4 @@
-package com.linyilinyi.user.config;
+package com.linyilinyi.article.config;
 
 import com.alibaba.fastjson2.JSON;
 import lombok.extern.slf4j.Slf4j;
@@ -6,7 +6,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.method.HandlerMethod;
-import org.springframework.web.servlet.mvc.condition.PatternsRequestCondition;
 import org.springframework.web.servlet.mvc.condition.RequestMethodsRequestCondition;
 import org.springframework.web.servlet.mvc.method.RequestMappingInfo;
 import org.springframework.web.servlet.mvc.method.annotation.RequestMappingHandlerMapping;
@@ -17,7 +16,7 @@ import java.util.*;
 
 @Component
 @Slf4j
-public class UrlController {
+public class UrlConfig {
 
     @Autowired
     private RequestMappingHandlerMapping mappingHandlerMapping;

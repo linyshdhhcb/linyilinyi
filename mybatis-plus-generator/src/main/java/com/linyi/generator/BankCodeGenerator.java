@@ -149,8 +149,8 @@ public class BankCodeGenerator {
 
 		// 自动填充字段配置
 		strategy.setTableFillList(Arrays.asList(
-				new TableFill("create_date", FieldFill.INSERT),
-				new TableFill("change_date", FieldFill.INSERT_UPDATE),
+				new TableFill("create_time", FieldFill.INSERT),
+				new TableFill("update_time", FieldFill.INSERT_UPDATE),
 				new TableFill("modify_date", FieldFill.UPDATE)
 		));
 		// 将策略配置应用到代码生成器
