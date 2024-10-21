@@ -40,10 +40,12 @@ public class BankCodeGenerator {
 //			"dictionary_label",
 //			"dictionary_type"
 //			"reviewer"
-			"role",
-			"role_menu",
-			"menu",
-			"user_role"
+//			"role",
+//			"role_menu",
+//			"menu",
+//			"user_role"
+			"dictionary_label",
+			"dictionary_type"
 	};
 
 	// TODO 默认生成entity，需要生成DTO修改此变量
