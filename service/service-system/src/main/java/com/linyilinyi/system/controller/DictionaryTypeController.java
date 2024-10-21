@@ -19,6 +19,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 @Slf4j
 @RestController
 @RequestMapping("dictionaryType")
+@SuppressWarnings({"unchecked", "rawtypes"})
 public class DictionaryTypeController {
 
     @Resource

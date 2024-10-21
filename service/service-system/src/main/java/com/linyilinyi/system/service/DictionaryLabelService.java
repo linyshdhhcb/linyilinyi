@@ -1,7 +1,9 @@
 package com.linyilinyi.system.service;
 
 import com.baomidou.mybatisplus.extension.service.IService;
+import com.linyilinyi.common.model.PageResult;
 import com.linyilinyi.model.entity.dictionary.DictionaryLabel;
+import com.linyilinyi.model.vo.dictionary.DictionaryLabelQueryVo;
 
 /**
  * <p>
@@ -13,4 +15,6 @@ import com.linyilinyi.model.entity.dictionary.DictionaryLabel;
  */
 public interface DictionaryLabelService extends IService<DictionaryLabel> {
 
+
+    PageResult<DictionaryLabel> pageList(long pageNo, long pageSize, DictionaryLabelQueryVo dictionaryLabelQueryVo);
 }
