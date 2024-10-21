@@ -3,6 +3,7 @@ package com.linyilinyi.common.exception;
 import com.linyilinyi.common.model.Result;
 import com.linyilinyi.common.model.ResultCodeEnum;
 import feign.codec.DecodeException;
+import jakarta.validation.ConstraintViolationException;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.dao.DataAccessException;
 import org.springframework.http.HttpStatus;
@@ -11,12 +12,15 @@ import org.springframework.http.converter.HttpMessageNotReadableException;
 import org.springframework.validation.BindException;
 import org.springframework.validation.BindingResult;
 import org.springframework.validation.FieldError;
+import org.springframework.validation.ObjectError;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
+import org.springframework.web.method.annotation.MethodArgumentTypeMismatchException;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -118,12 +122,27 @@ public class GlobalExceptionHandler {
     public Result handleValidationExceptions(MethodArgumentNotValidException exception) {
         // 打印异常堆栈跟踪信息，用于调试和日志记录
         exception.printStackTrace();
-
         // 获取第一个字段错误的默认消息，这里假设至少存在一个字段错误
         String defaultMessage = exception.getBindingResult().getFieldErrors().get(0).getDefaultMessage();
-
         // 返回验证错误信息，通知客户端
-        return Result.fail(defaultMessage);
+        return Result.fail(400,defaultMessage);
+    }
+
+    @ExceptionHandler(value = MethodArgumentTypeMismatchException.class)
+    @ResponseBody
+    public ResponseEntity<Result> handleValidationExceptions(MethodArgumentTypeMismatchException exception) {
+        exception.printStackTrace();
+        // 返回友好的错误信息
+        Result result = new Result(HttpStatus.BAD_REQUEST.value(), "参数类型不匹配");
+        return new ResponseEntity<>(result, HttpStatus.BAD_REQUEST);
+    }
+
+    @ExceptionHandler(ConstraintViolationException.class)
+    @ResponseBody
+    public Result handleConstraintViolationException(ConstraintViolationException ex) {
+        int i = ex.getMessage().lastIndexOf(" ");
+        return Result.fail(400,ex.getMessage().substring(i + 1));
+
     }
 
     /**

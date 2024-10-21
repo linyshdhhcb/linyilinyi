@@ -5,6 +5,7 @@ import com.linyilinyi.common.model.PageResult;
 import com.linyilinyi.model.entity.dictionary.DictionaryLabel;
 import com.linyilinyi.model.vo.dictionary.DictionaryLabelAddVo;
 import com.linyilinyi.model.vo.dictionary.DictionaryLabelQueryVo;
+import com.linyilinyi.model.vo.dictionary.DictionaryTypeTreeList;
 
 import java.util.List;
 
@@ -26,4 +27,7 @@ public interface DictionaryLabelService extends IService<DictionaryLabel> {
     String deleteDictionaryLabel(List<Integer> ids);
 
     String updateDictionaryLabel(DictionaryLabel dictionaryLabel);
+
+    List<DictionaryTypeTreeList> getDictionaryLabelTreeList(Integer dictionaryTypeId);
+
 }

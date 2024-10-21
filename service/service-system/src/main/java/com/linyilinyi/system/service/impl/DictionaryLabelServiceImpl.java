@@ -6,11 +6,15 @@ import com.linyilinyi.common.exception.LinyiException;
 import com.linyilinyi.common.model.PageResult;
 import com.linyilinyi.common.utils.AuthContextUser;
 import com.linyilinyi.model.entity.dictionary.DictionaryLabel;
+import com.linyilinyi.model.entity.dictionary.DictionaryType;
 import com.linyilinyi.model.vo.dictionary.DictionaryLabelAddVo;
 import com.linyilinyi.model.vo.dictionary.DictionaryLabelQueryVo;
+import com.linyilinyi.model.vo.dictionary.DictionaryTypeTreeList;
 import com.linyilinyi.system.mapper.DictionaryLabelMapper;
+import com.linyilinyi.system.mapper.DictionaryTypeMapper;
 import com.linyilinyi.system.service.DictionaryLabelService;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
+import com.linyilinyi.system.service.DictionaryTypeService;
 import jakarta.annotation.Resource;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
@@ -18,6 +22,7 @@ import org.springframework.beans.BeanUtils;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
@@ -34,6 +39,9 @@ import java.util.Optional;
 public class DictionaryLabelServiceImpl extends ServiceImpl<DictionaryLabelMapper, DictionaryLabel> implements DictionaryLabelService {
     @Resource
     private DictionaryLabelMapper dictionaryLabelMapper;
+
+    @Resource
+    private DictionaryTypeService dictionaryTypeService;
 
     @Override
     public PageResult<DictionaryLabel> pageList(long pageNo, long pageSize, DictionaryLabelQueryVo dictionaryLabelQueryVo) {
@@ -64,12 +72,12 @@ public class DictionaryLabelServiceImpl extends ServiceImpl<DictionaryLabelMappe
 
     @Override
     public String deleteDictionaryLabel(List<Integer> ids) {
-        ids=ids.stream().filter(id -> id > 0).toList();
+        ids = ids.stream().filter(id -> id > 0).toList();
         int i = dictionaryLabelMapper.deleteBatchIds(ids);
-        if (i<=0){
+        if (i <= 0) {
             throw new LinyiException("删除失败");
         }
-        return i+"条数据删除成功";
+        return i + "条数据删除成功";
     }
 
     @Override
@@ -77,11 +85,34 @@ public class DictionaryLabelServiceImpl extends ServiceImpl<DictionaryLabelMappe
         dictionaryLabel.setUpdateTime(LocalDateTime.now());
         dictionaryLabel.setUpdateUserId(AuthContextUser.getUserId());
         int i = dictionaryLabelMapper.updateById(dictionaryLabel);
-        if (i!=1){
+        if (i != 1) {
             throw new LinyiException("修改失败");
         }
         return "修改成功";
     }
 
+    @Override
+    public List<DictionaryTypeTreeList> getDictionaryLabelTreeList(Integer dictionaryTypeId) {
+        List<DictionaryTypeTreeList> dictionaryTypeTreeLists = new ArrayList<>();
+        if (Optional.ofNullable(dictionaryTypeId).isPresent()) {
+            DictionaryType byId = dictionaryTypeService.getById(dictionaryTypeId);
+            DictionaryTypeTreeList dictionaryTypeTreeList = new DictionaryTypeTreeList();
+            BeanUtils.copyProperties(byId, dictionaryTypeTreeList);
+            List<DictionaryLabel> dictionaryLabels = dictionaryLabelMapper.selectList(new LambdaQueryWrapper<DictionaryLabel>().eq(DictionaryLabel::getDictionaryId, dictionaryTypeId));
+            dictionaryTypeTreeList.setDictionaryLabelChild(dictionaryLabels);
+            dictionaryTypeTreeLists.add(dictionaryTypeTreeList);
+        } else if (Optional.ofNullable(dictionaryTypeId).isEmpty()) {
+            List<DictionaryType> dictionaryTypeList = dictionaryTypeService.getDictionaryTypeList();
+            dictionaryTypeList.stream().forEach(e -> {
+                List<DictionaryLabel> dictionaryLabels = dictionaryLabelMapper.selectList(new LambdaQueryWrapper<DictionaryLabel>().eq(DictionaryLabel::getDictionaryId, e.getId()));
+                DictionaryTypeTreeList dictionaryTypeTreeList = new DictionaryTypeTreeList();
+                BeanUtils.copyProperties(e, dictionaryTypeTreeList);
+                dictionaryTypeTreeList.setDictionaryLabelChild(dictionaryLabels);
+                dictionaryTypeTreeLists.add(dictionaryTypeTreeList);
 
+            });
+            return dictionaryTypeTreeLists;
+        }
+        throw new LinyiException("参数错误");
+    }
 }

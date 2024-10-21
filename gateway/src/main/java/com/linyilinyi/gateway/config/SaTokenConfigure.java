@@ -44,7 +44,7 @@ public class SaTokenConfigure {
 
     private static final List<String> EXCLUDED_PATHS = Arrays.asList(
 
-            //"/**",//全部不拦截
+            "/**",//全部不拦截
             USER_LOGIN_PATH,
             USER_REGISTER_PATH,
             USER_LOGOUT_PATH,
@@ -155,7 +155,7 @@ public class SaTokenConfigure {
             if (e instanceof NotLoginException nle) {
                 switch (nle.getType()) {
                     case NotLoginException.NOT_TOKEN:
-                        message = NotLoginException.NOT_TOKEN_MESSAGE;
+                        message = NotLoginException.DEFAULT_MESSAGE+"!!!"+NotLoginException.NOT_TOKEN_MESSAGE;
                         break;
                     case NotLoginException.INVALID_TOKEN:
                         message = NotLoginException.INVALID_TOKEN_MESSAGE;

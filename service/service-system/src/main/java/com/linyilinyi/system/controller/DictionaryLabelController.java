@@ -3,17 +3,17 @@ package com.linyilinyi.system.controller;
 import com.linyilinyi.common.model.PageResult;
 import com.linyilinyi.common.model.Result;
 import com.linyilinyi.model.entity.dictionary.DictionaryLabel;
-import com.linyilinyi.model.vo.article.ArticleQueryVo;
 import com.linyilinyi.model.vo.dictionary.DictionaryLabelAddVo;
 import com.linyilinyi.model.vo.dictionary.DictionaryLabelQueryVo;
+import com.linyilinyi.model.vo.dictionary.DictionaryTypeTreeList;
 import com.linyilinyi.system.service.DictionaryLabelService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.annotation.Resource;
-import jakarta.servlet.DispatcherType;
+import jakarta.validation.constraints.Positive;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Autowired;
 
 import java.util.List;
 
@@ -26,6 +26,7 @@ import java.util.List;
  */
 @Tag(name = "数据字典内容管理器")
 @Slf4j
+@Validated
 @RestController
 @RequestMapping("dictionaryLabel")
 @SuppressWarnings({"unchecked", "rawtypes"})
@@ -43,7 +44,7 @@ public class DictionaryLabelController {
     }
 
     @Operation(summary = "数据字典内容表新增")
-    @GetMapping("addDictionaryLabel")
+    @PostMapping("addDictionaryLabel")
     public Result<String> addDictionaryLabel(@RequestBody DictionaryLabelAddVo dictionaryLabelAddVo) {
         return Result.ok(dictionaryLabelService.addDictionaryLabel(dictionaryLabelAddVo));
     }
@@ -62,8 +63,14 @@ public class DictionaryLabelController {
 
     @Operation(summary = "根据id获取数据字典内容")
     @GetMapping("getDictionaryLabelById/{id}")
-    public Result<DictionaryLabel> getDictionaryLabelById(@PathVariable Integer id) {
+    public Result<DictionaryLabel> getDictionaryLabelById(@Positive(message = "id必须为正整数")@PathVariable Integer id) {
         return Result.ok(dictionaryLabelService.getById(id));
+    }
+
+    @Operation(summary = "获取全部数据字典内容列表")
+    @GetMapping("getDictionaryLabelTreeList")
+    public Result<List<DictionaryTypeTreeList>> getDictionaryLabelTreeList(@RequestParam(required = false) Integer dictionaryTypeId) {
+        return Result.ok(dictionaryLabelService.getDictionaryLabelTreeList(dictionaryTypeId));
     }
 
 }

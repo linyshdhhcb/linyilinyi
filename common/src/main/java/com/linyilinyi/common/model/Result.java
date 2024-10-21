@@ -83,6 +83,13 @@ public class Result<T> {
         return success(data, ResultCodeEnum.FAIL);
     }
 
+    public static<T> Result<T> fail(Integer code,String msg){
+        Result<Object> objectResult = new Result<>();
+        objectResult.setCode(code);
+        objectResult.setMessage(msg);
+        return (Result<T>) objectResult;
+    }
+
     public static<T> Result<T> fail(String msg){
         Result<Object> objectResult = new Result<>();
         objectResult.setCode(ResultCodeEnum.FAIL.getCode());

@@ -6,9 +6,11 @@ import com.linyilinyi.system.service.DictionaryTypeService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.annotation.Resource;
+import jakarta.validation.Valid;
+import jakarta.validation.constraints.Positive;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Autowired;
 
 import java.util.List;
 
@@ -21,6 +23,7 @@ import java.util.List;
  */
 @Tag(name = "数据字典类型表")
 @Slf4j
+@Validated
 @RestController
 @RequestMapping("dictionaryType")
 @SuppressWarnings({"unchecked", "rawtypes"})
@@ -42,8 +45,8 @@ public class DictionaryTypeController {
     }
 
     @Operation(summary = "根据id获取数据字典类型")
-    @GetMapping("getDictionaryTypeById/{id}")
-    public Result<DictionaryType> getDictionaryTypeById(@PathVariable Integer id) {
+    @GetMapping("getDictionaryTypeById")
+    public Result<DictionaryType> getDictionaryTypeById(@Positive(message="正整数") @RequestParam Integer id) {
         return Result.ok(dictionaryTypeService.getById(id));
     }
 
