@@ -53,4 +53,10 @@ public class DictionaryLabelController {
     public Result<String> deleteDictionaryLabel(@PathVariable List<Integer> ids) {
         return Result.ok(dictionaryLabelService.deleteDictionaryLabel(ids));
     }
+
+    @Operation(summary = "数据字典内容表修改")
+    @PutMapping("updateDictionaryLabel")
+    public Result<String> updateDictionaryLabel(@RequestBody DictionaryLabel dictionaryLabel) {
+        return Result.ok(dictionaryLabelService.updateDictionaryLabel(dictionaryLabel));
+    }
 }

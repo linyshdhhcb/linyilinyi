@@ -4,6 +4,7 @@ import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.linyilinyi.common.exception.LinyiException;
 import com.linyilinyi.common.model.PageResult;
+import com.linyilinyi.common.utils.AuthContextUser;
 import com.linyilinyi.model.entity.dictionary.DictionaryLabel;
 import com.linyilinyi.model.vo.dictionary.DictionaryLabelAddVo;
 import com.linyilinyi.model.vo.dictionary.DictionaryLabelQueryVo;
@@ -54,6 +55,7 @@ public class DictionaryLabelServiceImpl extends ServiceImpl<DictionaryLabelMappe
         DictionaryLabel dictionaryLabel = new DictionaryLabel();
         BeanUtils.copyProperties(dictionaryLabelAddVo, dictionaryLabel);
         dictionaryLabel.setCreateTime(LocalDateTime.now());
+        dictionaryLabel.setCreateUserId(AuthContextUser.getUserId());
         if (dictionaryLabelMapper.insert(dictionaryLabel) != 1) {
             throw new RuntimeException("添加失败");
         }
@@ -68,6 +70,17 @@ public class DictionaryLabelServiceImpl extends ServiceImpl<DictionaryLabelMappe
             throw new LinyiException("删除失败");
         }
         return i+"条数据删除成功";
+    }
+
+    @Override
+    public String updateDictionaryLabel(DictionaryLabel dictionaryLabel) {
+        dictionaryLabel.setUpdateTime(LocalDateTime.now());
+        dictionaryLabel.setUpdateUserId(AuthContextUser.getUserId());
+        int i = dictionaryLabelMapper.updateById(dictionaryLabel);
+        if (i!=1){
+            throw new LinyiException("修改失败");
+        }
+        return "修改成功";
     }
 
 

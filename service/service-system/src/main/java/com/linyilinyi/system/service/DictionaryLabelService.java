@@ -24,4 +24,6 @@ public interface DictionaryLabelService extends IService<DictionaryLabel> {
     String addDictionaryLabel(DictionaryLabelAddVo dictionaryLabelAddVo);
 
     String deleteDictionaryLabel(List<Integer> ids);
+
+    String updateDictionaryLabel(DictionaryLabel dictionaryLabel);
 }
