@@ -23,6 +23,7 @@
         <module>service-video</module>
         <module>service-article</module>
         <module>service-system</module>
+        <module>service-search</module>
     </modules>
     <dependencies>
         <dependency>
