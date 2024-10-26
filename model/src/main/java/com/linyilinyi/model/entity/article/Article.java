@@ -54,6 +54,14 @@ public class Article implements Serializable {
     @Schema(description = "作者ID")
     private Integer userId;
 
+    @NotBlank(message = "用户名不能为空")
+    @Schema(description = "用户名")
+    private String username;
+
+    @NotBlank(message = "用户昵称不能为空")
+    @Schema(description = "用户昵称")
+    private String nickname;
+
 
     @Schema(description = "封面MD5")
     private String imageMd5;

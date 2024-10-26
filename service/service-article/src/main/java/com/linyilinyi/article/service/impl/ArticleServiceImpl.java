@@ -10,12 +10,15 @@ import com.linyilinyi.article.mapper.ArticleMapper;
 import com.linyilinyi.article.service.ArticleService;
 import com.linyilinyi.common.exception.LinyiException;
 import com.linyilinyi.common.model.PageResult;
+import com.linyilinyi.common.model.Result;
 import com.linyilinyi.common.model.ResultCodeEnum;
 import com.linyilinyi.common.utils.AuthContextUser;
 import com.linyilinyi.model.entity.article.Article;
 import com.linyilinyi.model.entity.article.ArticleData;
+import com.linyilinyi.model.entity.user.User;
 import com.linyilinyi.model.vo.article.ArticleAddVo;
 import com.linyilinyi.model.vo.article.ArticleQueryVo;
+import com.linyilinyi.user.client.UserClient;
 import jakarta.annotation.Resource;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.BeanUtils;
@@ -38,6 +41,9 @@ public class ArticleServiceImpl extends ServiceImpl<ArticleMapper, Article> impl
     private ArticleMapper articleMapper;
 
     @Resource
+    private UserClient userClient;
+
+    @Resource
     private ArticleDataMapper articleDataMapper;
 
     @Override
@@ -46,6 +52,8 @@ public class ArticleServiceImpl extends ServiceImpl<ArticleMapper, Article> impl
         queryWrapper.like(StringUtils.isNotBlank(articleQueryVo.getTitle()), Article::getTitle, articleQueryVo.getTitle());
         queryWrapper.eq(Optional.ofNullable(articleQueryVo.getType()).isPresent(), Article::getType, articleQueryVo.getType());
         queryWrapper.eq(Optional.ofNullable(articleQueryVo.getUserId()).isPresent(), Article::getUserId, articleQueryVo.getUserId());
+        queryWrapper.eq(StringUtils.isNotBlank(articleQueryVo.getUsername()), Article::getUsername, articleQueryVo.getUsername());
+        queryWrapper.like(StringUtils.isNotBlank(articleQueryVo.getNickname()), Article::getNickname, articleQueryVo.getNickname());
         queryWrapper.eq(StringUtils.isNotBlank(articleQueryVo.getImageMd5()), Article::getImageMd5, articleQueryVo.getImageMd5());
         queryWrapper.eq(Optional.ofNullable(articleQueryVo.getImageStatus()).isPresent(), Article::getImageStatus, articleQueryVo.getImageStatus());
         Page<Article> articlePage = new Page<>(pageNo, pageSize);
@@ -66,6 +74,9 @@ public class ArticleServiceImpl extends ServiceImpl<ArticleMapper, Article> impl
         Article article = new Article();
         BeanUtils.copyProperties(articleAddVo, article);
         article.setUserId(AuthContextUser.getUserId());
+        User data = userClient.getUserById(AuthContextUser.getUserId()).getData();
+        article.setUsername(data.getUsername());
+        article.setNickname(data.getNickname());
         article.setCreateTime(LocalDateTime.now());
         int insert = articleMapper.insert(article);
         if (insert != 1) {
