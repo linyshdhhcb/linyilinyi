@@ -15,7 +15,6 @@ import org.springframework.cloud.openfeign.EnableFeignClients;
 @SpringBootApplication(scanBasePackages = {"com.linyilinyi.common.exception", "com.linyilinyi.common.config","com.linyilinyi.search"})
 @EnableDiscoveryClient
 @EnableFeignClients("com.linyilinyi")
-//@MapperScan("com.linyilinyi.search.mapper")
 public class SearchApplication {
 
     public static void main(String[] args) {

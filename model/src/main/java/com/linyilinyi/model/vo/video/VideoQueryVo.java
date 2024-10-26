@@ -16,7 +16,7 @@ import java.time.LocalDateTime;
  * @ClassName: VideoQueryVo
  */
 @Data
-@Schema(name = "VideoQueryVo", description = "视频信息分页查询表")
+@Schema(name = "VideoQueryVo 视频信息分页查询", description = "视频信息分页查询表")
 public class VideoQueryVo extends FrameTime {
 
     @Schema(description = "视频时长")
@@ -39,10 +39,6 @@ public class VideoQueryVo extends FrameTime {
 
     @Schema(description = "修改时间")
     private LocalDateTime updateTime;
-
-    @Schema(description = "逻辑删除标识（0：未删除；1：已删除）")
-    @TableLogic
-    private Integer isDelete;
 
     @Schema(description = "用户账号")
     private String username;

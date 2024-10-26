@@ -5,6 +5,7 @@ import com.linyilinyi.common.model.ResultCodeEnum;
 import feign.codec.DecodeException;
 import jakarta.validation.ConstraintViolationException;
 import lombok.extern.slf4j.Slf4j;
+import org.elasticsearch.client.Response;
 import org.springframework.dao.DataAccessException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -178,6 +179,4 @@ public class GlobalExceptionHandler {
         // 返回包含错误信息的响应体
         return Result.success(e.getMessage(), ResultCodeEnum.DATABASE_ERROR);
     }
-
-
 }

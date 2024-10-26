@@ -19,6 +19,4 @@ public class ReadQueryVo extends FrameTime {
 
     @Schema(description = "阅读文章用户id")
     private Integer userId;
-
-
 }
