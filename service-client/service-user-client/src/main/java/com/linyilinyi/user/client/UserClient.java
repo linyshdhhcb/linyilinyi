@@ -1,10 +1,12 @@
 package com.linyilinyi.user.client;
 
+import com.linyilinyi.common.model.PageResult;
 import com.linyilinyi.common.model.Result;
 import com.linyilinyi.model.entity.user.Menu;
 import com.linyilinyi.model.entity.user.Role;
 import com.linyilinyi.model.entity.user.User;
 import com.linyilinyi.model.vo.user.LoginVo;
+import com.linyilinyi.model.vo.user.UserQueryVo;
 import jakarta.validation.Valid;
 import org.springframework.cloud.openfeign.FeignClient;
 import org.springframework.web.bind.annotation.*;
@@ -62,5 +64,10 @@ public interface UserClient {
 
     @GetMapping("/menu/getMenuListByRoleCode/{roleCode}")
     public Result<List<Menu>> getMenuListByRoleCode(@PathVariable String roleCode);
+
+    @PostMapping("/user/getUserList")
+    public Result<PageResult<User>> getUserList(@RequestParam(required = false,defaultValue = "1") long pageNo,
+                                                @RequestParam(required = false,defaultValue = "5") long pageSize,
+                                                @RequestBody UserQueryVo userQueryVo);
 
 }

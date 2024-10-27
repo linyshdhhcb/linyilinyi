@@ -2,6 +2,7 @@ package com.linyilinyi.search.service;
 
 
 import com.linyilinyi.model.vo.article.ArticleEsQueryVo;
+import com.linyilinyi.model.vo.user.UserQueryVo;
 import com.linyilinyi.model.vo.video.VideoEsQueryVo;
 import com.linyilinyi.model.vo.video.VideoQueryVo;
 
@@ -15,7 +16,7 @@ import java.util.Map;
  * @Date 2024/10/24
  * @ClassName: VideoEsService
  */
-public interface VideoEsService {
+public interface SearchService {
 
     String addVideoDoc() throws IOException;
 
@@ -27,5 +28,9 @@ public interface VideoEsService {
 
     List<Map<String, Object>> searchArticle(ArticleEsQueryVo articleQueryVo);
 
+
+    List<Map<String, Object>> searchUser(UserQueryVo userQueryVo);
+
+    String addUser();
 
 }

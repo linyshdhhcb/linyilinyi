@@ -37,8 +37,4 @@ public class UserQueryVo extends FrameTime {
 
     @Schema(description = "邮箱")
     private String mail;
-
-    @Schema(description = "创建时间")
-    @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
-    private LocalDateTime createTime;
 }

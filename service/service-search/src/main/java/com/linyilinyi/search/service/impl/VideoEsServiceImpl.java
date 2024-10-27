@@ -4,13 +4,17 @@ import com.alibaba.fastjson2.JSON;
 import com.linyilinyi.article.client.ArticleClient;
 import com.linyilinyi.common.exception.LinyiException;
 import com.linyilinyi.common.model.PageResult;
+import com.linyilinyi.common.model.Result;
 import com.linyilinyi.model.entity.article.Article;
+import com.linyilinyi.model.entity.user.User;
 import com.linyilinyi.model.entity.video.Video;
 import com.linyilinyi.model.vo.article.ArticleEsQueryVo;
 import com.linyilinyi.model.vo.article.ArticleQueryVo;
+import com.linyilinyi.model.vo.user.UserQueryVo;
 import com.linyilinyi.model.vo.video.VideoEsQueryVo;
 import com.linyilinyi.model.vo.video.VideoQueryVo;
-import com.linyilinyi.search.service.VideoEsService;
+import com.linyilinyi.search.service.SearchService;
+import com.linyilinyi.user.client.UserClient;
 import com.linyilinyi.video.client.VideoClient;
 import jakarta.annotation.Resource;
 import lombok.extern.slf4j.Slf4j;
@@ -43,7 +47,7 @@ import java.util.stream.Collectors;
 @Slf4j
 @Service
 @SuppressWarnings({"unchecked", "rawtypes"})
-public class VideoEsServiceImpl implements VideoEsService {
+public class VideoEsServiceImpl implements SearchService {
 
     @Resource
     private RestHighLevelClient restHighLevelClient;
@@ -53,6 +57,9 @@ public class VideoEsServiceImpl implements VideoEsService {
 
     @Resource
     private ArticleClient articleClient;
+
+    @Resource
+    private UserClient userClient;
 
     @Override
     public String addVideoDoc() throws IOException {
@@ -93,6 +100,28 @@ public class VideoEsServiceImpl implements VideoEsService {
             throw new LinyiException("添加文章索引失败");
         }
 
+        return "成功";
+    }
+
+    @Override
+    public String addUser() {
+        int pageNo = 1;
+        int pageSize = 100;
+        PageResult<User> data = userClient.getUserList(pageNo, pageSize, new UserQueryVo()).getData();
+        List<User> items = data.getItems();
+        BulkRequest bulkRequest = new BulkRequest();
+        for (User user : items) {
+            UserQueryVo userQueryVo = JSON.parseObject(JSON.toJSONString(user), UserQueryVo.class);
+            bulkRequest.add(new IndexRequest("user").id(user.getId().toString()).source(JSON.toJSONString(userQueryVo), XContentType.JSON));
+        }
+        try {
+            BulkResponse bulk = restHighLevelClient.bulk(bulkRequest, RequestOptions.DEFAULT);
+            if (bulk.hasFailures()) {
+                throw new LinyiException("添加文章索引失败");
+            }
+        } catch (IOException e) {
+            throw new LinyiException("添加用户索引失败");
+        }
         return "成功";
     }
 
@@ -218,4 +247,52 @@ public class VideoEsServiceImpl implements VideoEsService {
         }
         return maps;
     }
+
+    @Override
+    public List<Map<String, Object>> searchUser(UserQueryVo userQueryVo) {
+        String keyword = "user";
+
+        BoolQueryBuilder boolQueryBuilder = QueryBuilders.boolQuery();
+
+        BoolQueryBuilder must = null;
+        for (Field field : UserQueryVo.class.getDeclaredFields()) {
+            field.setAccessible(true);
+            try {
+                String name = field.getName();
+                Object o = field.get(userQueryVo);
+                if (Optional.ofNullable(o).isPresent()) {
+                    must = boolQueryBuilder.must(QueryBuilders.matchQuery(name, o));
+                    log.info("添加查询条件：value:{},name:{}", name, o);
+                    continue;
+                }
+            } catch (IllegalAccessException e) {
+                throw new LinyiException("反射异常");
+            }
+        }
+        SearchRequest searchRequest = new SearchRequest(keyword);
+        SearchSourceBuilder query = new SearchSourceBuilder().query(must);
+        List<Map<String, Object>> maps = new ArrayList<>();
+        SearchRequest source = searchRequest.source(query);
+        try {
+            SearchResponse search = restHighLevelClient.search(source, RequestOptions.DEFAULT);
+            for (SearchHit hit : search.getHits().getHits()) {
+                System.out.println(hit.getSourceAsMap());
+                maps.add(hit.getSourceAsMap());
+            }
+            // 按 score 降序排序
+            Collections.sort(maps, new Comparator<Map<String, Object>>() {
+                @Override
+                public int compare(Map<String, Object> o1, Map<String, Object> o2) {
+                    float score1 = (float) o1.get("_score");
+                    float score2 = (float) o2.get("_score");
+                    return Float.compare(score2, score1); // 降序排序
+                }
+            });
+        } catch (IOException e) {
+            throw new LinyiException(Arrays.stream(e.getSuppressed()).map(Throwable::getMessage).collect(Collectors.toList()).get(0));
+        }
+        return maps;
+    }
+
+
 }
