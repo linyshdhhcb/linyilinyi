@@ -1,17 +1,19 @@
 package com.linyilinyi.search.service.impl;
 
 import com.alibaba.fastjson2.JSON;
+import com.linyilinyi.article.client.ArticleClient;
 import com.linyilinyi.common.exception.LinyiException;
 import com.linyilinyi.common.model.PageResult;
+import com.linyilinyi.model.entity.article.Article;
 import com.linyilinyi.model.entity.video.Video;
+import com.linyilinyi.model.vo.article.ArticleEsQueryVo;
 import com.linyilinyi.model.vo.article.ArticleQueryVo;
-import com.linyilinyi.model.vo.video.VideoEsVo;
+import com.linyilinyi.model.vo.video.VideoEsQueryVo;
 import com.linyilinyi.model.vo.video.VideoQueryVo;
 import com.linyilinyi.search.service.VideoEsService;
 import com.linyilinyi.video.client.VideoClient;
 import jakarta.annotation.Resource;
 import lombok.extern.slf4j.Slf4j;
-import org.apache.commons.lang3.StringUtils;
 import org.elasticsearch.action.bulk.BulkRequest;
 import org.elasticsearch.action.bulk.BulkResponse;
 import org.elasticsearch.action.index.IndexRequest;
@@ -24,10 +26,8 @@ import org.elasticsearch.index.query.BoolQueryBuilder;
 import org.elasticsearch.index.query.QueryBuilders;
 import org.elasticsearch.search.SearchHit;
 import org.elasticsearch.search.builder.SearchSourceBuilder;
-import org.springframework.beans.BeanUtils;
 import org.springframework.stereotype.Service;
 
-import java.io.File;
 import java.io.IOException;
 import java.lang.reflect.Field;
 import java.util.*;
@@ -51,6 +51,9 @@ public class VideoEsServiceImpl implements VideoEsService {
     @Resource
     private VideoClient videoClient;
 
+    @Resource
+    private ArticleClient articleClient;
+
     @Override
     public String addVideoDoc() throws IOException {
         int pageNo = 1, pageSize = 100;
@@ -59,14 +62,37 @@ public class VideoEsServiceImpl implements VideoEsService {
         List<Map<String, Object>> items = data.getItems();
         items.stream().forEach(item -> {
             Video video = JSON.parseObject(JSON.toJSONString(item), Video.class);
-            VideoEsVo videoEsVo = new VideoEsVo();
-            BeanUtils.copyProperties(video, videoEsVo);
-            bulkRequest.add(new IndexRequest("video").id(videoEsVo.getId().toString()).source(JSON.toJSONString(videoEsVo), XContentType.JSON));
+            bulkRequest.add(new IndexRequest("video").id(video.getId().toString()).source(JSON.toJSONString(video), XContentType.JSON));
         });
         BulkResponse bulk = restHighLevelClient.bulk(bulkRequest, RequestOptions.DEFAULT);
         if (bulk.hasFailures()) {
             System.out.println("批量添加失败");
         }
+        return "成功";
+    }
+
+    @Override
+    public String addArticleDoc() {
+        int pageNo = 1;
+        int pageSize = 100;
+
+        BulkRequest bulkRequest = new BulkRequest();
+        PageResult<Article> data = articleClient.getArticleList(pageNo, pageSize, new ArticleQueryVo()).getData();
+        List<Article> items = data.getItems();
+        items.stream().forEach(item -> {
+            Article article = JSON.parseObject(JSON.toJSONString(item), Article.class);
+            bulkRequest.add(new IndexRequest("article").id(article.getId().toString()).source(JSON.toJSONString(article), XContentType.JSON));
+        });
+
+        try {
+            BulkResponse bulk = restHighLevelClient.bulk(bulkRequest, RequestOptions.DEFAULT);
+            if (bulk.hasFailures()) {
+                throw new LinyiException("添加文章索引失败");
+            }
+        } catch (IOException e) {
+            throw new LinyiException("添加文章索引失败");
+        }
+
         return "成功";
     }
 
@@ -101,7 +127,7 @@ public class VideoEsServiceImpl implements VideoEsService {
      * @return 返回一个包含搜索结果的列表，每个搜索结果是一个键值对映射
      */
     @Override
-    public List<Map<String, Object>> searchVideo(VideoQueryVo videoQueryVo) {
+    public List<Map<String, Object>> searchVideo(VideoEsQueryVo videoQueryVo) {
         String keyword = "video";
         // 创建BoolQueryBuilder，用于构建复杂的查询条件
         BoolQueryBuilder boolQueryBuilder = QueryBuilders.boolQuery();
@@ -115,13 +141,10 @@ public class VideoEsServiceImpl implements VideoEsService {
                 Object o = field.get(videoQueryVo);
                 // 检查字段值是否非空，且不为字符串类型，避免空字符串查询
                 if (Optional.ofNullable(o).isPresent()) {
-                    // 转换o为String
-                    if (StringUtils.isNotBlank(String.valueOf(o)) && o instanceof String) {
-                        continue;
-                    }
                     // 添加匹配查询条件到bool查询中
                     must = boolQueryBuilder.must(QueryBuilders.matchQuery(name, o));
                     log.info("添加查询条件：value:{},name:{}", name, o);
+                    continue;
                 }
             } catch (IllegalAccessException e) {
                 // 反射异常处理
@@ -157,44 +180,42 @@ public class VideoEsServiceImpl implements VideoEsService {
     }
 
     @Override
-    public List<Map<String, Object>> searchArticle(ArticleQueryVo articleQueryVo) {
+    public List<Map<String, Object>> searchArticle(ArticleEsQueryVo articleQueryVo) {
         String keyword = "article";
         //创建BoolQueryBuilder，用于构建复杂的查询条件
         BoolQueryBuilder boolQueryBuilder = QueryBuilders.boolQuery();
-        for (Field field : ArticleQueryVo.class.getDeclaredFields()) {
+        BoolQueryBuilder must = null;
+        for (Field field : ArticleEsQueryVo.class.getDeclaredFields()) {
             field.setAccessible(true);
-
             try {
                 String name = field.getName();
                 Object o = field.get(articleQueryVo);
                 if (Optional.ofNullable(o).isPresent()) {
-                    if (StringUtils.isNotBlank(String.valueOf(o)) && o instanceof String) {
-                        continue;
-                    }
-                    boolQueryBuilder.must(QueryBuilders.matchQuery(name, o));
+                    must = boolQueryBuilder.must(QueryBuilders.matchQuery(name, o));
                     log.info("添加查询条件：value:{},name:{}", name, o);
+                    continue;
                 }
             } catch (IllegalAccessException e) {
                 throw new LinyiException("反射异常");
             }
-            SearchSourceBuilder query = new SearchSourceBuilder().query(boolQueryBuilder);
-            SearchRequest searchRequest = new SearchRequest(keyword);
-
-            ArrayList<Map<String, Object>> maps = new ArrayList<>();
-            try {
-                SearchRequest source = searchRequest.source(query);
-                //执行搜索并处理响应
-                SearchResponse search = restHighLevelClient.search(source, RequestOptions.DEFAULT);
-
-                SearchHit[] hits = search.getHits().getHits();
-                for (SearchHit hit : hits) {
-                    maps.add(hit.getSourceAsMap());
-                }
-            } catch (IOException e) {
-                throw new LinyiException(Arrays.stream(e.getSuppressed()).map(Throwable::getMessage).collect(Collectors.toList()).get(0));
-            }
-            return maps;
         }
-        return null;
+
+        SearchRequest searchRequest = new SearchRequest(keyword);
+        SearchSourceBuilder query = new SearchSourceBuilder().query(must);
+
+        ArrayList<Map<String, Object>> maps = new ArrayList<>();
+        try {
+            SearchRequest source = searchRequest.source(query);
+            //执行搜索并处理响应
+            SearchResponse search = restHighLevelClient.search(source, RequestOptions.DEFAULT);
+
+            SearchHit[] hits = search.getHits().getHits();
+            for (SearchHit hit : hits) {
+                maps.add(hit.getSourceAsMap());
+            }
+        } catch (IOException e) {
+            throw new LinyiException(Arrays.stream(e.getSuppressed()).map(Throwable::getMessage).collect(Collectors.toList()).get(0));
+        }
+        return maps;
     }
 }

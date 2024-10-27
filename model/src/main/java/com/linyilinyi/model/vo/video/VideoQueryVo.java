@@ -45,4 +45,7 @@ public class VideoQueryVo extends FrameTime {
 
     @Schema(description = "用户昵称")
     private String nickname;
+
+    @Schema(description = "组合搜索（name,nickname,tag）")
+    private String combined_fields;
 }

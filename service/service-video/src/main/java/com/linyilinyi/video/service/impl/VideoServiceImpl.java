@@ -63,7 +63,6 @@ public class VideoServiceImpl extends ServiceImpl<VideoMapper, Video> implements
         queryWrapper.eq(videoQueryVo.getUserId() != null, Video::getUserId, videoQueryVo.getUserId());
         queryWrapper.like(StringUtils.isNotBlank(videoQueryVo.getNickname()), Video::getNickname, videoQueryVo.getNickname());
         queryWrapper.like(StringUtils.isNotBlank(videoQueryVo.getUsername()), Video::getUsername, videoQueryVo.getUsername());
-        queryWrapper.eq(videoQueryVo.getIsDelete() != null, Video::getIsDelete, videoQueryVo.getIsDelete());
         queryWrapper.gt(videoQueryVo.getStartTime() != null, Video::getCreateTime, videoQueryVo.getStartTime());
         queryWrapper.lt(videoQueryVo.getEndTime() != null, Video::getCreateTime, videoQueryVo.getEndTime());
         Page<Video> videoPage = new Page<>(pageNo, pageSize);

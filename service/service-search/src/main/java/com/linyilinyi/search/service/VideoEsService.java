@@ -1,7 +1,8 @@
 package com.linyilinyi.search.service;
 
 
-import com.linyilinyi.model.vo.article.ArticleQueryVo;
+import com.linyilinyi.model.vo.article.ArticleEsQueryVo;
+import com.linyilinyi.model.vo.video.VideoEsQueryVo;
 import com.linyilinyi.model.vo.video.VideoQueryVo;
 
 import java.io.IOException;
@@ -18,9 +19,13 @@ public interface VideoEsService {
 
     String addVideoDoc() throws IOException;
 
+    String addArticleDoc();
+
     List<Map<String, Object>> searchAll(String keyword);
 
-    List<Map<String, Object>> searchVideo(VideoQueryVo videoQueryVo);
+    List<Map<String, Object>> searchVideo(VideoEsQueryVo videoQueryVo);
 
-    List<Map<String, Object>> searchArticle(ArticleQueryVo articleQueryVo);
+    List<Map<String, Object>> searchArticle(ArticleEsQueryVo articleQueryVo);
+
+
 }

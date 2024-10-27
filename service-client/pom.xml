@@ -15,6 +15,7 @@
 
         <module>service-user-client</module>
         <module>service-video-client</module>
+        <module>service-article-client</module>
     </modules>
 
     <properties>

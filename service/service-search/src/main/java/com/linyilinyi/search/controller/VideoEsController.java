@@ -1,14 +1,12 @@
 package com.linyilinyi.search.controller;
 
 import com.linyilinyi.common.model.Result;
-import com.linyilinyi.model.vo.article.ArticleQueryVo;
-import com.linyilinyi.model.vo.video.VideoEsVo;
+import com.linyilinyi.model.vo.article.ArticleEsQueryVo;
+import com.linyilinyi.model.vo.video.VideoEsQueryVo;
 import com.linyilinyi.model.vo.video.VideoQueryVo;
 import com.linyilinyi.search.service.VideoEsService;
 import io.swagger.v3.oas.annotations.Operation;
 import jakarta.annotation.Resource;
-import org.elasticsearch.action.search.SearchResponse;
-import org.elasticsearch.search.SearchHit;
 import org.springframework.web.bind.annotation.*;
 
 import java.io.IOException;
@@ -22,16 +20,23 @@ import java.util.Map;
  * @ClassName: VideoEsController
  */
 @RestController
-@RequestMapping("/es/video")
+@RequestMapping("/es/search")
 @SuppressWarnings({"unchecked", "rawtypes"})
 public class VideoEsController {
 
     @Resource
     private VideoEsService videoEsService;
 
-    @PostMapping("/add")
-    public String addVideoDoc() throws IOException {
-        return videoEsService.addVideoDoc();
+    @Operation(summary = "添加视频索引")
+    @PostMapping("/addVideo")
+    public Result<String> addVideoDoc() throws IOException {
+        return Result.ok(videoEsService.addVideoDoc());
+    }
+
+    @Operation(summary = "添加文章索引")
+    @PostMapping("/addArticle")
+    public Result<String> addArticle() throws IOException {
+        return Result.ok(videoEsService.addArticleDoc());
     }
 
     @Operation(summary = "DSL查询全部")
@@ -42,14 +47,14 @@ public class VideoEsController {
 
     @Operation(summary = "DSL查询视频")
     @PostMapping("/searchVideo")
-    public Result<List<Map<String, Object>>> searchVideo(@RequestBody VideoQueryVo videoQueryVo) throws IOException {
+    public Result<List<Map<String, Object>>> searchVideo(@RequestBody VideoEsQueryVo videoQueryVo) throws IOException {
         return Result.ok(videoEsService.searchVideo(videoQueryVo));
     }
 
     @Operation(summary = "DSL查询文章")
     @PostMapping("/searchArticle")
-    public Result<List<Map<String, Object>>> search(@RequestBody ArticleQueryVo articleQueryVo) throws IOException {
-        return Result.ok(videoEsService.searchArticle(articleQueryVo));
+    public Result<List<Map<String, Object>>> search(@RequestBody ArticleEsQueryVo articleEsQueryVo) throws IOException {
+        return Result.ok(videoEsService.searchArticle(articleEsQueryVo));
     }
 
 
