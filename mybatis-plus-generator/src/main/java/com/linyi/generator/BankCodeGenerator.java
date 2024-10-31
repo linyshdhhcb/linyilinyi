@@ -44,8 +44,9 @@ public class BankCodeGenerator {
 //			"role_menu",
 //			"menu",
 //			"user_role"
-			"dictionary_label",
-			"dictionary_type"
+//			"dictionary_label",
+//			"dictionary_type"
+			"notice_info"
 	};
 
 	// TODO 默认生成entity，需要生成DTO修改此变量
@@ -94,7 +95,7 @@ public class BankCodeGenerator {
 		// 设置数据库类型
 		dsc.setDbType(DbType.MYSQL);
 		// 设置数据库连接URL
-		dsc.setUrl("jdbc:mysql://192.168.85.129:3306/" + SERVICE_NAME
+		dsc.setUrl("jdbc:mysql://192.168.85.131:3306/" + SERVICE_NAME
 				+ "?characterEncoding=utf-8&useSSL=false");
 		// 设置数据库驱动名
 		dsc.setDriverName("com.mysql.cj.jdbc.Driver");
