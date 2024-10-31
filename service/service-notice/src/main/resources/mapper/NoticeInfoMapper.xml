@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.linyilinyi.notice.mapper.NoticeInfoMapper">
+
+    <!-- 通用查询映射结果 -->
+    <resultMap id="BaseResultMap" type="com.linyilinyi.model.entity.notice.NoticeInfo">
+        <id column="id" property="id" />
+        <result column="sender_id" property="senderId" />
+        <result column="receiver_id" property="receiverId" />
+        <result column="message_type" property="messageType" />
+        <result column="content" property="content" />
+        <result column="is_read" property="read" />
+        <result column="created_time" property="createdTime" />
+        <result column="read_time" property="readTime" />
+        <result column="announcement_title" property="announcementTitle" />
+        <result column="service_agent_id" property="serviceAgentId" />
+    </resultMap>
+
+    <!-- 通用查询结果列 -->
+    <sql id="Base_Column_List">
+        id, sender_id, receiver_id, message_type, content, is_read, created_time, read_time, announcement_title, service_agent_id
+    </sql>
+
+</mapper>
