@@ -8,18 +8,18 @@ public class WebSocketSessionManager {
     private static final ConcurrentHashMap<String, WebSocketSession> sessions = new ConcurrentHashMap<>();
 
     // 添加用户会话
-    public static void addSession(String userId, WebSocketSession session) {
-        sessions.put(userId, session);
+    public static void addSession(String username, WebSocketSession session) {
+        sessions.put(username, session);
     }
 
     // 移除用户会话
-    public static void removeSession(String userId) {
-        sessions.remove(userId);
+    public static void removeSession(String username) {
+        sessions.remove(username);
     }
 
     // 获取用户会话
-    public static WebSocketSession getSession(String userId) {
-        return sessions.get(userId);
+    public static WebSocketSession getSession(String username) {
+        return sessions.get(username);
     }
 
     // 获取所有会话

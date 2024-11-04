@@ -34,10 +34,10 @@ public class NoticeInfo implements Serializable {
     private Long id;
 
     @Schema(description = "发送者的用户ID")
-    private Long senderId;
+    private Integer senderId;
 
     @Schema(description = "接收者的用户ID")
-    private Long receiverId;
+    private Integer receiverId;
 
     @Schema(description = "信息类型（1点赞 2评论 3收藏 4关注 5私信 6通知 7客服）")
     private Integer messageType;
@@ -46,7 +46,7 @@ public class NoticeInfo implements Serializable {
     private String content;
 
     @Schema(description = "标记信息是否已读(已读：1，未读：0)")
-    private Boolean read;
+    private Boolean isRead;
 
     @Schema(description = "信息的创建时间")
     private LocalDateTime createdTime;

@@ -1,8 +1,9 @@
 package com.linyilinyi.notice.service;
 
-import com.linyilinyi.common.model.Result;
-import com.linyilinyi.model.vo.notice.CommentMessageVo;
-import com.linyilinyi.model.vo.notice.LikeMseeageVo;
+import com.linyilinyi.model.vo.notice.NoticeSystemVo;
+import com.linyilinyi.model.vo.notice.NoticeVo;
+
+import java.util.List;
 
 /**
  * @Description
@@ -12,7 +13,11 @@ import com.linyilinyi.model.vo.notice.LikeMseeageVo;
  */
 public interface NoticeSendService {
 
-    void sendLikeNotice(LikeMseeageVo likeMseeageVo);
+    void sendLikeNotice(NoticeVo noticeVo);
 
-    void sendCommentNotice(CommentMessageVo commentMessageVo);
+
+    void sendSystemNotice(NoticeSystemVo noticeSystemVo);
+
+    List<NoticeVo> readNotice();
+
 }

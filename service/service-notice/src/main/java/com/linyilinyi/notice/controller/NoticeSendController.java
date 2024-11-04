@@ -1,16 +1,16 @@
 package com.linyilinyi.notice.controller;
 
-import com.linyilinyi.model.vo.notice.CommentMessageVo;
-import com.linyilinyi.model.vo.notice.LikeMseeageVo;
+import com.linyilinyi.common.model.Result;
+import com.linyilinyi.model.vo.notice.NoticeSystemVo;
+import com.linyilinyi.model.vo.notice.NoticeVo;
 import com.linyilinyi.notice.service.NoticeSendService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.annotation.Resource;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
 
 /**
  * @Description
@@ -27,17 +27,22 @@ public class NoticeSendController {
     @Resource
     private NoticeSendService noticeSendService;
 
-    @Operation(summary = "点赞通知")
+    @Operation(summary = "点赞、评论、收藏、关注、私信、客服通知")
     @PostMapping("/sendLikeNotice")
-    public void sendLikeNotice(@RequestBody LikeMseeageVo likeMseeageVo){
-         noticeSendService.sendLikeNotice(likeMseeageVo);
+    public void sendLikeNotice(@RequestBody NoticeVo noticeVo){
+         noticeSendService.sendLikeNotice(noticeVo);
     }
 
-    @Operation(summary = "评论通知")
-    @PostMapping("/sendCommentNotice")
-    public void sendCommentNotice(@RequestBody CommentMessageVo commentMessageVo){
-         noticeSendService.sendCommentNotice(commentMessageVo);
+    @Operation(summary = "系统通知")
+    @PostMapping("/sendSystemNotice")
+    public void sendSystemNotice(@RequestBody NoticeSystemVo noticeSystemVo){
+         noticeSendService.sendSystemNotice(noticeSystemVo);
     }
 
+    @Operation(summary = "读取未读信息")
+    @PostMapping("/readNotice")
+    public Result<List<NoticeVo>> readNotice(){
+        return Result.ok(noticeSendService.readNotice());
+    }
 
 }

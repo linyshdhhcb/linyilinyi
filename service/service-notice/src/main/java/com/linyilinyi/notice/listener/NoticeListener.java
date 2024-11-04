@@ -1,12 +1,11 @@
 package com.linyilinyi.notice.listener;
 
-import com.alibaba.fastjson2.JSON;
 import com.linyilinyi.common.exception.LinyiException;
 import com.linyilinyi.common.model.ResultCodeEnum;
 import com.linyilinyi.model.entity.notice.NoticeInfo;
-import com.linyilinyi.model.vo.notice.CommentMessageVo;
-import com.linyilinyi.model.vo.notice.LikeMseeageVo;
 import com.linyilinyi.common.constant.MqConstant;
+import com.linyilinyi.model.vo.notice.NoticeSystemVo;
+import com.linyilinyi.model.vo.notice.NoticeVo;
 import com.linyilinyi.notice.mapper.NoticeInfoMapper;
 import jakarta.annotation.Resource;
 import lombok.RequiredArgsConstructor;
@@ -35,18 +34,20 @@ public class NoticeListener {
     private NoticeInfoMapper noticeInfoMapper;
 
     /**
-     * 点赞监听器
+     * 点赞信息
+     * @param noticeVo
+     * @throws InterruptedException
      */
     @RabbitListener(bindings = @QueueBinding(
             value = @Queue(name = MqConstant.Like_QUEUE_NAME, durable = "true"),
             exchange = @Exchange(name = MqConstant.Like_EXCHANGE_NAME),
             key = MqConstant.Like_ROUTING_KEY
     ))
-    public void likeListener(LikeMseeageVo likeMseeageVo) throws InterruptedException {
+    public void likeListener(NoticeVo noticeVo) throws InterruptedException {
 
         //信息插入数据库
         NoticeInfo noticeInfo = new NoticeInfo();
-        BeanUtils.copyProperties(likeMseeageVo,noticeInfo);
+        BeanUtils.copyProperties(noticeVo,noticeInfo);
         noticeInfo.setCreatedTime(LocalDateTime.now());
         noticeInfo.setMessageType(21001);
         int i = noticeInfoMapper.insert(noticeInfo);
@@ -56,21 +57,143 @@ public class NoticeListener {
         log.info("点赞消息监听成功");
     }
 
+    /**
+     * 评论监听器
+     * @param noticeVo
+     * @throws InterruptedException
+     */
     @RabbitListener(bindings = @QueueBinding(
             value = @Queue(name = MqConstant.COMMENT_QUEUE_NAME, durable = "true"),
             exchange = @Exchange(name = MqConstant.COMMENT_EXCHANGE_NAME),
             key = MqConstant.COMMENT_ROUTING_KEY
     ))
-    public void commentListener(CommentMessageVo commentMessageVo) throws InterruptedException {
+    public void commentListener(NoticeVo noticeVo) throws InterruptedException {
         //信息插入数据库
         NoticeInfo noticeInfo = new NoticeInfo();
-        BeanUtils.copyProperties(commentMessageVo,noticeInfo);
+        BeanUtils.copyProperties(noticeInfo,noticeInfo);
         noticeInfo.setCreatedTime(LocalDateTime.now());
         noticeInfo.setMessageType(21002);
         int i = noticeInfoMapper.insert(noticeInfo);
         if (i != 1){
             throw new LinyiException(ResultCodeEnum.INSERT_FAIL);
         }
-        log.info("点赞消息监听成功");
+        log.info("评论消息监听成功");
+    }
+
+    /**
+     * 收藏监听器
+     * @param noticeVo
+     * @throws InterruptedException
+     */
+    @RabbitListener(bindings = @QueueBinding(
+            value = @Queue(name = MqConstant.COLLECT_QUEUE_NAME, durable = "true"),
+            exchange = @Exchange(name = MqConstant.COLLECT_EXCHANGE_NAME),
+            key = MqConstant.COLLECT_ROUTING_KEY
+    ))
+    public void collectListener(NoticeVo noticeVo) throws InterruptedException {
+
+        //信息插入数据库
+        NoticeInfo noticeInfo = new NoticeInfo();
+        BeanUtils.copyProperties(noticeInfo,noticeInfo);
+        noticeInfo.setCreatedTime(LocalDateTime.now());
+        noticeInfo.setMessageType(21003);
+        int i = noticeInfoMapper.insert(noticeInfo);
+        if (i != 1){
+            throw new LinyiException(ResultCodeEnum.INSERT_FAIL);
+        }
+        log.info("收藏消息监听成功");
+    }
+
+    /**
+     * 关注监听器
+     * @param noticeVo
+     * @throws InterruptedException
+     */
+    @RabbitListener(bindings = @QueueBinding(
+            value = @Queue(name = MqConstant.FOLLOW_QUEUE_NAME, durable = "true"),
+            exchange = @Exchange(name = MqConstant.FOLLOW_EXCHANGE_NAME),
+            key = MqConstant.FOLLOW_ROUTING_KEY
+    ))
+    public void followListener(NoticeVo noticeVo) throws InterruptedException {
+
+        //信息插入数据库
+        NoticeInfo noticeInfo = new NoticeInfo();
+        BeanUtils.copyProperties(noticeInfo,noticeInfo);
+        noticeInfo.setCreatedTime(LocalDateTime.now());
+        noticeInfo.setMessageType(21004);
+        int i = noticeInfoMapper.insert(noticeInfo);
+        if (i != 1){
+            throw new LinyiException(ResultCodeEnum.INSERT_FAIL);
+        }
+        log.info("关注消息监听成功");
+    }
+
+    /**
+     * 私信监听器
+     * @param noticeVo
+     * @throws InterruptedException
+     */
+    @RabbitListener(bindings = @QueueBinding(
+            value = @Queue(name = MqConstant.PRIVATE_EXCHANGE_NAME, durable = "true"),
+            exchange = @Exchange(name = MqConstant.PRIVATE_EXCHANGE_NAME),
+            key = MqConstant.PRIVATE_ROUTING_KEY
+    ))
+    public void privateListener(NoticeVo noticeVo) throws InterruptedException {
+
+        //信息插入数据库
+        NoticeInfo noticeInfo = new NoticeInfo();
+        BeanUtils.copyProperties(noticeInfo,noticeInfo);
+        noticeInfo.setCreatedTime(LocalDateTime.now());
+        noticeInfo.setMessageType(21005);
+        int i = noticeInfoMapper.insert(noticeInfo);
+        if (i != 1){
+            throw new LinyiException(ResultCodeEnum.INSERT_FAIL);
+        }
+    }
+
+    /**
+     * 系统消息监听器
+     * @param noticeSystemVo
+     * @throws InterruptedException
+     */
+    @RabbitListener(bindings = @QueueBinding(
+            value = @Queue(name = MqConstant.SYSTEM_QUEUE_NAME, durable = "true"),
+            exchange = @Exchange(name = MqConstant.SYSTEM_EXCHANGE_NAME),
+            key = MqConstant.SYSTEM_ROUTING_KEY
+    ))
+    public void systemListener(NoticeSystemVo noticeSystemVo) throws InterruptedException {
+
+        //信息插入数据库
+        NoticeInfo noticeInfo = new NoticeInfo();
+        BeanUtils.copyProperties(noticeInfo,noticeInfo);
+        noticeInfo.setCreatedTime(LocalDateTime.now());
+        noticeInfo.setMessageType(21006);
+        int i = noticeInfoMapper.insert(noticeInfo);
+        if (i != 1){
+            throw new LinyiException(ResultCodeEnum.INSERT_FAIL);
+        }
+    }
+
+    /**
+     * 客服消息监听器
+     * @param noticeSystemVo
+     * @throws InterruptedException
+     */
+    @RabbitListener(bindings = @QueueBinding(
+            value = @Queue(name = MqConstant.CUSTOMER_QUEUE_NAME, durable = "true"),
+            exchange = @Exchange(name = MqConstant.CUSTOMER_EXCHANGE_NAME),
+            key = MqConstant.CUSTOMER_ROUTING_KEY
+    ))
+    public void customerListener(NoticeSystemVo noticeSystemVo) throws InterruptedException {
+
+        //信息插入数据库
+        NoticeInfo noticeInfo = new NoticeInfo();
+        BeanUtils.copyProperties(noticeInfo,noticeInfo);
+        noticeInfo.setCreatedTime(LocalDateTime.now());
+        noticeInfo.setMessageType(21007);
+        int i = noticeInfoMapper.insert(noticeInfo);
+        if (i != 1){
+            throw new LinyiException(ResultCodeEnum.INSERT_FAIL);
+        }
     }
 }

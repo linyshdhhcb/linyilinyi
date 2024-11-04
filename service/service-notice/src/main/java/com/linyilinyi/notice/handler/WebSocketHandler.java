@@ -32,9 +32,9 @@ public class WebSocketHandler extends TextWebSocketHandler {
         String uri = session.getUri().toString();
         Matcher matcher = USER_ID_PATTERN.matcher(uri);
         if (matcher.find()) {
-            String userId = matcher.group(1);
-            sessions.put(userId, session); // 将会话存储到映射中
-            log.info("用户{}的连接建立",userId);
+            String username = matcher.group(1);
+            sessions.put(username, session); // 将会话存储到映射中
+            log.info("用户{}的连接建立",username);
         }
     }
 
@@ -53,9 +53,9 @@ public class WebSocketHandler extends TextWebSocketHandler {
         String uri = session.getUri().toString();
         Matcher matcher = USER_ID_PATTERN.matcher(uri);
         if (matcher.find()) {
-            String userId = matcher.group(1);
+            String username = matcher.group(1);
             // 处理收到的消息（如有需要）
-            log.info("用户{}发送信息：{}",userId, message.getPayload());
+            log.info("用户{}发送信息：{}",username, message.getPayload());
         }
     }
 
@@ -65,15 +65,15 @@ public class WebSocketHandler extends TextWebSocketHandler {
         String uri = session.getUri().toString();
         Matcher matcher = USER_ID_PATTERN.matcher(uri);
         if (matcher.find()) {
-            String userId = matcher.group(1);
-            sessions.remove(userId);
-            log.info("用户 {} 的连接已关闭", userId);
+            String username = matcher.group(1);
+            sessions.remove(username);
+            log.info("用户 {} 的连接已关闭", username);
         }
     }
 
     // 方法：单点发送消息
-    public void sendMessageToUser(String userId, String message) throws Exception {
-        WebSocketSession session = sessions.get(userId);
+    public void sendMessageToUser(String username, String message) throws Exception {
+        WebSocketSession session = sessions.get(username);
         if (session != null && session.isOpen()) {
             session.sendMessage(new TextMessage(message));
         }
@@ -89,12 +89,20 @@ public class WebSocketHandler extends TextWebSocketHandler {
     }
 
     // 方法：向多个用户发送消息
-    public void sendMessageToUsers(List<String> userIds, String message) throws Exception {
-        for (String userId : userIds) {
-            WebSocketSession session = sessions.get(userId);
+    public void sendMessageToUsers(List<String> usernames, String message) throws Exception {
+        for (String username : usernames) {
+            WebSocketSession session = sessions.get(username);
             if (session != null && session.isOpen()) {
                 session.sendMessage(new TextMessage(message));
             }
+        }
+    }
+
+    //推送未读信息
+    public void sendUnreadMessage(String username, String message) throws Exception {
+        WebSocketSession session = sessions.get(username);
+        if (session != null && session.isOpen()) {
+            session.sendMessage(new TextMessage(message));
         }
     }
 }
