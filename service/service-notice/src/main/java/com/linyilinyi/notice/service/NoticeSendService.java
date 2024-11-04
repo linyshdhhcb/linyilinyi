@@ -1,6 +1,7 @@
 package com.linyilinyi.notice.service;
 
 import com.linyilinyi.common.model.Result;
+import com.linyilinyi.model.vo.notice.CommentMessageVo;
 import com.linyilinyi.model.vo.notice.LikeMseeageVo;
 
 /**
@@ -12,4 +13,6 @@ import com.linyilinyi.model.vo.notice.LikeMseeageVo;
 public interface NoticeSendService {
 
     void sendLikeNotice(LikeMseeageVo likeMseeageVo);
+
+    void sendCommentNotice(CommentMessageVo commentMessageVo);
 }

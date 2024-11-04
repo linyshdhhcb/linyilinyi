@@ -1,5 +1,6 @@
 package com.linyilinyi.notice.controller;
 
+import com.linyilinyi.model.vo.notice.CommentMessageVo;
 import com.linyilinyi.model.vo.notice.LikeMseeageVo;
 import com.linyilinyi.notice.service.NoticeSendService;
 import io.swagger.v3.oas.annotations.Operation;
@@ -34,8 +35,8 @@ public class NoticeSendController {
 
     @Operation(summary = "评论通知")
     @PostMapping("/sendCommentNotice")
-    public void sendCommentNotice(){
-         //noticeSendService.sendCommentNotice();
+    public void sendCommentNotice(@RequestBody CommentMessageVo commentMessageVo){
+         noticeSendService.sendCommentNotice(commentMessageVo);
     }
 
 

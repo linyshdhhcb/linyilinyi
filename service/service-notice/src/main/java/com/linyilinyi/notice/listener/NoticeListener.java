@@ -4,6 +4,7 @@ import com.alibaba.fastjson2.JSON;
 import com.linyilinyi.common.exception.LinyiException;
 import com.linyilinyi.common.model.ResultCodeEnum;
 import com.linyilinyi.model.entity.notice.NoticeInfo;
+import com.linyilinyi.model.vo.notice.CommentMessageVo;
 import com.linyilinyi.model.vo.notice.LikeMseeageVo;
 import com.linyilinyi.common.constant.MqConstant;
 import com.linyilinyi.notice.mapper.NoticeInfoMapper;
@@ -48,6 +49,24 @@ public class NoticeListener {
         BeanUtils.copyProperties(likeMseeageVo,noticeInfo);
         noticeInfo.setCreatedTime(LocalDateTime.now());
         noticeInfo.setMessageType(21001);
+        int i = noticeInfoMapper.insert(noticeInfo);
+        if (i != 1){
+            throw new LinyiException(ResultCodeEnum.INSERT_FAIL);
+        }
+        log.info("点赞消息监听成功");
+    }
+
+    @RabbitListener(bindings = @QueueBinding(
+            value = @Queue(name = MqConstant.COMMENT_QUEUE_NAME, durable = "true"),
+            exchange = @Exchange(name = MqConstant.COMMENT_EXCHANGE_NAME),
+            key = MqConstant.COMMENT_ROUTING_KEY
+    ))
+    public void commentListener(CommentMessageVo commentMessageVo) throws InterruptedException {
+        //信息插入数据库
+        NoticeInfo noticeInfo = new NoticeInfo();
+        BeanUtils.copyProperties(commentMessageVo,noticeInfo);
+        noticeInfo.setCreatedTime(LocalDateTime.now());
+        noticeInfo.setMessageType(21002);
         int i = noticeInfoMapper.insert(noticeInfo);
         if (i != 1){
             throw new LinyiException(ResultCodeEnum.INSERT_FAIL);
