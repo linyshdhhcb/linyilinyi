@@ -18,6 +18,7 @@ public class NoticeSendServiceImpl implements NoticeSendService {
 
     @Resource
     private RabbitTemplate rabbitTemplate;
+
     @Override
     public void sendLikeNotice(LikeMseeageVo likeMseeageVo) {
         rabbitTemplate.convertAndSend(MqConstant.Like_EXCHANGE_NAME, MqConstant.Like_ROUTING_KEY, likeMseeageVo);

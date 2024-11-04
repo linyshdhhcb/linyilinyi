@@ -1,5 +1,6 @@
 package com.linyilinyi.notice.listener;
 
+import com.alibaba.fastjson2.JSON;
 import com.linyilinyi.common.exception.LinyiException;
 import com.linyilinyi.common.model.ResultCodeEnum;
 import com.linyilinyi.model.entity.notice.NoticeInfo;
@@ -40,7 +41,9 @@ public class NoticeListener {
             exchange = @Exchange(name = MqConstant.Like_EXCHANGE_NAME),
             key = MqConstant.Like_ROUTING_KEY
     ))
-    public void likeListener(LikeMseeageVo likeMseeageVo) {
+    public void likeListener(LikeMseeageVo likeMseeageVo) throws InterruptedException {
+
+        //信息插入数据库
         NoticeInfo noticeInfo = new NoticeInfo();
         BeanUtils.copyProperties(likeMseeageVo,noticeInfo);
         noticeInfo.setCreatedTime(LocalDateTime.now());

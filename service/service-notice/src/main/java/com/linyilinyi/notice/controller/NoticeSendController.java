@@ -1,7 +1,5 @@
 package com.linyilinyi.notice.controller;
 
-import com.github.xiaoymin.knife4j.annotations.ApiSupport;
-import com.linyilinyi.common.model.Result;
 import com.linyilinyi.model.vo.notice.LikeMseeageVo;
 import com.linyilinyi.notice.service.NoticeSendService;
 import io.swagger.v3.oas.annotations.Operation;

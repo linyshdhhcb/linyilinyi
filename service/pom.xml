@@ -25,6 +25,7 @@
         <module>service-system</module>
         <module>service-search</module>
         <module>service-notice</module>
+
     </modules>
     <dependencies>
         <dependency>
