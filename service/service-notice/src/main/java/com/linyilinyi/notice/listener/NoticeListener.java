@@ -6,6 +6,7 @@ import com.linyilinyi.model.entity.notice.NoticeInfo;
 import com.linyilinyi.common.constant.MqConstant;
 import com.linyilinyi.model.vo.notice.NoticeSystemVo;
 import com.linyilinyi.model.vo.notice.NoticeVo;
+import com.linyilinyi.notice.handler.WebSocketHandler;
 import com.linyilinyi.notice.mapper.NoticeInfoMapper;
 import jakarta.annotation.Resource;
 import lombok.RequiredArgsConstructor;
@@ -33,6 +34,7 @@ public class NoticeListener {
     @Resource
     private NoticeInfoMapper noticeInfoMapper;
 
+
     /**
      * 点赞信息
      * @param noticeVo
@@ -55,6 +57,13 @@ public class NoticeListener {
             throw new LinyiException(ResultCodeEnum.INSERT_FAIL);
         }
         log.info("点赞消息监听成功");
+        //通过websocket 发送消息
+        try {
+            new WebSocketHandler().sendMessageToUser(String.valueOf(noticeVo.getReceiverId()), noticeVo.getContent());
+            log.info("点赞消息发送成功");
+        } catch (Exception e) {
+            throw new LinyiException(ResultCodeEnum.SEND_WEBSOCKET_MESSAGE_ERROR);
+        }
     }
 
     /**

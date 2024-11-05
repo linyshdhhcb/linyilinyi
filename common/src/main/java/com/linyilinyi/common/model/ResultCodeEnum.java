@@ -60,7 +60,8 @@ public enum ResultCodeEnum {
     DATABASE_ERROR(400, "数据库方面异常"),
     TOKEN_NULL(401, "token为空"),
     SYSTEM_ERROR(500, "系统内部错误"),
-    UNAUTHORIZED(210, "为经授权");
+    UNAUTHORIZED(210, "为经授权"),
+    SEND_WEBSOCKET_MESSAGE_ERROR(408, "发送websocket消息错误");
 
     private Integer code;
 

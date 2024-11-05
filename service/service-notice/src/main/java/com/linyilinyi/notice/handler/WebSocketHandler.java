@@ -35,6 +35,7 @@ public class WebSocketHandler extends TextWebSocketHandler {
             String username = matcher.group(1);
             sessions.put(username, session); // 将会话存储到映射中
             log.info("用户{}的连接建立",username);
+            log.info("当前在线用户数：{}", sessions.size());
         }
     }
 
@@ -68,6 +69,7 @@ public class WebSocketHandler extends TextWebSocketHandler {
             String username = matcher.group(1);
             sessions.remove(username);
             log.info("用户 {} 的连接已关闭", username);
+            log.info("当前在线用户数：{}", sessions.size());
         }
     }
 

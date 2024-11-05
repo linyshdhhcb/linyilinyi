@@ -10,6 +10,7 @@ import com.linyilinyi.model.vo.notice.NoticeSystemVo;
 import com.linyilinyi.model.vo.notice.NoticeVo;
 import com.linyilinyi.notice.mapper.NoticeInfoMapper;
 import com.linyilinyi.notice.service.NoticeSendService;
+import com.mysql.cj.protocol.x.Notice;
 import jakarta.annotation.Resource;
 import org.apache.ibatis.annotations.Case;
 import org.springframework.amqp.rabbit.core.RabbitTemplate;
@@ -17,7 +18,10 @@ import org.springframework.beans.BeanUtils;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
+import java.util.stream.Collectors;
 
 /**
  * @Description
@@ -46,29 +50,29 @@ public class NoticeSendServiceImpl implements NoticeSendService {
         // 根据消息类型执行不同的发送逻辑
         switch (noticeVo.getMessageType()) {
             // 点赞
-            case NoticeTypeConstant.LIKE_NOTICE->
+            case NoticeTypeConstant.LIKE_NOTICE ->
                 // 将消息发送到点赞通知的交换机和路由键指定的队列
-                rabbitTemplate.convertAndSend(MqConstant.Like_EXCHANGE_NAME, MqConstant.Like_ROUTING_KEY, noticeVo);
+                    rabbitTemplate.convertAndSend(MqConstant.Like_EXCHANGE_NAME, MqConstant.Like_ROUTING_KEY, noticeVo);
             // 收藏
-            case NoticeTypeConstant.COLLECT_NOTICE->
+            case NoticeTypeConstant.COLLECT_NOTICE ->
                 // 将消息发送到收藏通知的交换机和路由键指定的队列
-                rabbitTemplate.convertAndSend(MqConstant.COLLECT_EXCHANGE_NAME, MqConstant.COLLECT_ROUTING_KEY, noticeVo);
+                    rabbitTemplate.convertAndSend(MqConstant.COLLECT_EXCHANGE_NAME, MqConstant.COLLECT_ROUTING_KEY, noticeVo);
             // 评论
-            case NoticeTypeConstant.COMMENT_NOTICE->
+            case NoticeTypeConstant.COMMENT_NOTICE ->
                 // 将消息发送到评论通知的交换机和路由键指定的队列
-                rabbitTemplate.convertAndSend(MqConstant.COMMENT_EXCHANGE_NAME, MqConstant.COMMENT_ROUTING_KEY, noticeVo);
+                    rabbitTemplate.convertAndSend(MqConstant.COMMENT_EXCHANGE_NAME, MqConstant.COMMENT_ROUTING_KEY, noticeVo);
             // 关注
-            case NoticeTypeConstant.FOLLOW_NOTICE->
+            case NoticeTypeConstant.FOLLOW_NOTICE ->
                 // 将消息发送到关注通知的交换机和路由键指定的队列
-                rabbitTemplate.convertAndSend(MqConstant.FOLLOW_EXCHANGE_NAME, MqConstant.FOLLOW_ROUTING_KEY, noticeVo);
+                    rabbitTemplate.convertAndSend(MqConstant.FOLLOW_EXCHANGE_NAME, MqConstant.FOLLOW_ROUTING_KEY, noticeVo);
             // 私信
-            case NoticeTypeConstant.PRIVATE_MESSAGE_NOTICE->
+            case NoticeTypeConstant.PRIVATE_MESSAGE_NOTICE ->
                 // 将消息发送到私信通知的交换机和路由键指定的队列
-                rabbitTemplate.convertAndSend(MqConstant.PRIVATE_EXCHANGE_NAME, MqConstant.PRIVATE_ROUTING_KEY, noticeVo);
+                    rabbitTemplate.convertAndSend(MqConstant.PRIVATE_EXCHANGE_NAME, MqConstant.PRIVATE_ROUTING_KEY, noticeVo);
             // 客服
-            case NoticeTypeConstant.CUSTOMER_NOTICE->
+            case NoticeTypeConstant.CUSTOMER_NOTICE ->
                 // 将消息发送到客服通知的交换机和路由键指定的队列
-                rabbitTemplate.convertAndSend(MqConstant.CUSTOMER_EXCHANGE_NAME, MqConstant.CUSTOMER_ROUTING_KEY, noticeVo);
+                    rabbitTemplate.convertAndSend(MqConstant.CUSTOMER_EXCHANGE_NAME, MqConstant.CUSTOMER_ROUTING_KEY, noticeVo);
             // 默认情况，抛出异常
             default -> throw new LinyiException("消息类型不存在");
         }
@@ -88,14 +92,99 @@ public class NoticeSendServiceImpl implements NoticeSendService {
 
     @Override
     public List<NoticeVo> readNotice() {
-        Integer userId = AuthContextUser.getUserId();
-        LambdaQueryWrapper<NoticeInfo> queryWrapper = new LambdaQueryWrapper<NoticeInfo>().eq(NoticeInfo::getReceiverId, userId).eq(NoticeInfo::getIsRead, 0).orderByDesc(NoticeInfo::getSenderId);
+        LambdaQueryWrapper<NoticeInfo> queryWrapper = new LambdaQueryWrapper<NoticeInfo>().eq(NoticeInfo::getReceiverId, AuthContextUser.getUserId()).eq(NoticeInfo::getIsRead, 0).orderByDesc(NoticeInfo::getSenderId);
         ArrayList<NoticeVo> noticeVos = new ArrayList<>();
-        noticeInfoMapper.selectList(queryWrapper).stream().forEach(e->{
+        noticeInfoMapper.selectList(queryWrapper).stream().forEach(e -> {
             NoticeVo noticeVo = new NoticeVo();
-            BeanUtils.copyProperties(e,noticeVo);
+            BeanUtils.copyProperties(e, noticeVo);
             noticeVos.add(noticeVo);
         });
         return noticeVos;
+    }
+
+    @Override
+    public List<NoticeInfo> read(Integer senderId) {
+        LambdaQueryWrapper<NoticeInfo> queryWrapper = new LambdaQueryWrapper<NoticeInfo>().eq(NoticeInfo::getSenderId, senderId).eq(NoticeInfo::getReceiverId, AuthContextUser.getUserId()).eq(NoticeInfo::getIsRead, 0).orderByDesc(NoticeInfo::getSenderId);
+        noticeInfoMapper.selectList(queryWrapper).stream().forEach(e -> {
+            e.setIsRead(1);
+        });
+        return noticeInfoMapper.selectList(new LambdaQueryWrapper<NoticeInfo>().eq(NoticeInfo::getSenderId, senderId).eq(NoticeInfo::getReceiverId, AuthContextUser.getUserId()).orderByAsc(NoticeInfo::getCreatedTime));
+    }
+
+    @Override
+    public Map<String, List<NoticeInfo>> getNotice() {
+        String LIKE = "like";
+        String COMMENT = "comment";
+        String COLLECT = "collect";
+        String FOLLOW = "follow";
+        String PRIVATE = "private";
+        String SYSTEM = "system";
+        //获取通知列表
+        List<NoticeInfo> noticeList = noticeInfoMapper.selectList(new LambdaQueryWrapper<NoticeInfo>().eq(NoticeInfo::getReceiverId, AuthContextUser.getUserId()).orderByDesc(NoticeInfo::getMessageType).orderByDesc(NoticeInfo::getCreatedTime));
+        HashMap<String, List<NoticeInfo>> map = new HashMap<>();
+        List<NoticeInfo> noticeInfoLikeList = new ArrayList<>();
+        List<NoticeInfo> noticeInfoCommentList = new ArrayList<>();
+        List<NoticeInfo> noticeInfoCollectList = new ArrayList<>();
+        List<NoticeInfo> noticeInfoFollowList = new ArrayList<>();
+        List<NoticeInfo> noticeInfoPrivateList = new ArrayList<>();
+        List<NoticeInfo> noticeInfoSystemList = new ArrayList<>();
+        noticeList.stream().forEach(e -> {
+            switch (e.getMessageType()) {
+                // 点赞
+                case NoticeTypeConstant.LIKE_NOTICE -> {
+                    noticeInfoLikeList.add(e);
+                    map.put(LIKE, noticeInfoLikeList);
+                }
+
+                // 收藏
+                case NoticeTypeConstant.COLLECT_NOTICE -> {
+                    noticeInfoCommentList.add(e);
+                    map.put(COLLECT, noticeInfoCommentList);
+                }
+
+                // 评论
+                case NoticeTypeConstant.COMMENT_NOTICE -> {
+                    noticeInfoCollectList.add(e);
+                    map.put(COMMENT, noticeInfoCollectList);
+                }
+
+                // 关注
+                case NoticeTypeConstant.FOLLOW_NOTICE -> {
+                    noticeInfoFollowList.add(e);
+                    map.put(FOLLOW, noticeInfoFollowList);
+                }
+
+                // 私信
+                case NoticeTypeConstant.PRIVATE_MESSAGE_NOTICE -> {
+                    noticeInfoPrivateList.add(e);
+                    map.put(PRIVATE, noticeInfoPrivateList);
+                }
+
+                // 客服
+                case NoticeTypeConstant.CUSTOMER_NOTICE -> {
+                    noticeInfoSystemList.add(e);
+                    map.put(SYSTEM, noticeInfoSystemList);
+                }
+                // 默认情况，抛出异常
+                default -> System.out.println("消息类型不存在");
+            }
+        });
+        return map;
+    }
+
+    @Override
+    public Map<Integer,List<NoticeInfo>> sendPrivateMessage() {
+        List<NoticeInfo> noticeInfos = noticeInfoMapper.selectList(new LambdaQueryWrapper<NoticeInfo>().eq(NoticeInfo::getReceiverId, AuthContextUser.getUserId()).eq(NoticeInfo::getMessageType, NoticeTypeConstant.PRIVATE_MESSAGE_NOTICE).orderByDesc(NoticeInfo::getCreatedTime));
+        HashMap<Integer, List<NoticeInfo>> map = new HashMap<>();
+        noticeInfos.stream().forEach(e -> {
+            if (map.containsKey(e.getSenderId())) {
+                map.get(e.getSenderId()).add(e);
+            } else {
+                ArrayList<NoticeInfo> arrayList = new ArrayList<>();
+                arrayList.add(e);
+                map.put(e.getSenderId(), arrayList);
+            }
+        });
+        return map;
     }
 }

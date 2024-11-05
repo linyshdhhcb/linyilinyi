@@ -9,6 +9,7 @@ import org.springframework.cloud.openfeign.EnableFeignClients;
 
 @SpringBootApplication(scanBasePackages = {"com.linyilinyi.common.exception", "com.linyilinyi.common.config","com.linyilinyi.notice"})
 @EnableDiscoveryClient
+@EnableRabbit
 @EnableFeignClients("com.linyilinyi")
 @MapperScan("com.linyilinyi.notice.mapper")
 public class NoticeApplication {

@@ -46,7 +46,7 @@ public class NoticeInfo implements Serializable {
     private String content;
 
     @Schema(description = "标记信息是否已读(已读：1，未读：0)")
-    private Boolean isRead;
+    private Integer isRead;
 
     @Schema(description = "信息的创建时间")
     private LocalDateTime createdTime;
