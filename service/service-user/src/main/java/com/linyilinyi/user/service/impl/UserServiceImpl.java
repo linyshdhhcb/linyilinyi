@@ -9,12 +9,11 @@ import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.linyilinyi.common.exception.LinyiException;
 import com.linyilinyi.common.model.PageResult;
 import com.linyilinyi.common.model.ResultCodeEnum;
+import com.linyilinyi.common.utils.EmailUtil;
 import com.linyilinyi.common.utils.PasswordEncoder;
 import com.linyilinyi.model.entity.user.User;
-import com.linyilinyi.model.vo.user.LoginVo;
-import com.linyilinyi.model.vo.user.UserAddVo;
-import com.linyilinyi.model.vo.user.UserQueryVo;
-import com.linyilinyi.model.vo.user.UserUpdateVo;
+import com.linyilinyi.model.vo.code.Code;
+import com.linyilinyi.model.vo.user.*;
 import com.linyilinyi.user.mapper.UserMapper;
 import com.linyilinyi.user.service.UserService;
 import jakarta.annotation.Resource;
@@ -23,13 +22,16 @@ import org.apache.commons.lang3.RandomStringUtils;
 import org.apache.commons.lang3.RandomUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.BeanUtils;
+import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Service;
 
+import javax.mail.MessagingException;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
 import java.util.Random;
 import java.util.UUID;
+import java.util.concurrent.TimeUnit;
 
 /**
  * <p>
@@ -44,6 +46,9 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements Us
 
     @Resource
     private UserMapper userMapper;
+
+    @Resource
+    private RedisTemplate redisTemplate;
 
     @Override
     public User getUserById(Integer id) {
@@ -138,5 +143,56 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements Us
             return tokenValue;
         }
         throw new LinyiException(ResultCodeEnum.PASSWORD_ERROR);
+    }
+
+    @Override
+    public String register(UserRegisterVo userRegisterVo) {
+        //验证码校验
+        Code code = null;
+        try {
+            code = (Code) redisTemplate.opsForValue().get("user:register:code:" + userRegisterVo.getCodeKey());
+        } catch (Exception e) {
+            throw new LinyiException("验证码获取异常");
+        }
+        if (!code.getCode().equals(userRegisterVo.getCode())){
+            throw new LinyiException("验证码错误");
+        }
+        if (!userRegisterVo.getPassword().equals(userRegisterVo.getPasswords())){
+            throw new LinyiException("两次密码不相同");
+        }
+        if (getByUsername(userRegisterVo.getUsername())!=null){
+            throw new LinyiException("用户名已存在");
+        }
+        User user = new User();
+        BeanUtils.copyProperties(userRegisterVo,user);
+        String salt = RandomStringUtils.randomAlphanumeric(20);
+        user.setSalt(salt);
+        String password = PasswordEncoder.encode(user.getPassword(), salt);
+        user.setPassword(password);
+        user.setImage("http://192.168.85.129:9000/linyilinyi/image/moren/1111.webp");
+        user.setNickname("user_"+String.valueOf(System.currentTimeMillis())+RandomStringUtils.randomAlphanumeric(5));
+        user.setCreateTime(LocalDateTime.now());
+        int i = userMapper.insert(user);
+        if (i!=1){
+            throw new LinyiException(ResultCodeEnum.INSERT_FAIL);
+        }
+        redisTemplate.delete("user:register:code:" + userRegisterVo.getCodeKey());
+        return "注册成功";
+    }
+
+    @Override
+    public Code getRegisterCode(String mail) {
+        Code code1 = new Code();
+        try {
+            String code = RandomStringUtils.randomNumeric(6);
+            String keyCode = UUID.randomUUID().toString().replace("-", "");
+            code1.setCode(code);
+            code1.setCodeKey(keyCode);
+            EmailUtil.sendEmail(mail, "注册验证码", "欢迎注册linyilinyi，您的验证码为：" + code+"。有效期10分钟。");
+        } catch (MessagingException e) {
+            throw new LinyiException(ResultCodeEnum.SEND_EMAIL_ERROR);
+        }
+        redisTemplate.opsForValue().set("user:register:code:" + code1.getCodeKey(), code1, 10, TimeUnit.MINUTES);
+        return code1;
     }
 }

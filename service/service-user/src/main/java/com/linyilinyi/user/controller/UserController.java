@@ -7,10 +7,8 @@ import com.linyilinyi.common.exception.LinyiException;
 import com.linyilinyi.common.model.PageResult;
 import com.linyilinyi.common.model.Result;
 import com.linyilinyi.model.entity.user.User;
-import com.linyilinyi.model.vo.user.LoginVo;
-import com.linyilinyi.model.vo.user.UserAddVo;
-import com.linyilinyi.model.vo.user.UserQueryVo;
-import com.linyilinyi.model.vo.user.UserUpdateVo;
+import com.linyilinyi.model.vo.code.Code;
+import com.linyilinyi.model.vo.user.*;
 import com.linyilinyi.user.service.UserService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -78,8 +76,8 @@ public class UserController {
 
     @Operation(summary = "用户注册")
     @PostMapping("/register")
-    public Result<String> register(@RequestBody UserAddVo userAddVo){
-        return null;
+    public Result<String> register(@RequestBody UserRegisterVo userRegisterVo){
+      return Result.ok(userService.register(userRegisterVo));
     }
 
     @Operation(summary = "获取用户权限")
@@ -109,11 +107,10 @@ public class UserController {
         return Result.ok("退出成功");
     }
 
-    @Operation(summary = "获取当前用户信息")
-    @GetMapping("/getCurrentUser")
-    public void getCurrentUser() {
-        log.info("------ 全局鉴权，当前登录账号id=" + StpUtil.getLoginId());
-        log.info("------ 全局鉴权，当前登录权限集合=" +StpUtil.getPermissionList());
-        log.info("------ 全局鉴权，当前登录角色集合=" +StpUtil.getRoleList());
+    @Operation(summary = "获取用户注册验证码")
+    @GetMapping("/getRegisterCode")
+    public Result<Code> getRegisterCode(@RequestParam String mail) {
+        return Result.ok(userService.getRegisterCode(mail));
     }
+
 }

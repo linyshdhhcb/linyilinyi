@@ -3,10 +3,8 @@ package com.linyilinyi.user.service;
 import com.baomidou.mybatisplus.extension.service.IService;
 import com.linyilinyi.common.model.PageResult;
 import com.linyilinyi.model.entity.user.User;
-import com.linyilinyi.model.vo.user.LoginVo;
-import com.linyilinyi.model.vo.user.UserAddVo;
-import com.linyilinyi.model.vo.user.UserQueryVo;
-import com.linyilinyi.model.vo.user.UserUpdateVo;
+import com.linyilinyi.model.vo.code.Code;
+import com.linyilinyi.model.vo.user.*;
 
 import java.util.List;
 
@@ -33,4 +31,8 @@ public interface UserService extends IService<User> {
     User getByUsername(String username);
 
     String login(LoginVo loginVo);
+
+    String register(UserRegisterVo userRegisterVo);
+
+    Code getRegisterCode(String mail);
 }

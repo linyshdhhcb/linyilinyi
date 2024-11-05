@@ -12,8 +12,8 @@ import lombok.Data;
 @Data
 public class Code {
 
-    @Schema(description = "状态码")
-    private Integer code;
+    @Schema(description = "验证码")
+    private String code;
 
     @Schema(description = "键")
     private String codeKey;
