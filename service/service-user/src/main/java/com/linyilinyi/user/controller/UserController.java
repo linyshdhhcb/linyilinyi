@@ -107,6 +107,12 @@ public class UserController {
         return Result.ok("退出成功");
     }
 
+    @Operation(summary = "忘记密码")
+    @PostMapping("/forgetPassword")
+    public Result<String> forgetPassword(@RequestBody ForgetPasswordVo forgetPasswordVo) {
+        return Result.ok(userService.forgetPassword(forgetPasswordVo));
+    }
+
     @Operation(summary = "获取用户注册验证码")
     @GetMapping("/getRegisterCode")
     public Result<Code> getRegisterCode(@RequestParam String mail) {

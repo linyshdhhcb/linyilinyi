@@ -35,4 +35,7 @@ public interface UserService extends IService<User> {
     String register(UserRegisterVo userRegisterVo);
 
     Code getRegisterCode(String mail);
+
+    String forgetPassword(ForgetPasswordVo forgetPasswordVo);
+
 }

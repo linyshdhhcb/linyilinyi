@@ -150,7 +150,7 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements Us
         //验证码校验
         Code code = null;
         try {
-            code = (Code) redisTemplate.opsForValue().get("user:register:code:" + userRegisterVo.getCodeKey());
+            code = (Code) redisTemplate.opsForValue().get("user:code:" + userRegisterVo.getCodeKey());
         } catch (Exception e) {
             throw new LinyiException("验证码获取异常");
         }
@@ -176,7 +176,7 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements Us
         if (i!=1){
             throw new LinyiException(ResultCodeEnum.INSERT_FAIL);
         }
-        redisTemplate.delete("user:register:code:" + userRegisterVo.getCodeKey());
+        redisTemplate.delete("user:code:" + userRegisterVo.getCodeKey());
         return "注册成功";
     }
 
@@ -188,11 +188,39 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements Us
             String keyCode = UUID.randomUUID().toString().replace("-", "");
             code1.setCode(code);
             code1.setCodeKey(keyCode);
-            EmailUtil.sendEmail(mail, "注册验证码", "欢迎注册linyilinyi，您的验证码为：" + code+"。有效期10分钟。");
+            EmailUtil.sendEmail(mail, "验证码", "欢迎注册linyilinyi，您的验证码为：" + code+"。有效期10分钟。");
         } catch (MessagingException e) {
             throw new LinyiException(ResultCodeEnum.SEND_EMAIL_ERROR);
         }
-        redisTemplate.opsForValue().set("user:register:code:" + code1.getCodeKey(), code1, 10, TimeUnit.MINUTES);
+        redisTemplate.opsForValue().set("user:code:" + code1.getCodeKey(), code1, 10, TimeUnit.MINUTES);
         return code1;
+    }
+
+    @Override
+    public String forgetPassword(ForgetPasswordVo forgetPasswordVo) {
+        //验证码校验
+        Code code = null;
+        try {
+            code = (Code) redisTemplate.opsForValue().get("user:code:" + forgetPasswordVo.getCodeKey());
+        } catch (Exception e) {
+            throw new LinyiException("验证码获取异常");
+        }
+        if (!code.getCode().equals(forgetPasswordVo.getCode())){
+            throw new LinyiException("验证码错误");
+        }
+        if (!forgetPasswordVo.getPassword().equals(forgetPasswordVo.getPasswords())){
+            throw new LinyiException("两次密码不相同");
+        }
+
+        User user = userMapper.selectOne(new LambdaQueryWrapper<User>().eq(User::getMail, forgetPasswordVo.getMail()));
+
+        String encode = PasswordEncoder.encode(forgetPasswordVo.getPassword(), user.getSalt());
+        user.setPassword(encode);
+        int i = userMapper.updateById(user);
+        if (i!=1){
+            throw new LinyiException(ResultCodeEnum.UPDATE_FAIL);
+        }
+        redisTemplate.delete("user:code:" + forgetPasswordVo.getCodeKey());
+        return "修改成功";
     }
 }
