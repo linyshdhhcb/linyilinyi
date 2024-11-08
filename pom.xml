@@ -22,7 +22,7 @@
         <module>model</module>
         <module>gateway</module>
         <module>service-client</module>
-
+        <module>OperLog</module>
     </modules>
 
     <properties>

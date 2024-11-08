@@ -15,7 +15,7 @@ import org.springframework.context.annotation.ComponentScan;
  * @Date 2024/9/14
  * @ClassName: UserApplication
  */
-@SpringBootApplication(scanBasePackages = {"com.linyilinyi.common.exception", "com.linyilinyi.common.config","com.linyilinyi.user"})
+@SpringBootApplication(scanBasePackages = {"com.linyilinyi.common.exception", "com.linyilinyi.common.config","com.linyilinyi.log","com.linyilinyi.user"})
 @EnableDiscoveryClient
 @EnableFeignClients("com.linyilinyi")
 @MapperScan("com.linyilinyi.user.mapper")

@@ -6,6 +6,7 @@ import com.alibaba.fastjson2.JSON;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
+import com.linyilinyi.common.constant.SystemConstant;
 import com.linyilinyi.common.exception.LinyiException;
 import com.linyilinyi.common.model.PageResult;
 import com.linyilinyi.common.model.ResultCodeEnum;
@@ -99,7 +100,7 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements Us
 
     @Override
     public String addUser(UserAddVo userAddVo) {
-        userAddVo.setImage("http://192.168.85.129:9000/linyilinyi/image/moren/1111.webp");
+        userAddVo.setImage(SystemConstant.USER_DEFAULT_AVATAR);
         if (!userAddVo.getPassword().equals(userAddVo.getPasswords())){
             throw new LinyiException(ResultCodeEnum.PASSWORDS_ERROR);
         }
@@ -169,7 +170,7 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements Us
         user.setSalt(salt);
         String password = PasswordEncoder.encode(user.getPassword(), salt);
         user.setPassword(password);
-        user.setImage("http://192.168.85.129:9000/linyilinyi/image/moren/1111.webp");
+        user.setImage(SystemConstant.USER_DEFAULT_AVATAR);
         user.setNickname("user_"+String.valueOf(System.currentTimeMillis())+RandomStringUtils.randomAlphanumeric(5));
         user.setCreateTime(LocalDateTime.now());
         int i = userMapper.insert(user);

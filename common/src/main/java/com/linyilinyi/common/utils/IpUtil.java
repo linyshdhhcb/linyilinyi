@@ -12,6 +12,12 @@ import java.net.UnknownHostException;
  */
 public class IpUtil {
 
+    /**
+     * 获取用户的真实IP地址，避免通过代理或负载均衡影响IP获取
+     *
+     * @param request HttpServletRequest对象，用于获取请求头信息
+     * @return 用户的真实IP地址，如果无法获取，则返回空字符串
+     */
     public static String getIpAddress(HttpServletRequest request) {
         String ipAddress = null;
         try {
@@ -50,6 +56,13 @@ public class IpUtil {
         return ipAddress;
     }
 
+    /**
+     * 获取客户端真实的IP地址
+     * 该方法主要用于处理经过多次反向代理的情况，以确保获取到的IP地址是最初发起请求的客户端IP
+     *
+     * @param request ServerHttpRequest对象，用于获取请求头信息
+     * @return 返回客户端真实的IP地址
+     */
     public static String getGatwayIpAddress(ServerHttpRequest request) {
         HttpHeaders headers = request.getHeaders();
         String ip = headers.getFirst("x-forwarded-for");

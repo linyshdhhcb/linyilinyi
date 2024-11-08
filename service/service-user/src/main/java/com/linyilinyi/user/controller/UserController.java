@@ -1,11 +1,9 @@
 package com.linyilinyi.user.controller;
 
-import cn.dev33.satoken.exception.NotLoginException;
 import cn.dev33.satoken.stp.StpUtil;
-import cn.dev33.satoken.util.SaResult;
-import com.linyilinyi.common.exception.LinyiException;
 import com.linyilinyi.common.model.PageResult;
 import com.linyilinyi.common.model.Result;
+import com.linyilinyi.log.annotation.Log;
 import com.linyilinyi.model.entity.user.User;
 import com.linyilinyi.model.vo.code.Code;
 import com.linyilinyi.model.vo.user.*;
@@ -86,8 +84,10 @@ public class UserController {
         return null;
     }
 
+
     @Operation(summary = "查询登录状态(登录：true，未登录：false)")
     @GetMapping("/isLogin")
+    @Log(title = "用户管理", content = "查询登录状态(登录：true，未登录：false)")
     public Result<Boolean> isLogin() {
         log.info("是否登录：{}",StpUtil.isLogin());
         boolean b = StpUtil.isLogin() ? true : false;

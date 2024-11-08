@@ -20,6 +20,12 @@
     </properties>
 
     <dependencies>
+
+        <dependency>
+            <groupId>com.linyilinyi</groupId>
+            <artifactId>service-system</artifactId>
+            <version>1.0</version>
+        </dependency>
         <!-- jedis-->
         <dependency>
             <groupId>redis.clients</groupId>

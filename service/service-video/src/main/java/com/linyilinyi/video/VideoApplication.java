@@ -18,7 +18,7 @@ import java.text.MessageFormat;
  * @ClassName: VideoApplication
  */
 
-@SpringBootApplication(scanBasePackages = {"com.linyilinyi.common.exception", "com.linyilinyi.common.config","com.linyilinyi.video"})
+@SpringBootApplication(scanBasePackages = {"com.linyilinyi.common.exception", "com.linyilinyi.common.config","com.linyilinyi.log","com.linyilinyi.video"})
 @EnableDiscoveryClient
 @EnableFeignClients("com.linyilinyi")
 @MapperScan("com.linyilinyi.video.mapper")

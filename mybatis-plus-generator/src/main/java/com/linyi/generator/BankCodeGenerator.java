@@ -46,7 +46,8 @@ public class BankCodeGenerator {
 //			"user_role"
 //			"dictionary_label",
 //			"dictionary_type"
-			"notice_info"
+//			"notice_info"
+		"oper_log"
 	};
 
 	// TODO 默认生成entity，需要生成DTO修改此变量

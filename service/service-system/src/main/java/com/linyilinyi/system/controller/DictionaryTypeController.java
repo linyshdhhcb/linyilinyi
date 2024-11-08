@@ -1,12 +1,12 @@
 package com.linyilinyi.system.controller;
 
 import com.linyilinyi.common.model.Result;
+import com.linyilinyi.log.annotation.Log;
 import com.linyilinyi.model.entity.dictionary.DictionaryType;
 import com.linyilinyi.system.service.DictionaryTypeService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.annotation.Resource;
-import jakarta.validation.Valid;
 import jakarta.validation.constraints.Positive;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
@@ -56,6 +56,7 @@ public class DictionaryTypeController {
         return Result.ok(dictionaryTypeService.updateDictionaryType(dictionaryType));
     }
 
+    @Log(title = "数据字典类型表", content = "获取全部数据类型列表")
     @Operation(summary = "获取全部数据类型列表")
     @GetMapping("getDictionaryTypeList")
     public Result<List<DictionaryType>> getDictionaryTypeList() {

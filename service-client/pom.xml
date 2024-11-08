@@ -12,10 +12,10 @@
     <artifactId>service-client</artifactId>
     <packaging>pom</packaging>
     <modules>
-
         <module>service-user-client</module>
         <module>service-video-client</module>
         <module>service-article-client</module>
+        <module>service-system-client</module>
     </modules>
 
     <properties>

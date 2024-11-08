@@ -5,13 +5,12 @@
     <modelVersion>4.0.0</modelVersion>
     <parent>
         <groupId>com.linyilinyi</groupId>
-        <artifactId>service</artifactId>
+        <artifactId>linyilinyi</artifactId>
         <version>1.0</version>
     </parent>
 
-    <artifactId>service-system</artifactId>
+    <artifactId>OperLog</artifactId>
     <version>1.0</version>
-    <packaging>jar</packaging>
 
     <properties>
         <maven.compiler.source>17</maven.compiler.source>
@@ -20,15 +19,24 @@
     </properties>
 
     <dependencies>
+
+        <dependency>
+            <groupId>com.linyilinyi</groupId>
+            <artifactId>common</artifactId>
+            <version>1.0</version>
+            <scope>compile</scope>
+        </dependency>
+        <dependency>
+            <groupId>com.linyilinyi</groupId>
+            <artifactId>service-system-client</artifactId>
+            <version>1.0</version>
+            <scope>compile</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-web</artifactId>
+            <scope>provided</scope>
+        </dependency>
     </dependencies>
 
-    <build>
-        <finalName>${project.artifactId}</finalName>
-        <plugins>
-            <plugin>
-                <groupId>org.springframework.boot</groupId>
-                <artifactId>spring-boot-maven-plugin</artifactId>
-            </plugin>
-        </plugins>
-    </build>
 </project>
