@@ -1,7 +1,9 @@
 package com.linyilinyi.system.service;
 
 import com.baomidou.mybatisplus.extension.service.IService;
+import com.linyilinyi.common.model.PageResult;
 import com.linyilinyi.model.entity.log.OperLog;
+import com.linyilinyi.model.vo.log.OperLogQueryVo;
 
 /**
  * <p>
@@ -13,4 +15,5 @@ import com.linyilinyi.model.entity.log.OperLog;
  */
 public interface OperLogService extends IService<OperLog> {
 
+    PageResult<OperLog> pageList(OperLogQueryVo operLogQueryVo, long pageNo, long pageSize);
 }

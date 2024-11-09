@@ -30,7 +30,7 @@
     <dependencies>
         <dependency>
             <groupId>com.linyilinyi</groupId>
-            <artifactId>OperLog</artifactId>
+            <artifactId>operLog</artifactId>
             <version>1.0</version>
         </dependency>
         <dependency>

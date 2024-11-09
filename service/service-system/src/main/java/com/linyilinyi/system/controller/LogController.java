@@ -1,14 +1,14 @@
 package com.linyilinyi.system.controller;
 
+import com.linyilinyi.common.model.PageResult;
+import com.linyilinyi.common.model.Result;
 import com.linyilinyi.model.entity.log.OperLog;
+import com.linyilinyi.model.vo.log.OperLogQueryVo;
 import com.linyilinyi.system.service.OperLogService;
 import io.swagger.v3.oas.annotations.Operation;
 import jakarta.annotation.Resource;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 /**
  * @Description
@@ -29,5 +29,13 @@ public class LogController {
     @PostMapping("add")
     public void operLog(@RequestBody OperLog operLog){
         operLogService.save(operLog);
+    }
+
+    @Operation(summary = "分页查询日志记录")
+    @PostMapping("page")
+    public Result<PageResult<OperLog>> pageList(@RequestParam(required = false, defaultValue = "1") long pageNo,
+                                       @RequestParam(required = false, defaultValue = "5") long pageSize,
+                                       @RequestBody OperLogQueryVo operLogQueryVo){
+        return Result.ok(operLogService.pageList(operLogQueryVo,pageNo,pageSize));
     }
 }
