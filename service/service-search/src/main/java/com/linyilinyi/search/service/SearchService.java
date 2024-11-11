@@ -1,6 +1,7 @@
 package com.linyilinyi.search.service;
 
 
+import com.linyilinyi.model.entity.video.Video;
 import com.linyilinyi.model.vo.article.ArticleEsQueryVo;
 import com.linyilinyi.model.vo.user.UserQueryVo;
 import com.linyilinyi.model.vo.video.VideoEsQueryVo;
@@ -32,5 +33,7 @@ public interface SearchService {
     List<Map<String, Object>> searchUser(UserQueryVo userQueryVo);
 
     String addUser();
+
+    Video getLatestVideo();
 
 }

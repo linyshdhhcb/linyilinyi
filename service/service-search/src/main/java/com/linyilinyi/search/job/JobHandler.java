@@ -13,7 +13,10 @@ import java.util.List;
 import java.util.Random;
 
 /**
- * 任务处理器
+ * @Description 定时任务处理器
+ * @Author linyi
+ * @Date 2024/10/24
+ * @ClassName: JobHandler
  */
 @Slf4j
 @Component
@@ -30,12 +33,22 @@ public class JobHandler {
      * 普通任务
      */
     @XxlJob("videoJob")
-    public void videoJob() throws Exception {
-        log.info("videoJob执行时间：{}。定时任务：将mysql的video插入es", LocalDateTime.now());
+    public void videoJob(){
+        try {
+            log.info("videoJob执行时间：{}。定时任务：将mysql的video插入es", LocalDateTime.now());
+
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
     }
 
     @XxlJob("articleJob")
-    public void articleJob() throws Exception {
-        log.info("videoJob执行时间：{}。定时任务：将mysql的数据article插入es", LocalDateTime.now());
+    public void articleJob(){
+        try {
+            log.info("videoJob执行时间：{}。定时任务：将mysql的数据article插入es", LocalDateTime.now());
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
     }
 }

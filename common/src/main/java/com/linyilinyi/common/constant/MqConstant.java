@@ -71,8 +71,4 @@ public class MqConstant {
     //客服通知队列
     public static final String CUSTOMER_QUEUE_NAME = "customer.queue";
 
-
-
-
-
 }

@@ -36,6 +36,7 @@ import java.util.Optional;
  * @ClassName: ArticleServiceImpl
  */
 @Service
+@SuppressWarnings({"unchecked", "rawtypes"})
 public class ArticleServiceImpl extends ServiceImpl<ArticleMapper, Article> implements ArticleService {
     @Resource
     private ArticleMapper articleMapper;

@@ -2,6 +2,7 @@ package com.linyilinyi.search.service.impl;
 
 import com.alibaba.fastjson2.JSON;
 import com.linyilinyi.article.client.ArticleClient;
+import com.linyilinyi.common.constant.EsConstant;
 import com.linyilinyi.common.exception.LinyiException;
 import com.linyilinyi.common.model.PageResult;
 import com.linyilinyi.common.model.Result;
@@ -69,7 +70,7 @@ public class VideoEsServiceImpl implements SearchService {
         List<Map<String, Object>> items = data.getItems();
         items.stream().forEach(item -> {
             Video video = JSON.parseObject(JSON.toJSONString(item), Video.class);
-            bulkRequest.add(new IndexRequest("video").id(video.getId().toString()).source(JSON.toJSONString(video), XContentType.JSON));
+            bulkRequest.add(new IndexRequest(EsConstant.VIDEO_INDEX).id(video.getId().toString()).source(JSON.toJSONString(video), XContentType.JSON));
         });
         BulkResponse bulk = restHighLevelClient.bulk(bulkRequest, RequestOptions.DEFAULT);
         if (bulk.hasFailures()) {
@@ -88,7 +89,7 @@ public class VideoEsServiceImpl implements SearchService {
         List<Article> items = data.getItems();
         items.stream().forEach(item -> {
             Article article = JSON.parseObject(JSON.toJSONString(item), Article.class);
-            bulkRequest.add(new IndexRequest("article").id(article.getId().toString()).source(JSON.toJSONString(article), XContentType.JSON));
+            bulkRequest.add(new IndexRequest(EsConstant.ARTICLE_INDEX).id(article.getId().toString()).source(JSON.toJSONString(article), XContentType.JSON));
         });
 
         try {
@@ -112,7 +113,7 @@ public class VideoEsServiceImpl implements SearchService {
         BulkRequest bulkRequest = new BulkRequest();
         for (User user : items) {
             UserQueryVo userQueryVo = JSON.parseObject(JSON.toJSONString(user), UserQueryVo.class);
-            bulkRequest.add(new IndexRequest("user").id(user.getId().toString()).source(JSON.toJSONString(userQueryVo), XContentType.JSON));
+            bulkRequest.add(new IndexRequest(EsConstant.USER_INDEX).id(user.getId().toString()).source(JSON.toJSONString(userQueryVo), XContentType.JSON));
         }
         try {
             BulkResponse bulk = restHighLevelClient.bulk(bulkRequest, RequestOptions.DEFAULT);
@@ -157,7 +158,7 @@ public class VideoEsServiceImpl implements SearchService {
      */
     @Override
     public List<Map<String, Object>> searchVideo(VideoEsQueryVo videoQueryVo) {
-        String keyword = "video";
+
         // 创建BoolQueryBuilder，用于构建复杂的查询条件
         BoolQueryBuilder boolQueryBuilder = QueryBuilders.boolQuery();
 
@@ -185,7 +186,7 @@ public class VideoEsServiceImpl implements SearchService {
         SearchSourceBuilder query = new SearchSourceBuilder().query(must);
 
         // 创建SearchRequest，keyword作为索引名称
-        SearchRequest searchRequest = new SearchRequest(keyword);
+        SearchRequest searchRequest = new SearchRequest(EsConstant.VIDEO_INDEX);
 
         // 初始化用于存储搜索结果的列表
         List<Map<String, Object>> maps = new ArrayList<>();
@@ -210,7 +211,7 @@ public class VideoEsServiceImpl implements SearchService {
 
     @Override
     public List<Map<String, Object>> searchArticle(ArticleEsQueryVo articleQueryVo) {
-        String keyword = "article";
+
         //创建BoolQueryBuilder，用于构建复杂的查询条件
         BoolQueryBuilder boolQueryBuilder = QueryBuilders.boolQuery();
         BoolQueryBuilder must = null;
@@ -229,7 +230,7 @@ public class VideoEsServiceImpl implements SearchService {
             }
         }
 
-        SearchRequest searchRequest = new SearchRequest(keyword);
+        SearchRequest searchRequest = new SearchRequest(EsConstant.ARTICLE_INDEX);
         SearchSourceBuilder query = new SearchSourceBuilder().query(must);
 
         ArrayList<Map<String, Object>> maps = new ArrayList<>();
@@ -250,7 +251,6 @@ public class VideoEsServiceImpl implements SearchService {
 
     @Override
     public List<Map<String, Object>> searchUser(UserQueryVo userQueryVo) {
-        String keyword = "user";
 
         BoolQueryBuilder boolQueryBuilder = QueryBuilders.boolQuery();
 
@@ -269,7 +269,7 @@ public class VideoEsServiceImpl implements SearchService {
                 throw new LinyiException("反射异常");
             }
         }
-        SearchRequest searchRequest = new SearchRequest(keyword);
+        SearchRequest searchRequest = new SearchRequest(EsConstant.USER_INDEX);
         SearchSourceBuilder query = new SearchSourceBuilder().query(must);
         List<Map<String, Object>> maps = new ArrayList<>();
         SearchRequest source = searchRequest.source(query);
@@ -294,5 +294,12 @@ public class VideoEsServiceImpl implements SearchService {
         return maps;
     }
 
+    @Override
+    public Video getLatestVideo() {
+        SearchRequest searchRequest = new SearchRequest(EsConstant.VIDEO_INDEX);
+        SearchSourceBuilder searchSourceBuilder = new SearchSourceBuilder();
 
+        //根据di降序
+        return null;
+    }
 }

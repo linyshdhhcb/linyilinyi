@@ -1,6 +1,7 @@
 package com.linyilinyi.search.controller;
 
 import com.linyilinyi.common.model.Result;
+import com.linyilinyi.model.entity.video.Video;
 import com.linyilinyi.model.vo.article.ArticleEsQueryVo;
 import com.linyilinyi.model.vo.user.UserQueryVo;
 import com.linyilinyi.model.vo.video.VideoEsQueryVo;
@@ -67,6 +68,12 @@ public class SearchController {
     @PostMapping("/searchUser")
     public Result<List<Map<String, Object>>> searchUser(@RequestBody UserQueryVo userQueryVo) throws IOException {
         return Result.ok(videoEsService.searchUser(userQueryVo));
+    }
+
+    @Operation(summary = "获取视频在es中最新的数据")
+    @GetMapping("/getLatestVideo")
+    public Result<Video> getLatestVideo() throws IOException {
+        return Result.ok(videoEsService.getLatestVideo());
     }
 
 

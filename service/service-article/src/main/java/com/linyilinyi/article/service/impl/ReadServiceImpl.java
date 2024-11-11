@@ -31,6 +31,7 @@ import java.util.Optional;
  */
 @Slf4j
 @Service
+@SuppressWarnings({"unchecked", "rawtypes"})
 public class ReadServiceImpl extends ServiceImpl<ReadMapper, Read> implements ReadService {
 
     @Resource
