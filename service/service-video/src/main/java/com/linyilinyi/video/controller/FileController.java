@@ -3,6 +3,7 @@ package com.linyilinyi.video.controller;
 import com.linyilinyi.common.exception.LinyiException;
 import com.linyilinyi.common.model.PageResult;
 import com.linyilinyi.common.model.Result;
+import com.linyilinyi.log.annotation.Log;
 import com.linyilinyi.model.entity.file.File;
 import com.linyilinyi.model.vo.file.FileQueryVo;
 import com.linyilinyi.video.service.FileService;
@@ -41,6 +42,7 @@ public class FileController {
 
     @Operation(summary = "分页查询上传文件列表")
     @PostMapping("/uploadFileList")
+    @Log(title = "文件管理",content = "分页查询上传文件列表")
     public Result<PageResult<File>> uploadFileList(@RequestParam(required = false, defaultValue = "1") long pageNo,
                                                    @RequestParam(required = false, defaultValue = "5") long pageSize,
                                                    @Valid @RequestBody FileQueryVo fileQueryVo) {
@@ -49,6 +51,7 @@ public class FileController {
 
     @Operation(summary = "根据id查询文件信息（回显使用）")
     @GetMapping("/getFileById/{id}")
+    @Log(title = "文件管理",content = "根据id查询文件信息（回显使用）")
     public Result<File> getFileById(@NotNull(message = "id不能为空") @PathVariable Long id) {
         return Result.ok(fileService.getById(id));
     }
@@ -56,6 +59,7 @@ public class FileController {
 
     @Operation(summary = "视频文件上传（视频不大于100M）")
     @PostMapping("/uploadVideoFile")
+    @Log(title = "文件管理",content = "视频文件上传（视频不大于100M)")
     //Spring Web MVC 的依赖下的一种处理上传文件的类
     public Result<File> uploadVideoFile(@RequestPart("filedata") MultipartFile filedata) {
         try {
@@ -94,6 +98,7 @@ public class FileController {
 
     @Operation(summary = "上传图片（图片不大于3M）")
     @PostMapping("/uploadImageFile")
+    @Log(title = "文件管理",content = "上传图片（图片不大于3M）")
     public Result<File> uploadImageFile(@RequestPart("filedata") MultipartFile filedata) {
         try {
             if (!filedata.getContentType().startsWith("image/")) {
@@ -129,12 +134,14 @@ public class FileController {
 
     @Operation(summary = "逻辑删除文件信息")
     @DeleteMapping("/isDeleteFile/{id}")
+    @Log(title = "文件管理",content = "逻辑删除文件信息")
     public Result<String> isDeleteFile(@NotNull(message = "id不能为空") @PathVariable Long id) {
         return Result.ok(fileService.isDeleteFile(id));
     }
 
     @Operation(summary = "获取逻辑删除文件列表【也用于根据id回显逻辑删除的文件信息】")
     @PostMapping("/getDeleteFileList")
+    @Log(title = "文件管理",content = "获取逻辑删除文件列表【也用于根据id回显逻辑删除的文件信息】")
     public Result<PageResult<File>> getDeleteFileList(@RequestParam(required = false, defaultValue = "1") long pageNo,
                                                       @RequestParam(required = false, defaultValue = "5") long pageSize,
                                                       @RequestParam(required = false) Long id) {
@@ -143,18 +150,21 @@ public class FileController {
 
     @Operation(summary = "物理删除上传文件信息")
     @DeleteMapping("/deleteFile/{ids}")
+    @Log(title = "文件管理",content = "物理删除上传文件信息")
     public Result<String> deleteFile(@NotNull(message = "id不能为空") @PathVariable List<Long> ids) {
         return Result.ok(fileService.deleteFiles(ids));
     }
 
     @Operation(summary = "检查文件md5（已存在，未存在，传输部分）")
     @GetMapping("/checkFileMd5/{md5}")
+    @Log(title = "文件管理",content = "检查文件md5（已存在，未存在，传输部分）")
     public Result<Boolean> checkFileMd5(@NotBlank(message = "md5不能为空") @PathVariable String md5) {
         return Result.ok(fileService.checkFileMd5(md5));
     }
 
     @Operation(summary = "计算文件md5")
     @PostMapping("/getFileMd5")
+    @Log(title = "文件管理",content = "计算文件md5")
     public Result<String> getFileMd5(@RequestPart("filedata") MultipartFile filedata) {
         try {
             long l = System.currentTimeMillis();
@@ -176,6 +186,7 @@ public class FileController {
 
     @Operation(summary = "分片上传（md5是整个文件的）")
     @PostMapping("/uploadChunk")
+    @Log(title = "文件管理",content = "分片上传（md5是整个文件的）")
     public Result<String> uploadChunk(@RequestPart("file") MultipartFile file,
                                       @NotBlank(message = "md5不能为空") @RequestParam("md5") String md5,
                                       @NotNull(message = "分块编号不能为空") @RequestParam("chunkNumber") int chunkNumber){
@@ -192,6 +203,7 @@ public class FileController {
 
     @Operation(summary = "分块合并")
     @PostMapping("/mergeChunk")
+    @Log(title = "文件管理",content = "分块合并")
     public Result<File> mergeChunk(@NotBlank(message = "文件md5不难为空")@RequestParam("md5") String md5,
                                      @NotBlank(message = "源文件名不能为空") @RequestParam("fileName") String fileName,
                                      @NotNull(message = "分块数量不能为空") @RequestParam("chunkCount") int chunkCount) {

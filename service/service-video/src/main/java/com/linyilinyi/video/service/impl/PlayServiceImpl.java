@@ -30,6 +30,7 @@ import java.util.Optional;
  */
 @Slf4j
 @Service
+@SuppressWarnings({"unchecked", "rawtypes"})
 public class PlayServiceImpl extends ServiceImpl<PlayMapper, Play> implements PlayService {
 
     @Resource
