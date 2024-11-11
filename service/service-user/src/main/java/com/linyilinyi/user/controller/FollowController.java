@@ -1,6 +1,7 @@
 package com.linyilinyi.user.controller;
 
 import com.linyilinyi.common.model.Result;
+import com.linyilinyi.log.annotation.Log;
 import com.linyilinyi.model.vo.user.FanVo;
 import com.linyilinyi.model.vo.user.FollowVo;
 import com.linyilinyi.user.service.FollowService;
@@ -24,7 +25,7 @@ import java.util.List;
  * @author linyi
  */
 @Slf4j
-@Tag(name = "粉丝管理模块")
+@Tag(name = "粉丝管理")
 @RestController
 @RequestMapping("follow")
 @SuppressWarnings({"unchecked", "rawtypes"})
@@ -35,24 +36,28 @@ public class FollowController {
 
     @Operation(summary = "获取该用户所有粉丝")
     @GetMapping("/getFansList")
+    @Log(title = "粉丝管理", content = "获取该用户所有粉丝")
     public Result<List<FanVo>> getFansList() {
         return Result.ok(followService.getFansList());
     }
 
     @Operation(summary = "获取该用户关注")
     @GetMapping("/getFollowList")
+    @Log(title = "粉丝管理", content = "获取该用户关注")
     public Result<List<FollowVo>> getFollowList() {
         return Result.ok(followService.getFollowList());
     }
 
     @Operation(summary = "关注/取消用户")
     @GetMapping("/addFollow/{id}")
+    @Log(title = "粉丝管理", content = "关注/取消用户")
     public Result<String> addFollow(@NotNull(message = "id不能为空") @PathVariable Integer id) {
         return Result.ok(followService.addFollow(id));
     }
 
     @Operation(summary = "判断是否关注了")
     @GetMapping("/isFollow/{id}")
+    @Log(title = "粉丝管理", content = "判断是否关注了")
     public Result<Boolean> isFollow(@NotNull(message = "id不能为空") @PathVariable Integer id) {
         return Result.ok(followService.isFollow(id));
     }

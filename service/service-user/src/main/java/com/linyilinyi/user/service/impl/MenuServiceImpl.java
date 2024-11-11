@@ -35,6 +35,7 @@ import java.util.stream.Collectors;
  */
 @Slf4j
 @Service
+@SuppressWarnings({"unchecked", "rawtypes"})
 public class MenuServiceImpl extends ServiceImpl<MenuMapper, Menu> implements MenuService {
 
     @Resource

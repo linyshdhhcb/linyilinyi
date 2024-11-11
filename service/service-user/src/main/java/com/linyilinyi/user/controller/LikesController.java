@@ -1,6 +1,7 @@
 package com.linyilinyi.user.controller;
 
 import com.linyilinyi.common.model.Result;
+import com.linyilinyi.log.annotation.Log;
 import com.linyilinyi.model.vo.user.FanVo;
 import com.linyilinyi.user.service.LikesService;
 import io.swagger.v3.oas.annotations.Operation;
@@ -38,12 +39,14 @@ public class LikesController {
 
     @Operation(summary = "点赞/取消")
     @GetMapping("/addLikes/{targetId}/{targetType}")
+    @Log(title = "点赞管理",content = "点赞/取消")
     public Result<String> addLikes(@NotNull(message = "targetId不能为空") @PathVariable Integer targetId,@NotNull(message = "targetType不能为空") @PathVariable Integer targetType) {
         return Result.ok(likesService.addLikes(targetId,targetType));
     }
 
     @Operation(summary = "判断是否点赞过")
     @GetMapping("/isLikes/{targetId}/{targetType}")
+    @Log(title = "点赞管理",content = "判断是否点赞过")
     public Result<Boolean> isLikes(@NotNull(message = "targetId不能为空") @PathVariable Integer targetId,@NotNull(message = "targetType不能为空") @PathVariable Integer targetType) {
         return Result.ok(likesService.isLikes(targetId,targetType));
     }

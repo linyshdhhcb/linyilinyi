@@ -28,6 +28,7 @@ import java.util.stream.Stream;
  */
 @Slf4j
 @Service
+@SuppressWarnings({"unchecked", "rawtypes"})
 public class RoleMenuServiceImpl extends ServiceImpl<RoleMenuMapper, RoleMenu> implements RoleMenuService {
 
     @Resource

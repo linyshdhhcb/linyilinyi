@@ -34,6 +34,7 @@ import java.util.stream.Collectors;
  */
 @Slf4j
 @Service
+@SuppressWarnings({"unchecked", "rawtypes"})
 public class RoleServiceImpl extends ServiceImpl<RoleMapper, Role> implements RoleService {
 
     @Resource

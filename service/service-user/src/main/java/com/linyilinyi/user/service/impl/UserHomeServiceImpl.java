@@ -17,6 +17,7 @@ import org.springframework.stereotype.Service;
  */
 @Slf4j
 @Service
+@SuppressWarnings({"unchecked", "rawtypes"})
 public class UserHomeServiceImpl extends ServiceImpl<UserHomeMapper, UserHome> implements UserHomeService {
 
 }

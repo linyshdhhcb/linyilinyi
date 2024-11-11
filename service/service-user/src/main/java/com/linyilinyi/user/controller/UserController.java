@@ -31,29 +31,34 @@ public class UserController {
 
     @Operation(summary = "根据id查询用户信息")
     @GetMapping("/getUserById/{id}")
+    @Log(title = "用户管理", content = "根据id查询用户信息")
     public Result<User> getUserById(@Valid @PathVariable Integer id){
         return Result.ok(userService.getUserById(id));
     }
 
     @Operation(summary = "根据id删除用户信息")
     @GetMapping("/deleteUserById/{ids}")
+    @Log(title = "用户管理", content = "根据id删除用户信息")
     public Result<String> deleteUserById(@Valid @PathVariable List<Integer> ids){
         return Result.ok(userService.deleteUserById(ids));
     }
 
     @Operation(summary = "根据id修改用户信息（不能修改password字段）")
     @PostMapping("/updateUser")
+    @Log(title = "用户管理", content = "根据id修改用户信息")
     public Result<String> updateUser(@RequestBody UserUpdateVo user){
         return Result.ok(userService.updateUser(user));
     }
 
     @Operation(summary = "添加用户")
     @PostMapping("addUser")
+    @Log(title = "用户管理", content = "添加用户")
     public Result<String> addUser(@Valid @RequestBody UserAddVo userAddVo){
         return Result.ok(userService.addUser(userAddVo));
     }
     @Operation(summary = "查询用户列表")
     @PostMapping("/getUserList")
+    @Log(title = "用户管理", content = "查询用户列表")
     public Result<PageResult<User>> getUserList(@RequestParam(required = false,defaultValue = "1") long pageNo,
                                                      @RequestParam(required = false,defaultValue = "5") long pageSize,
                                                      @RequestBody UserQueryVo userQueryVo){
@@ -61,12 +66,14 @@ public class UserController {
     }
     @Operation(summary = "根据用户名查询用户信息")
     @GetMapping("/getByUsername/{username}")
+    @Log(title = "用户管理", content = "根据用户名查询用户信息")
     public Result<User> getByUsername(@NotBlank(message = "账号不能为空") @PathVariable String username){
         return Result.ok(userService.getByUsername(username));
     }
 
     @Operation(summary = "用户登录（成功返回token）")
     @PostMapping("/login")
+    @Log(title = "用户管理", content = "用户登录")
     public Result<String> login(@RequestBody LoginVo loginVo){
         log.info("登录请求：{}",loginVo);
         return Result.ok(userService.login(loginVo));
@@ -74,12 +81,14 @@ public class UserController {
 
     @Operation(summary = "用户注册")
     @PostMapping("/register")
+    @Log(title = "用户管理", content = "用户注册")
     public Result<String> register(@RequestBody UserRegisterVo userRegisterVo){
       return Result.ok(userService.register(userRegisterVo));
     }
 
     @Operation(summary = "获取用户权限")
     @GetMapping("/getUserPermissions")
+    @Log(title = "用户管理", content = "获取用户权限")
     public Result<List<String>> getUserPermissions(@RequestParam String username){
         return null;
     }
@@ -96,12 +105,14 @@ public class UserController {
 
     @Operation(summary = "获取token信息")
     @GetMapping("/getToken")
+    @Log(title = "用户管理", content = "获取token信息")
     public Result<String> tokenInfo() {
         return Result.ok(StpUtil.getTokenValue());
     }
 
     @Operation(summary = "用户登出")
     @PostMapping("/logout")
+    @Log(title = "用户管理", content = "用户登出")
     public Result<String> logout() {
         StpUtil.logout();
         return Result.ok("退出成功");
@@ -109,12 +120,14 @@ public class UserController {
 
     @Operation(summary = "忘记密码")
     @PostMapping("/forgetPassword")
+    @Log(title = "用户管理", content = "忘记密码")
     public Result<String> forgetPassword(@RequestBody ForgetPasswordVo forgetPasswordVo) {
         return Result.ok(userService.forgetPassword(forgetPasswordVo));
     }
 
     @Operation(summary = "获取用户注册验证码")
     @GetMapping("/getRegisterCode")
+    @Log(title = "用户管理", content = "获取用户注册验证码")
     public Result<Code> getRegisterCode(@RequestParam String mail) {
         return Result.ok(userService.getRegisterCode(mail));
     }

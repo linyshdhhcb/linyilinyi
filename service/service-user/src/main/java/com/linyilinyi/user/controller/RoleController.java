@@ -3,6 +3,7 @@ package com.linyilinyi.user.controller;
 import com.linyilinyi.common.model.PageResult;
 import com.linyilinyi.common.model.Result;
 import com.linyilinyi.common.model.ResultCodeEnum;
+import com.linyilinyi.log.annotation.Log;
 import com.linyilinyi.model.entity.user.Role;
 import com.linyilinyi.model.vo.user.RoleQueryVo;
 import com.linyilinyi.user.service.RoleService;
@@ -33,6 +34,7 @@ public class RoleController {
 
     @Operation(summary = "新增角色")
     @PostMapping("addRole")
+    @Log(title = "角色管理",content = "新增角色")
     public Result<String> addRole(@RequestParam String name, @RequestParam String code) {
         roleService.addRole(name, code);
         return Result.success(ResultCodeEnum.SUCCESS);
@@ -40,12 +42,14 @@ public class RoleController {
 
     @Operation(summary = "删除角色")
     @DeleteMapping("deleteRoleById/{ids}")
+    @Log(title = "角色管理",content = "删除角色")
     public Result<String> deleteRoleById(@PathVariable List<Long> ids) {
         return Result.ok(roleService.deleteRoleById(ids));
     }
 
     @Operation(summary = "分页条件查询角色列表")
     @PostMapping("getRoleList")
+    @Log(title = "角色管理",content = "分页条件查询角色列表")
     public Result<PageResult<Role>> getRoleList(@RequestParam(required = false, defaultValue = "1") long pageNo,
                                                 @RequestParam(required = false, defaultValue = "5") long pageSize,
                                                 @RequestBody RoleQueryVo roleQueryVo) {
@@ -54,6 +58,7 @@ public class RoleController {
 
     @Operation(summary = "修改角色")
     @PutMapping("updateRole")
+    @Log(title = "角色管理",content = "修改角色")
     public Result updateRole(@RequestBody Role role) {
         roleService.updateRole(role);
         return Result.ok();
@@ -61,12 +66,14 @@ public class RoleController {
 
     @Operation(summary = "根据id获取角色详情（回显）")
     @GetMapping("getRoleById/{id}")
+    @Log(title = "角色管理",content = "根据id获取角色详情（回显）")
     public Result<Role> getRoleById(@PathVariable Long id) {
         return Result.ok(roleService.getById(id));
     }
 
     @Operation(summary = "获取角色列表")
     @GetMapping("getRoleList")
+    @Log(title = "角色管理",content = "获取角色列表")
     public Result<List<Role>> getRoleList() {
         return Result.ok(roleService.getList());
     }

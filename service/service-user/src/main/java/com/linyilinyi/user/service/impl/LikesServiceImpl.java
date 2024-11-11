@@ -25,6 +25,7 @@ import java.time.LocalDateTime;
  */
 @Slf4j
 @Service
+@SuppressWarnings({"unchecked", "rawtypes"})
 public class LikesServiceImpl extends ServiceImpl<LikesMapper, Likes> implements LikesService {
 
     @Resource

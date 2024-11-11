@@ -2,6 +2,7 @@ package com.linyilinyi.user.controller;
 
 import com.linyilinyi.common.model.PageResult;
 import com.linyilinyi.common.model.Result;
+import com.linyilinyi.log.annotation.Log;
 import com.linyilinyi.model.entity.comment.Comment;
 import com.linyilinyi.model.vo.comment.CommentAddVo;
 import com.linyilinyi.model.vo.comment.CommentVo;
@@ -38,12 +39,14 @@ public class CommentController {
 
     @Operation(summary = "发布评论")
     @PostMapping("/addComment")
+    @Log(title = "评论管理",content = "发布评论")
     public Result<CommentsVo> addComment(@Valid @RequestBody CommentAddVo commentAddVo) {
         return Result.ok(commentService.addComment(commentAddVo));
     }
 
     @Operation(summary = "获取评论列表")
     @PostMapping("/getCommentList")
+    @Log(title = "评论管理",content = "获取评论列表")
     public Result<PageResult<CommentsVo>> getCommentList(@NotNull(message = "targetId不能为空") @RequestParam Integer targetId,
                                                          @NotNull(message = "targetType不能为空") @RequestParam Integer targetType,
                                                          @RequestParam(required = false, defaultValue = "0") Integer topId,
@@ -54,12 +57,14 @@ public class CommentController {
 
     @Operation(summary = "删除评论")
     @DeleteMapping("/deleteComment/{id}")
+    @Log(title = "评论管理",content = "删除评论")
     public Result<String> deleteComment(@PathVariable Integer id) {
         return Result.ok(commentService.deleteComment(id));
     }
 
     @Operation(summary = "根据id获取评论信息")
     @GetMapping("/getComment/{id}")
+    @Log(title = "评论管理",content = "根据id获取评论信息")
     public Result<Comment> getComment(@NotNull(message = "id不能为空")@PathVariable Integer id) {
         return Result.ok(commentService.getComment(id));
     }
