@@ -30,6 +30,7 @@ import java.util.stream.Collectors;
  * @ClassName: NoticeSendServiceImpl
  */
 @Service
+@SuppressWarnings({"unchecked", "rawtypes"})
 public class NoticeSendServiceImpl implements NoticeSendService {
 
     @Resource
