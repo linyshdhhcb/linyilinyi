@@ -2,6 +2,7 @@ package com.linyilinyi.system.controller;
 
 import com.linyilinyi.common.model.PageResult;
 import com.linyilinyi.common.model.Result;
+import com.linyilinyi.log.annotation.Log;
 import com.linyilinyi.model.entity.dictionary.DictionaryLabel;
 import com.linyilinyi.model.vo.dictionary.DictionaryLabelAddVo;
 import com.linyilinyi.model.vo.dictionary.DictionaryLabelQueryVo;
@@ -37,6 +38,7 @@ public class DictionaryLabelController {
 
     @Operation(summary = "数据字典内容表分页查询")
     @PostMapping("page")
+    @Log(title = "数据字典内容管理器",content = "数据字典内容表分页查询")
     public Result<PageResult<DictionaryLabel>> pageList(@RequestParam(required = false, defaultValue = "1") long pageNo,
                                                        @RequestParam(required = false, defaultValue = "5") long pageSize,
                                                        @RequestBody DictionaryLabelQueryVo dictionaryLabelQueryVo) {
@@ -45,30 +47,35 @@ public class DictionaryLabelController {
 
     @Operation(summary = "数据字典内容表新增")
     @PostMapping("addDictionaryLabel")
+    @Log(title = "数据字典内容管理器",content = "数据字典内容表新增")
     public Result<String> addDictionaryLabel(@RequestBody DictionaryLabelAddVo dictionaryLabelAddVo) {
         return Result.ok(dictionaryLabelService.addDictionaryLabel(dictionaryLabelAddVo));
     }
 
     @Operation(summary = "数据字典内容表删除")
     @DeleteMapping("deleteDictionaryLabel/{ids}")
+    @Log(title = "数据字典内容管理器",content = "数据字典内容表删除")
     public Result<String> deleteDictionaryLabel(@PathVariable List<Integer> ids) {
         return Result.ok(dictionaryLabelService.deleteDictionaryLabel(ids));
     }
 
     @Operation(summary = "数据字典内容表修改")
     @PutMapping("updateDictionaryLabel")
+    @Log(title = "数据字典内容管理器",content = "数据字典内容表修改")
     public Result<String> updateDictionaryLabel(@RequestBody DictionaryLabel dictionaryLabel) {
         return Result.ok(dictionaryLabelService.updateDictionaryLabel(dictionaryLabel));
     }
 
     @Operation(summary = "根据id获取数据字典内容")
     @GetMapping("getDictionaryLabelById/{id}")
+    @Log(title = "数据字典内容管理器",content = "根据id获取数据字典内容")
     public Result<DictionaryLabel> getDictionaryLabelById(@Positive(message = "id必须为正整数")@PathVariable Integer id) {
         return Result.ok(dictionaryLabelService.getById(id));
     }
 
     @Operation(summary = "获取全部数据字典内容列表")
     @GetMapping("getDictionaryLabelTreeList")
+    @Log(title = "数据字典内容管理器",content = "获取全部数据字典内容列表")
     public Result<List<DictionaryTypeTreeList>> getDictionaryLabelTreeList(@RequestParam(required = false) Integer dictionaryTypeId) {
         return Result.ok(dictionaryLabelService.getDictionaryLabelTreeList(dictionaryTypeId));
     }
