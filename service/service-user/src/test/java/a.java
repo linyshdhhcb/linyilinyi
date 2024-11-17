@@ -10,9 +10,13 @@ import org.junit.jupiter.api.Test;
 public class a {
     @Test
     public void test(){
-        String s = String.valueOf(System.currentTimeMillis());
-        System.out.println("s = " + s);
+
         String a="$2a$10$dkDKgyJUJtsqI6Fpo0NXHOdO6ZB.2WMUUuCN8gG5IUQ75M1AXAFKe";
-        System.out.println(a.length());
+        char[] charArray = a.toCharArray();
+        int i = a.indexOf("s");
+        char c = a.charAt(2);
+        int[] ints = new int[128];
+        int anInt = ints[c];
+        System.out.println(ints[0]);
     }
 }

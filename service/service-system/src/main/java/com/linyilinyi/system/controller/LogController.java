@@ -30,7 +30,6 @@ public class LogController {
 
     @Operation(summary = "操作日志记录")
     @PostMapping("add")
-    @Log(title = "操作日志记录管理",content = "操作日志记录")
     public void operLog(@RequestBody OperLog operLog){
         operLogService.save(operLog);
     }

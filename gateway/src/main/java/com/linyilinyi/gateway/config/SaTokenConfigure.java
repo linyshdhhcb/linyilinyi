@@ -101,8 +101,6 @@ public class SaTokenConfigure {
                             .free(s -> log.debug("OPTIONS预检请求，不做处理"))
                             .back();
                 });
-
-
         return saReactorFilter;
     }
 
@@ -125,7 +123,7 @@ public class SaTokenConfigure {
                 SaRouter.match("/**", () -> StpUtil.isLogin());
 
                 //通过集合的url拦截 为每个 URL 模式设置权限检查
-                // TODO 2024/10/19 根据角色和权限拦截
+
                 addRoleUrls.forEach(url -> SaRouter.match(url, r -> StpUtil.checkRoleOr(ROLE_SUPER_ADMIN)));
                 deleteRoleUrls.forEach(url -> SaRouter.match(url, r -> StpUtil.checkRoleOr(ROLE_ADMIN)));
                 updateRoleUrls.forEach(url -> SaRouter.match(url, r -> StpUtil.checkRoleOr("1")));

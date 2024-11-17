@@ -56,41 +56,6 @@ public class IpUtil {
 
         return "0:0:0:0:0:0:0:1".equals(ip) ? "127.0.0.1" : getMultistageReverseProxyIp(ip);
 
-//        String ipAddress = null;
-//        try {
-//            ipAddress = request.getHeader("x-forwarded-for");
-//            if (ipAddress == null || ipAddress.length() == 0 || "unknown".equalsIgnoreCase(ipAddress)) {
-//                ipAddress = request.getHeader("Proxy-Client-IP");
-//            }
-//            if (ipAddress == null || ipAddress.length() == 0 || "unknown".equalsIgnoreCase(ipAddress)) {
-//                ipAddress = request.getHeader("WL-Proxy-Client-IP");
-//            }
-//            if (ipAddress == null || ipAddress.length() == 0 || "unknown".equalsIgnoreCase(ipAddress)) {
-//                ipAddress = request.getRemoteAddr();
-//                if (ipAddress.equals("127.0.0.1") || ipAddress.startsWith("192.168")) {
-//                    // 根据网卡取本机配置的IP
-//                    InetAddress inet = null;
-//                    try {
-//                        inet = InetAddress.getLocalHost();
-//                    } catch (UnknownHostException e) {
-//                        e.printStackTrace();
-//                    }
-//                    ipAddress = inet.getHostAddress();
-//                }
-//            }
-//            // 对于通过多个代理的情况，第一个IP为客户端真实IP,多个IP按照','分割
-//            if (ipAddress != null && ipAddress.length() > 15) { // "***.***.***.***".length()
-//                // = 15
-//                if (ipAddress.indexOf(",") > 0) {
-//                    ipAddress = ipAddress.substring(0, ipAddress.indexOf(","));
-//                }
-//            }
-//        } catch (Exception e) {
-//            ipAddress="";
-//        }
-//        // ipAddress = this.getRequest().getRemoteAddr();
-//
-//        return ipAddress;
     }
 
     /**
@@ -139,29 +104,6 @@ public class IpUtil {
         //String dbip = "ipdb/ip2region.xdb";
         String dbip = "C:/Intellij_IDEA/a/linyilinyi/common/src/main/resources/ipdb/ip2region.xdb";
         Searcher searcher = null;
-        //完全基于文件的查询
-//        try {
-//            ClassPathResource resource = new ClassPathResource(dbip);
-//            File file = resource.getFile();
-//            searcher = Searcher.newWithFileOnly(file.getAbsolutePath());
-//            if (searcher == null) {
-//                return "未知地址";
-//            }
-//            String region = searcher.search(ip);
-//            return region;
-//        } catch (Exception e) {
-//            log.info("查询IP地址失败：" + e.getMessage());
-//            return "未知地址";
-//        } finally {
-//            if (searcher != null) {
-//                try {
-//                    searcher.close(); // 手动关闭Searcher对象
-//                } catch (IOException e) {
-//                    log.error("释放Searcher对象资源时发生异常。", e);
-//                }
-//            }
-//
-//        }
         //缓存整个 xdb 数据
         // 1、从 dbPath 加载整个 xdb 到内存。
         byte[] cBuff;
@@ -178,7 +120,7 @@ public class IpUtil {
         try {
             searcher = Searcher.newWithBuffer(cBuff);
         } catch (Exception e) {
-            System.out.printf("创建内容缓存搜索器失败: %s\n", e);
+            log.error("创建内容缓存搜索器失败:{}", e.getMessage());
             return e.getMessage();
         }
         String region=null;
@@ -187,9 +129,9 @@ public class IpUtil {
             long sTime = System.nanoTime();
              region = searcher.search(ip);
             long cost = TimeUnit.NANOSECONDS.toMicros((long) (System.nanoTime() - sTime));
-            System.out.printf("{region: %s, ioCount: %d, took: %d μs}\n", region, searcher.getIOCount(), cost);
+            log.info("{region: {}, ioCount: {}, took: {} μs}", region, searcher.getIOCount(), cost);
         } catch (Exception e) {
-            System.out.printf("搜索失败(%s): %s\n", ip, e);
+            log.error("ip:{}-->搜索失败:{}", ip,e.getMessage());
         }
 
         // 4、关闭资源 - 该 searcher 对象可以安全用于并发，等整个服务关闭的时候再关闭 searcher

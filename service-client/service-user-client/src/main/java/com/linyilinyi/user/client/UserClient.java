@@ -6,8 +6,10 @@ import com.linyilinyi.model.entity.user.Menu;
 import com.linyilinyi.model.entity.user.Role;
 import com.linyilinyi.model.entity.user.User;
 import com.linyilinyi.model.vo.user.LoginVo;
+import com.linyilinyi.model.vo.user.MenuAdd;
 import com.linyilinyi.model.vo.user.UserQueryVo;
 import jakarta.validation.Valid;
+import lombok.extern.java.Log;
 import org.springframework.cloud.openfeign.FeignClient;
 import org.springframework.web.bind.annotation.*;
 
@@ -70,4 +72,12 @@ public interface UserClient {
                                                 @RequestParam(required = false,defaultValue = "5") long pageSize,
                                                 @RequestBody UserQueryVo userQueryVo);
 
+    @PostMapping("/menu/addMenuList")
+    public Result addMenuList(@RequestBody List<Menu> menuList);
+
+    @PostMapping("/menu/addMenu")
+    public Result addMenu(@RequestBody MenuAdd menuAdd);
+
+    @GetMapping("/menu/getMenuByName/{name}")
+    public Result<Menu> getMenuByName(@PathVariable String name);
 }

@@ -25,7 +25,7 @@ import java.util.List;
  */
 @Slf4j
 @RestController
-@Tag(name = "文章管理")
+@Tag(name = "文章信息管理")
 @RequestMapping("/article")
 @SuppressWarnings({"unchecked", "rawtypes"})
 public class ArticleController {

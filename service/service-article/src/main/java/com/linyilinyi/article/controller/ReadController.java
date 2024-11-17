@@ -33,7 +33,7 @@ public class ReadController {
     private ReadService readService;
 
     @Operation(summary = "分页获取文章历史记录")
-    @RequestMapping("getReadList")
+    @PostMapping("getReadList")
     @Log(title = "文章历史记录管理",content = "获取全部文章历史记录")
     public Result<PageResult<Read>> getReadList(@RequestParam(required = false, defaultValue = "1") long pageNo,
                                                 @RequestParam(required = false, defaultValue = "5") long pageSize,

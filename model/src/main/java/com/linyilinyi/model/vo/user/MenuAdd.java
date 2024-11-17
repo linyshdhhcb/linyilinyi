@@ -28,7 +28,7 @@ public class MenuAdd {
     private String path;
 
     @Schema(description = "菜单类型（M目录 C菜单 F按钮）")
-    private String menuType;
+    private Integer menuType;
 
     @Schema(description = "权限标识")
     private String perms;

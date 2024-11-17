@@ -155,4 +155,17 @@ public class MenuServiceImpl extends ServiceImpl<MenuMapper, Menu> implements Me
         // 返回包含所有子节点的菜单对象
         return sysMenu;
     }
+
+    @Override
+    public Menu getMenuByName(String name) {
+        LambdaQueryWrapper<Menu> queryWrapper = new LambdaQueryWrapper<>();
+        Menu menu = menuMapper.selectOne(queryWrapper.eq(Menu::getName, name));
+        return menu;
+    }
+
+    @Override
+    public void deleteMenuType(int i) {
+        //删除出i以外的全部数据
+        menuMapper.delete(new LambdaQueryWrapper<Menu>().ne(Menu::getMenuType,i));
+    }
 }

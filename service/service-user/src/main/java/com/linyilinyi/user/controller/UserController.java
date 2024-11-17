@@ -4,6 +4,7 @@ import cn.dev33.satoken.stp.StpUtil;
 import com.linyilinyi.common.model.PageResult;
 import com.linyilinyi.common.model.Result;
 import com.linyilinyi.log.annotation.Log;
+import com.linyilinyi.log.annotation.LogExecutionTime;
 import com.linyilinyi.model.entity.user.User;
 import com.linyilinyi.model.vo.code.Code;
 import com.linyilinyi.model.vo.user.*;
@@ -31,7 +32,6 @@ public class UserController {
 
     @Operation(summary = "根据id查询用户信息")
     @GetMapping("/getUserById/{id}")
-    @Log(title = "用户管理", content = "根据id查询用户信息")
     public Result<User> getUserById(@Valid @PathVariable Integer id){
         return Result.ok(userService.getUserById(id));
     }

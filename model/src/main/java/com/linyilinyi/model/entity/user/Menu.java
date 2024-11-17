@@ -21,11 +21,13 @@ import lombok.NoArgsConstructor;
  * @author linyi
  */
 @Data
+@NoArgsConstructor
 @Schema(name = "Menu 菜单表", description = "菜单表")
 public class Menu implements Serializable {
 
     private static final long serialVersionUID = 1L;
 
+    @TableId(value = "id", type = IdType.AUTO)
     @Schema(description = "菜单主键ID")
     private Long id;
 
@@ -43,8 +45,8 @@ public class Menu implements Serializable {
     @Schema(description = "组件路径")
     private String component;
 
-    @Schema(description = "菜单类型（M目录 C菜单 F按钮）")
-    private String menuType;
+    @Schema(description = "菜单类型（12001目录 12002菜单 12003按钮）")
+    private Integer menuType;
 
     @Schema(description = "权限标识")
     private String perms;
@@ -71,5 +73,18 @@ public class Menu implements Serializable {
     @TableField(exist = false)
     private List<Menu> children;
 
+    @TableField(exist = false)
+    @Schema(description = "标签")
+    private String tag;
 
+
+    public Menu(String name, Integer menuType, String path, String perms, String remark, String tag,LocalDateTime createTime) {
+        this.name = name;
+        this.menuType = menuType;
+        this.path = path;
+        this.perms = perms;
+        this.remark = remark;
+        this.createTime = createTime;
+        this.tag = tag;
+    }
 }

@@ -34,6 +34,9 @@ spring:
         prefix: ${spring.application.name}
         # 文件扩展名
         file-extension: yaml
+        # 配置文件名
+        shared-configs:
+          - data-id: common-account.yaml
 
   #springdoc-openapi项目配置
 springdoc:

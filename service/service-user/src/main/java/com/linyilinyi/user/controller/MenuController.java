@@ -75,6 +75,13 @@ public class MenuController {
         return Result.ok(menuService.getMenuListByRoleId(roleId));
     }
 
+    @Operation(summary = "根据菜单名称获取信息")
+    @GetMapping("getMenuByName/{name}")
+    @Log(title = "菜单管理",content = "根据菜单名称获取信息")
+    public Result<Menu> getMenuByName(@PathVariable String name) {
+        return Result.ok(menuService.getMenuByName(name));
+    }
+
     @Operation(summary = "根据角色名称code获取菜单")
     @GetMapping("getMenuListByRoleCode/{roleCode}")
     @Log(title = "菜单管理",content = "根据角色名称code获取菜单")
@@ -82,5 +89,12 @@ public class MenuController {
         return Result.ok(menuService.getMenuListByRoleCode(roleCode));
     }
 
+    @Operation(summary = "批量添加菜单列表")
+    @PostMapping("addMenuList")
+    @Log(title = "菜单管理",content = "批量添加菜单列表")
+    public Result addMenuList(@RequestBody List<Menu> menuList) {
+
+        return Result.ok(menuService.saveBatch(menuList));
+    }
 
 }

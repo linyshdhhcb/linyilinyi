@@ -1,5 +1,6 @@
 package com.linyilinyi.log.aspect;
 
+import com.linyilinyi.common.exception.LinyiException;
 import com.linyilinyi.common.utils.AuthContextUser;
 import com.linyilinyi.common.utils.IpUtil;
 import com.linyilinyi.log.annotation.Log;
@@ -46,6 +47,7 @@ import org.springframework.web.context.request.RequestContextHolder;
 import java.lang.reflect.Method;
 import java.time.LocalDateTime;
 import java.util.Optional;
+import java.util.concurrent.CompletableFuture;
 
 /**
  * @Description
@@ -69,7 +71,6 @@ public class LogAspect {
     ThreadLocal<Long> startTime = new ThreadLocal<>();
 
     @Pointcut("@annotation(com.linyilinyi.log.annotation.Log)")
-//   @Pointcut("execution(* com.linyilinyi.*.controller..*.*(..))")
     public void operLogPoinCut() {
     }
 
@@ -84,6 +85,7 @@ public class LogAspect {
 
     @AfterReturning(value = "operLogPoinCut()", returning = "result")
     public void doAfterReturning(JoinPoint joinPoint, Object result) {
+        long l = System.currentTimeMillis();
         RequestAttributes requestAttributes = RequestContextHolder.getRequestAttributes();
         HttpServletRequest request = (HttpServletRequest) requestAttributes.resolveReference(RequestAttributes.REFERENCE_REQUEST);
 
@@ -113,8 +115,11 @@ public class LogAspect {
 
             //获取用户名
             Integer userId = AuthContextUser.getUserId();
-            String username = userClient.getUserById(userId).getData().getUsername();
 
+            String username = CompletableFuture.supplyAsync(()->{
+                return userClient.getUserById(userId).getData().getUsername();
+            }).get();
+//            String username = userClient.getUserById(userId).getData().getUsername();
             operLog.setMethod(methoname); //设置请求方法
             operLog.setRequestMethod(request.getMethod());//设置请求方式
             operLog.setRequestParam(jsonString); // 请求参数
@@ -127,9 +132,16 @@ public class LogAspect {
             operLog.setStatus(0);//操作状态（0正常 1异常）
             Long takeTime = System.currentTimeMillis() - startTime.get();//记录方法执行耗时时间（单位：毫秒）
             operLog.setTakeTime(takeTime);
-            systemClient.operLog(operLog);
+            //异步调用
+            CompletableFuture.runAsync(()->{
+                systemClient.operLog(operLog);
+            });
+//            systemClient.operLog(operLog);
         } catch (Exception e) {
-            e.printStackTrace();
+            throw new LinyiException("日志记录出错");
+        }finally {
+
+            startTime.remove();
         }
     }
 
@@ -173,7 +185,7 @@ public class LogAspect {
             operLog.setIpLocation(IpUtil.address(ip)); // IP归属地（真是环境中可以调用第三方API根据IP地址，查询归属地）
             operLog.setRequestUrl(request.getRequestURI()); // 请求URI
             operLog.setOperTime(LocalDateTime.now()); // 时间
-            operLog.setStatus(0);//操作状态（0正常 1异常）
+            operLog.setStatus(1);//操作状态（0正常 1异常）
             Long takeTime = System.currentTimeMillis() - startTime.get();//记录方法执行耗时时间（单位：毫秒）
             operLog.setTakeTime(takeTime);
             operLog.setErrorMsg(stackTraceToString(e.getClass().getName(), e.getMessage(), e.getStackTrace()));

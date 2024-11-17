@@ -5,6 +5,9 @@ nacos:
   group: DEFAULT_GROUP
 # Spring环境配置
 spring:
+  task:
+    scheduling:
+      enabled: true
   # 应用名称
   application:
     name: service-system
