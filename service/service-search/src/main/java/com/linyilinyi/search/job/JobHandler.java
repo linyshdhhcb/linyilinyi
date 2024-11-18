@@ -13,7 +13,7 @@ import java.util.List;
 import java.util.Random;
 
 /**
- * @Description 定时任务处理器
+ * @Description 定时任务处理器（mysql和es数据同步）
  * @Author linyi
  * @Date 2024/10/24
  * @ClassName: JobHandler
