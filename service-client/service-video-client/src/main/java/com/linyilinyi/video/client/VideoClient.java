@@ -2,10 +2,12 @@ package com.linyilinyi.video.client;
 
 import com.linyilinyi.common.model.PageResult;
 import com.linyilinyi.common.model.Result;
+import com.linyilinyi.model.entity.video.Video;
 import com.linyilinyi.model.vo.video.VideoQueryVo;
 import com.linyilinyi.model.vo.video.VideoVo;
 import io.swagger.oas.annotations.Operation;
 import jakarta.validation.Valid;
+import lombok.extern.java.Log;
 import org.springframework.cloud.openfeign.FeignClient;
 import org.springframework.web.bind.annotation.*;
 
@@ -26,4 +28,9 @@ public interface VideoClient {
 
     @GetMapping("/video/getVideoById/{id}")
     public Result<VideoVo> getVideoById(@Valid @PathVariable Integer id);
+
+    @PutMapping("/video/updateVideo")
+    public Result<String> updateVideo(@Valid @RequestBody Video video);
+
+
 }

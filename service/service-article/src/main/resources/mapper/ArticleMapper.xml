@@ -14,6 +14,7 @@
         <result column="nickname" property="nickname" />
         <result column="image_md5" property="imageMd5" />
         <result column="image_status" property="imageStatus" />
+        <result column="article_status" property="articleStatus" />
         <result column="create_time" property="createTime" />
         <result column="update_time" property="updateTime" />
         <result column="is_delete" property="isDelete" />
@@ -21,7 +22,7 @@
 
     <!-- 通用查询结果列 -->
     <sql id="Base_Column_List">
-        id, title, content, url, type, user_id, username,nickname,image_md5, image_status, create_time, update_time, is_delete
+        id, title, content, url, type, user_id, username,nickname,image_md5, image_status, article_status,create_time, update_time, is_delete
     </sql>
     <delete id="deleteArticleByPhysical">
         delete from article where id in

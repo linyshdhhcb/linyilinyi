@@ -69,6 +69,9 @@ public class Article implements Serializable {
     @Schema(description = "图片审核状态")
     private Integer imageStatus;
 
+    @Schema(description = "文章审核状态")
+    private Integer articleStatus;
+
     @Schema(description = "创建时间")
     @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
     private LocalDateTime createTime;

@@ -37,5 +37,5 @@ public class ArticleQueryVo extends FrameTime {
     private String imageMd5;
 
     @Schema(description = "图片审核状态")
-    private Integer imageStatus;
+    private Integer articleStatus;
 }

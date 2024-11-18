@@ -5,6 +5,7 @@ import com.baomidou.mybatisplus.annotation.TableLogic;
 import com.linyilinyi.common.model.FrameTime;
 import com.linyilinyi.model.entity.video.Video;
 import io.swagger.v3.oas.annotations.media.Schema;
+import jakarta.validation.constraints.NotNull;
 import lombok.Data;
 
 import java.time.LocalDateTime;
@@ -48,4 +49,8 @@ public class VideoQueryVo extends FrameTime {
 
     @Schema(description = "组合搜索（name,nickname,tag）")
     private String combined_fields;
+
+
+    @Schema(description = "视频审核状态")
+    private Integer videoStart;
 }

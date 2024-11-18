@@ -5,10 +5,11 @@ import com.linyilinyi.common.model.Result;
 import com.linyilinyi.model.entity.article.Article;
 import com.linyilinyi.model.vo.article.ArticleQueryVo;
 import io.swagger.oas.annotations.Operation;
+import jakarta.validation.Valid;
+import jakarta.validation.constraints.NotNull;
+import lombok.extern.java.Log;
 import org.springframework.cloud.openfeign.FeignClient;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.*;
 
 /**
  * @Description
@@ -30,4 +31,10 @@ public interface ArticleClient {
     public Result<PageResult<Article>> getArticleList(@RequestParam(required = false, defaultValue = "1") long pageNo,
                                                       @RequestParam(required = false, defaultValue = "5") long pageSize,
                                                       @RequestBody ArticleQueryVo articleQueryVo);
+
+    @GetMapping("/article/getArticleById/{id}")
+    public Result<Article> getArticleById(@NotNull(message = "id不能为空") @PathVariable Integer id);
+
+    @PutMapping("/article/updateArticle")
+    public Result<String> updateArticle(@Valid @RequestBody Article article);
 }
