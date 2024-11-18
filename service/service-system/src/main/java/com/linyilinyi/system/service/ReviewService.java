@@ -1,5 +1,7 @@
 package com.linyilinyi.system.service;
 
+import com.linyilinyi.common.model.Result;
+
 /**
  * @Description
  * @Author linyi
@@ -7,4 +9,5 @@ package com.linyilinyi.system.service;
  * @ClassName: ReviewService
  */
 public interface ReviewService {
+    Result<String> video(String videoId, Integer status, String reason);
 }

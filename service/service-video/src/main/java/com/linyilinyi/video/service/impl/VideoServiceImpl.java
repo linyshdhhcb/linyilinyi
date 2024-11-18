@@ -9,7 +9,6 @@ import com.linyilinyi.common.model.PageResult;
 import com.linyilinyi.common.model.Result;
 import com.linyilinyi.common.model.ResultCodeEnum;
 import com.linyilinyi.common.utils.AuthContextUser;
-import com.linyilinyi.model.entity.reviewer.Reviewer;
 import com.linyilinyi.model.entity.user.User;
 import com.linyilinyi.model.entity.video.Video;
 import com.linyilinyi.model.entity.video.VideoData;
