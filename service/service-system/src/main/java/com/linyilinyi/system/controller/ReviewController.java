@@ -41,11 +41,11 @@ public class ReviewController {
         return Result.ok(reviewService.article(articleId, status, reason));
     }
 
-    @Operation(summary = "获取未审核列表")
+    @Operation(summary = "获取审核列表")
     @PostMapping("getUnreviewedArticleList")
     public Result<PageResult<?>> getUnreviewedArticleList(@RequestParam(required = false, defaultValue = "1") long pageNo,
                                                                 @RequestParam(required = false, defaultValue = "5") long pageSize,
-                                                                @RequestParam Integer mediaType) {
-        return Result.ok(reviewService.getUnreviewedList(pageNo,pageSize,mediaType));
+                                                                @RequestParam Integer mediaType,@RequestParam Integer status) {
+        return Result.ok(reviewService.getUnreviewedList(pageNo,pageSize,mediaType,status));
     }
 }

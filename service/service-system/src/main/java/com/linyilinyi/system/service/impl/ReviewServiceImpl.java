@@ -22,7 +22,6 @@ import org.springframework.transaction.annotation.Transactional;
 
 import javax.annotation.Resource;
 import java.time.LocalDateTime;
-import java.util.List;
 import java.util.Optional;
 
 /**
@@ -52,7 +51,7 @@ public class ReviewServiceImpl implements ReviewService {
     public String video(Integer videoId, Integer status, String reason) {
         VideoVo data = videoClient.getVideoById(videoId).getData();
         Video video = new Video();
-        BeanUtils.copyProperties(data,video);
+        BeanUtils.copyProperties(data, video);
         video.setVideoStart(status);
         video.setImageStart(status);
         video.setUpdateTime(LocalDateTime.now());
@@ -62,13 +61,13 @@ public class ReviewServiceImpl implements ReviewService {
         review.setStatus(status);
         review.setReviewer(userClient.getUserById(AuthContextUser.getUserId()).getData().getUsername());
         review.setReviewDate(LocalDateTime.now());
-        if (Optional.ofNullable(reason).isPresent()){
+        if (Optional.ofNullable(reason).isPresent()) {
             review.setRemarks(reason);
         }
         Result<String> result = videoClient.updateVideo(video);
-        if (result.getCode() == 200){
+        if (result.getCode() == 200) {
             int i = reviewMapper.insert(review);
-            if (i!=1){
+            if (i != 1) {
                 throw new LinyiException(ResultCodeEnum.INSERT_FAIL);
             }
         }
@@ -87,13 +86,13 @@ public class ReviewServiceImpl implements ReviewService {
         review.setStatus(status);
         review.setReviewer(userClient.getUserById(AuthContextUser.getUserId()).getData().getUsername());
         review.setReviewDate(LocalDateTime.now());
-        if (Optional.ofNullable(reason).isPresent()){
+        if (Optional.ofNullable(reason).isPresent()) {
             review.setRemarks(reason);
         }
         Result<String> result = articleClient.updateArticle(article);
-        if (result.getCode() == 200){
+        if (result.getCode() == 200) {
             int i = reviewMapper.insert(review);
-            if (i!=1){
+            if (i != 1) {
                 throw new LinyiException(ResultCodeEnum.INSERT_FAIL);
             }
         }
@@ -101,17 +100,16 @@ public class ReviewServiceImpl implements ReviewService {
     }
 
     @Override
-    public PageResult<?> getUnreviewedList(long pageNo, long pageSize, Integer mediaType) {
+    public PageResult<?> getUnreviewedList(long pageNo, long pageSize, Integer mediaType, Integer status) {
         try {
-            if (mediaType==10002){
+            if (mediaType == 11102) {
                 VideoQueryVo videoQueryVo = new VideoQueryVo();
-                videoQueryVo.setVideoStart(mediaType);
-               return videoClient.list(pageNo, pageSize, videoQueryVo).getData();
-            }else if (mediaType==10003){
+                videoQueryVo.setVideoStart(status);
+                return videoClient.list(pageNo, pageSize, videoQueryVo).getData();
+            } else if (mediaType == 11103) {
                 ArticleQueryVo articleQueryVo = new ArticleQueryVo();
-                articleQueryVo.setArticleStatus(mediaType);
-               return articleClient.getArticleList(pageNo,pageSize,articleQueryVo).getData();
-
+                articleQueryVo.setArticleStatus(status);
+                return articleClient.getArticleList(pageNo, pageSize, articleQueryVo).getData();
             }
         } catch (Exception e) {
             throw new LinyiException("获取未审核失败");

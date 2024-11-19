@@ -9,6 +9,7 @@ import com.linyilinyi.common.model.PageResult;
 import com.linyilinyi.common.model.Result;
 import com.linyilinyi.common.model.ResultCodeEnum;
 import com.linyilinyi.common.utils.AuthContextUser;
+import com.linyilinyi.model.entity.reviewer.Review;
 import com.linyilinyi.model.entity.user.User;
 import com.linyilinyi.model.entity.video.Video;
 import com.linyilinyi.model.entity.video.VideoData;
@@ -106,12 +107,11 @@ public class VideoServiceImpl extends ServiceImpl<VideoMapper, Video> implements
         if (insert != 1) {
             throw new LinyiException(ResultCodeEnum.FAIL);
         }
-        Reviewer reviewer = new Reviewer();
-        reviewer.setTargetId(videoNew.getId());
-        reviewer.setType(11102);
-        reviewer.setStatus(10001);
-        reviewer.setCreateTime(LocalDateTime.now());
-        // TODO 2024/9/22 远程调用，将审核信息存入数据库
+//        Review reviewer = new Review();
+//        reviewer.setTargetId(videoNew.getId());
+//        reviewer.setType(11102);
+//        reviewer.setStatus(10001);
+//        reviewer.setCreateTime(LocalDateTime.now());
 
         VideoData videoData = new VideoData();
         videoData.setVideoId(videoNew.getId());

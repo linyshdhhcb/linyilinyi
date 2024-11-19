@@ -1,9 +1,6 @@
 package com.linyilinyi.system.service;
 
 import com.linyilinyi.common.model.PageResult;
-import com.linyilinyi.model.vo.video.VideoVo;
-
-import java.util.List;
 
 /**
  * @Description
@@ -17,5 +14,5 @@ public interface ReviewService {
     String article(Integer articleId, Integer status, String reason);
 
 
-    PageResult<?> getUnreviewedList(long pageNo, long pageSize, Integer mediaType);
+    PageResult<?> getUnreviewedList(long pageNo, long pageSize, Integer mediaType, Integer status);
 }

@@ -56,7 +56,7 @@ public class ArticleServiceImpl extends ServiceImpl<ArticleMapper, Article> impl
         queryWrapper.eq(StringUtils.isNotBlank(articleQueryVo.getUsername()), Article::getUsername, articleQueryVo.getUsername());
         queryWrapper.like(StringUtils.isNotBlank(articleQueryVo.getNickname()), Article::getNickname, articleQueryVo.getNickname());
         queryWrapper.eq(StringUtils.isNotBlank(articleQueryVo.getImageMd5()), Article::getImageMd5, articleQueryVo.getImageMd5());
-        queryWrapper.eq(Optional.ofNullable(articleQueryVo.getImageStatus()).isPresent(), Article::getImageStatus, articleQueryVo.getImageStatus());
+        queryWrapper.eq(Optional.ofNullable(articleQueryVo.getArticleStatus()).isPresent(), Article::getImageStatus, articleQueryVo.getArticleStatus());
         Page<Article> articlePage = new Page<>(pageNo, pageSize);
         Page<Article> page = articleMapper.selectPage(articlePage, queryWrapper);
         return new PageResult<>(page.getRecords(), page.getTotal(), pageNo, pageSize);
