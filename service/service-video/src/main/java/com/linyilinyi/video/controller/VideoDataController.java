@@ -1,5 +1,6 @@
 package com.linyilinyi.video.controller;
 
+import com.github.xiaoymin.knife4j.annotations.Ignore;
 import com.linyilinyi.common.model.PageResult;
 import com.linyilinyi.common.model.Result;
 import com.linyilinyi.log.annotation.Log;
@@ -33,7 +34,7 @@ public class VideoDataController {
     @PostMapping("/getVideoDataList")
     @Log(title = "视频数据统计管理",content = "分页获取视频数据列表")
     public Result<PageResult<VideoData>> getVideoDataList(@RequestParam(required = false, defaultValue = "1") long pageNo,
-                                               @RequestParam(required = false, defaultValue = "10") long pageSize) {
+                                                          @RequestParam(required = false, defaultValue = "10") long pageSize) {
         return Result.ok(videoDataService.getVideoDataList(pageNo, pageSize));
     }
 
@@ -49,5 +50,13 @@ public class VideoDataController {
     @Log(title = "视频数据统计管理",content = "修改视频数据")
     public Result<String> updateVideoData(@RequestBody VideoData videoData) {
         return Result.ok(videoDataService.updateVideoData(videoData));
+    }
+
+
+    @Operation(summary = "添加视频数据")
+    @PostMapping("addVideoData")
+    @Log(title = "视频数据统计管理",content = "添加视频数据")
+    public Result<String> addData(@RequestParam Integer id,@RequestParam Integer status) {
+        return Result.ok(videoDataService.addData(id,status));
     }
 }

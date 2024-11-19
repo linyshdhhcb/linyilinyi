@@ -10,7 +10,6 @@ import com.linyilinyi.article.mapper.ArticleMapper;
 import com.linyilinyi.article.service.ArticleService;
 import com.linyilinyi.common.exception.LinyiException;
 import com.linyilinyi.common.model.PageResult;
-import com.linyilinyi.common.model.Result;
 import com.linyilinyi.common.model.ResultCodeEnum;
 import com.linyilinyi.common.utils.AuthContextUser;
 import com.linyilinyi.model.entity.article.Article;

@@ -2,7 +2,6 @@ package com.linyilinyi.system.controller;
 
 import com.linyilinyi.common.model.PageResult;
 import com.linyilinyi.common.model.Result;
-import com.linyilinyi.model.vo.video.VideoVo;
 import com.linyilinyi.system.service.ReviewService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -12,7 +11,6 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import javax.annotation.Resource;
-import java.util.List;
 
 /**
  * @Description 审核模块

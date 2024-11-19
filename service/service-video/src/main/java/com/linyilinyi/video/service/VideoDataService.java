@@ -21,4 +21,6 @@ public interface VideoDataService extends IService<VideoData> {
     void addVideoData(VideoData videoData);
 
     String updateVideoData(VideoData videoData);
+
+    String addData(Integer id,Integer status);
 }

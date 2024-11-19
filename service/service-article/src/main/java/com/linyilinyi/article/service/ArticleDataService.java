@@ -2,7 +2,6 @@ package com.linyilinyi.article.service;
 
 import com.baomidou.mybatisplus.extension.service.IService;
 import com.linyilinyi.common.model.PageResult;
-import com.linyilinyi.common.model.ResultCodeEnum;
 import com.linyilinyi.model.entity.article.ArticleData;
 
 /**

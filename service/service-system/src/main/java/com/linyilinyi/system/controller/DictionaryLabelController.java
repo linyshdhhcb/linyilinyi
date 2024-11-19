@@ -25,7 +25,7 @@ import java.util.List;
  *
  * @author linyi
  */
-@Tag(name = "数据字典内容管理器")
+@Tag(name = "数据字典内容管理")
 @Slf4j
 @Validated
 @RestController

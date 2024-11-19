@@ -23,7 +23,7 @@ import java.util.List;
  *
  * @author linyi
  */
-@Tag(name = "数据字典类型表")
+@Tag(name = "数据字典类型")
 @Slf4j
 @Validated
 @RestController
