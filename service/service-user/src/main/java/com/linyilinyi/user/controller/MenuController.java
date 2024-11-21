@@ -62,11 +62,19 @@ public class MenuController {
     }
 
     @Operation(summary = "获取菜单树型列表")
-    @GetMapping("getMenuList")
+    @GetMapping("getMenuListTree")
     @Log(title = "菜单管理",content = "获取菜单树型列表")
+    public Result<List<Menu>> getMenuListTree() {
+        return Result.ok(menuService.getMenuListTree());
+    }
+
+    @Operation(summary = "获取菜单列表")
+    @GetMapping("getMenuList")
+    @Log(title = "菜单管理",content = "获取菜单列表")
     public Result<List<Menu>> getMenuList() {
         return Result.ok(menuService.getMenuList());
     }
+
 
     @Operation(summary = "根据角色id获取菜单")
     @GetMapping("getMenuListByRoleId/{roleId}")

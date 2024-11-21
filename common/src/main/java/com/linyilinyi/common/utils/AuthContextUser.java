@@ -1,5 +1,6 @@
 package com.linyilinyi.common.utils;
 
+import cn.dev33.satoken.stp.StpUtil;
 import com.linyilinyi.common.exception.LinyiException;
 
 import java.util.Optional;
@@ -16,10 +17,11 @@ public class AuthContextUser {
     }
 
     public static Integer getUserId() {
-        // TODO 2024/9/17 AuthContextUser待完善（写死）
-        setUserId(1);
-        if (Optional.ofNullable(userId.get()).isEmpty()){
-            throw new LinyiException(401,"没登录");
+        Integer i1 = convertToInteger(StpUtil.getLoginId());
+        userId.set(i1);
+        Integer i = userId.get();
+        if (Optional.ofNullable(i).isEmpty()) {
+            throw new LinyiException(401, "没登录");
         }
         return userId.get();
     }
@@ -28,4 +30,19 @@ public class AuthContextUser {
         userId.remove();
     }
 
+    public static Integer convertToInteger(Object loginId) {
+        if (loginId instanceof Integer) {
+            return (Integer) loginId;
+        } else if (loginId instanceof Long) {
+            return ((Long) loginId).intValue();
+        } else if (loginId instanceof String) {
+            try {
+                return Integer.parseInt((String) loginId);
+            } catch (NumberFormatException e) {
+                e.printStackTrace();
+            }
+        } else {
+        }
+        return null;
+    }
 }

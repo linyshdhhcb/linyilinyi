@@ -10,15 +10,23 @@ import cn.dev33.satoken.router.SaHttpMethod;
 import cn.dev33.satoken.router.SaRouter;
 import cn.dev33.satoken.stp.StpUtil;
 import com.alibaba.fastjson2.JSON;
+import com.linyilinyi.common.exception.LinyiException;
 import com.linyilinyi.common.model.Result;
 import com.linyilinyi.common.model.ResultCodeEnum;
+import com.linyilinyi.common.utils.AuthContextUser;
 import jakarta.annotation.Resource;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.core.annotation.Order;
+import org.springframework.data.redis.core.RedisTemplate;
 
+import java.security.AuthProvider;
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 /**
  * @Description 注册 Sa-Token全局过滤器
@@ -33,22 +41,23 @@ public class SaTokenConfigure {
     @Resource
     private StpInterfaceImpl stpInterface;
 
+    @Resource
+    private  RedisTemplate redisTemplate;
+
+
     private static final String USER_LOGIN_PATH = "/*/*/user/login";
     private static final String USER_REGISTER_PATH = "/*/*/user/register";
     private static final String USER_LOGOUT_PATH = "/*/*/user/logout";
     private static final String USER_ISLOGIN_PATH = "/*/*/user/isLogin";
 
-    private static final String ROLE_SUPER_ADMIN = "SUPER_ADMIN";
-    private static final String ROLE_ADMIN = "ADMIN";
-    private static final String PERMISSION_ADD_ROLE = "user:add";
-
     private static final List<String> EXCLUDED_PATHS = Arrays.asList(
 
-            "/**",//全部不拦截
+            //"/**",//全部不拦截
             USER_LOGIN_PATH,
             USER_REGISTER_PATH,
             USER_LOGOUT_PATH,
             USER_ISLOGIN_PATH,
+            "/*/*/log/**",
             "/favicon.ico",
             "/swagger-ui/**",
             "/swagger-resources/**",
@@ -62,20 +71,6 @@ public class SaTokenConfigure {
             "/*/*/doc.html"
     );
 
-    // 定义需要拦截的 URL 集合
-    private static final List<String> addRoleUrls = List.of(
-            "/*/*/role/addRole",
-            "/*/*/role/deleteRole/**"
-    );
-    private static final List<String> deleteRoleUrls = List.of(
-            "/lyly/user-api/role/getRoleList",
-            "/aa/*/role/updateRole"
-    );
-    private static final List<String> updateRoleUrls = List.of(
-            "/*/*/role/updateRole",
-            "/api/*/role/updateRole"
-    );
-
     @Bean
     public SaReactorFilter getSaReactorFilter() {
         SaReactorFilter saReactorFilter = new SaReactorFilter()
@@ -85,10 +80,13 @@ public class SaTokenConfigure {
             saReactorFilter.addExclude(path);
         }
 
+
+
         // 配置认证逻辑
         configureAuth(saReactorFilter);
         // 配置错误处理逻辑
-        configureErrorHandling(saReactorFilter);
+       configureErrorHandling(saReactorFilter);
+
 
         saReactorFilter
                 .setBeforeAuth(r -> {
@@ -115,18 +113,15 @@ public class SaTokenConfigure {
     private void configureAuth(SaReactorFilter saReactorFilter) {
         saReactorFilter.setAuth(obj -> {
             try {
-                System.out.println("*************************************");
-                System.out.println("id" + StpUtil.getLoginId());
-                System.out.println("全部角色" + StpUtil.getRoleList());
-                System.out.println("全部权限" + StpUtil.getPermissionList());
+                System.out.println("id:" + StpUtil.getLoginId());
+                System.out.println("全部角色:" + StpUtil.getRoleList());
+                System.out.println("全部权限:" + StpUtil.getPermissionList());
                 // 全局登录校验，确保在其他具体路径匹配规则之前执行
                 SaRouter.match("/**", () -> StpUtil.isLogin());
-
                 //通过集合的url拦截 为每个 URL 模式设置权限检查
-
-                addRoleUrls.forEach(url -> SaRouter.match(url, r -> StpUtil.checkRoleOr(ROLE_SUPER_ADMIN)));
-                deleteRoleUrls.forEach(url -> SaRouter.match(url, r -> StpUtil.checkRoleOr(ROLE_ADMIN)));
-                updateRoleUrls.forEach(url -> SaRouter.match(url, r -> StpUtil.checkRoleOr("1")));
+                String path = SaHolder.getRequest().getRequestPath();
+                System.out.println("path:" + path);
+                SaRouter.match(path, r -> StpUtil.checkRoleOr(String.join(",", StpUtil.getRoleList())));
 
             } catch (NotLoginException e) {
                 log.error("用户未登录，拦截请求信息：{},用户登录信息：{}", e.getMessage(), StpUtil.getTokenInfo());
@@ -150,10 +145,12 @@ public class SaTokenConfigure {
             log.error("发生错误: {}", e.getClass().getName(), e);
 
             String message = "未经授权";
+
             if (e instanceof NotLoginException nle) {
+                System.out.println("***************************"+((NotLoginException) e).getType());
                 switch (nle.getType()) {
                     case NotLoginException.NOT_TOKEN:
-                        message = NotLoginException.DEFAULT_MESSAGE+"!!!"+NotLoginException.NOT_TOKEN_MESSAGE;
+                        message = NotLoginException.DEFAULT_MESSAGE + "!!!" + NotLoginException.NOT_TOKEN_MESSAGE;
                         break;
                     case NotLoginException.INVALID_TOKEN:
                         message = NotLoginException.INVALID_TOKEN_MESSAGE;
@@ -176,8 +173,10 @@ public class SaTokenConfigure {
                 return JSON.toJSONString(Result.fail(ResultCodeEnum.NO_PERMISSION));
             } else if (e instanceof NotRoleException) {
                 return JSON.toJSONString(Result.fail(ResultCodeEnum.NO_ROLE));
+            }else if (e instanceof NoSuchMethodError){
+                return JSON.toJSONString(Result.fail(ResultCodeEnum.LOGIN_AUTH));
             } else {
-                return JSON.toJSONString(Result.fail(ResultCodeEnum.SYSTEM_ERROR));
+                return JSON.toJSONString(Result.fail("没有登录"));
             }
             // 记录更安全的日志信息
             log.error("发生错误: {}", message);
@@ -185,6 +184,5 @@ public class SaTokenConfigure {
         });
         return Result.ok();
     }
-
 
 }

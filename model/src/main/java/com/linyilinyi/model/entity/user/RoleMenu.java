@@ -50,6 +50,8 @@ public class RoleMenu implements Serializable {
     @TableLogic
     private Integer isDelete;
 
+    public RoleMenu() {
+    }
     public RoleMenu(Long roleId, Long menuId, LocalDateTime createTime, LocalDateTime updateTime) {
         this.roleId = roleId;
         this.menuId = menuId;

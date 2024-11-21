@@ -12,4 +12,5 @@ import com.linyilinyi.model.entity.user.Menu;
  */
 public interface MenuMapper extends BaseMapper<Menu> {
 
+    void deleteNeMenuType(Integer i);
 }

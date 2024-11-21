@@ -3,6 +3,7 @@ package com.linyilinyi.user.controller;
 import cn.dev33.satoken.stp.StpUtil;
 import com.linyilinyi.common.model.PageResult;
 import com.linyilinyi.common.model.Result;
+import com.linyilinyi.common.utils.AuthContextUser;
 import com.linyilinyi.log.annotation.Log;
 import com.linyilinyi.log.annotation.LogExecutionTime;
 import com.linyilinyi.model.entity.user.User;
@@ -73,7 +74,7 @@ public class UserController {
 
     @Operation(summary = "用户登录（成功返回token）")
     @PostMapping("/login")
-    @Log(title = "用户管理", content = "用户登录")
+    //@Log(title = "用户管理", content = "用户登录")
     public Result<String> login(@RequestBody LoginVo loginVo){
         log.info("登录请求：{}",loginVo);
         return Result.ok(userService.login(loginVo));
@@ -114,6 +115,7 @@ public class UserController {
     @PostMapping("/logout")
     @Log(title = "用户管理", content = "用户登出")
     public Result<String> logout() {
+        AuthContextUser.removeUserId();
         StpUtil.logout();
         return Result.ok("退出成功");
     }

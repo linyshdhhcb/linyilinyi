@@ -1,5 +1,6 @@
 package com.linyilinyi.article.service.impl;
 
+import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.linyilinyi.article.mapper.ArticleDataMapper;
 import com.linyilinyi.article.service.ArticleDataService;
@@ -34,13 +35,13 @@ public class ArticleDataServiceImpl extends ServiceImpl<ArticleDataMapper, Artic
     public PageResult<ArticleData> getArticleDataList(long pageNo, long pageSize) {
         Page<ArticleData> articleDataPage = new Page<>();
         Page<ArticleData> page = articleDataMapper.selectPage(articleDataPage, null);
-        return new PageResult<>(page.getRecords(),page.getTotal(),pageNo,pageSize);
+        return new PageResult<>(page.getRecords(), page.getTotal(), pageNo, pageSize);
     }
 
     @Override
     public ArticleData getArticleDataById(Integer id) {
         ArticleData articleData = articleDataMapper.selectById(id);
-        if (Optional.ofNullable(articleData).isEmpty()){
+        if (Optional.ofNullable(articleData).isEmpty()) {
             throw new LinyiException(ResultCodeEnum.DATA_ERROR);
         }
         return articleData;
@@ -50,9 +51,43 @@ public class ArticleDataServiceImpl extends ServiceImpl<ArticleDataMapper, Artic
     public String updateArticleData(ArticleData articleData) {
         articleData.setUpdateTime(LocalDateTime.now());
         int i = articleDataMapper.updateById(articleData);
-        if (i!=1){
+        if (i != 1) {
             throw new LinyiException(ResultCodeEnum.UPDATE_FAIL);
         }
         return "修改成功";
+    }
+
+    @Override
+    public String addArticleData(Integer id, Integer status) {
+        LambdaQueryWrapper<ArticleData> queryWrapper = new LambdaQueryWrapper<ArticleData>().eq(ArticleData::getArticleId, id);
+        ArticleData articleData = articleDataMapper.selectOne(queryWrapper);
+        switch (status) {
+            case 22301 -> {
+                articleData.setCommentCount(articleData.getCommentCount() + 1);
+                articleDataMapper.updateById(articleData);
+                return "评论数+1";
+            }
+            case 22302 -> {
+                articleData.setReadCount(articleData.getReadCount() + 1);
+                articleDataMapper.updateById(articleData);
+                return "播放数+1";
+            }
+            case 22303 -> {
+                articleData.setLikeCount(articleData.getLikeCount() + 1);
+                articleDataMapper.updateById(articleData);
+                return "点赞数+1";
+            }
+            case 22304 -> {
+                articleData.setCollectCount(articleData.getCollectCount() + 1);
+                articleDataMapper.updateById(articleData);
+                return "收藏数+1";
+            }
+            case 22305 -> {
+                articleData.setShareCount(articleData.getShareCount() + 1);
+                articleDataMapper.updateById(articleData);
+                return "分享数+1";
+            }
+            default -> throw new LinyiException("没有该类型");
+        }
     }
 }

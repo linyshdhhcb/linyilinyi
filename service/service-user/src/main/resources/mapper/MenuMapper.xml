@@ -22,5 +22,8 @@
     <sql id="Base_Column_List">
         id, name, parent_id, path, component, menu_type, perms, create_time, update_time, remark, status,is_delete
     </sql>
+    <delete id="deleteNeMenuType">
+        delete from menu where menu_type != #{i}
+    </delete>
 
 </mapper>

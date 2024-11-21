@@ -84,7 +84,7 @@ public class MenuServiceImpl extends ServiceImpl<MenuMapper, Menu> implements Me
     }
 
     @Override
-    public List<Menu> getMenuList() {
+    public List<Menu> getMenuListTree() {
         List<Menu> menus = menuMapper.selectList(new LambdaQueryWrapper<Menu>().eq(Menu::getStatus,1));
         if (Optional.ofNullable(menus).isEmpty()){
             return null;
@@ -96,10 +96,11 @@ public class MenuServiceImpl extends ServiceImpl<MenuMapper, Menu> implements Me
 
     @Override
     public List<Menu> getMenuListByRoleId(Long roleId) {
-        List<Menu> menus = menuMapper.selectList(new LambdaQueryWrapper<Menu>().eq(Menu::getStatus,1));
+//        List<Menu> menus = menuMapper.selectList(new LambdaQueryWrapper<Menu>().eq(Menu::getStatus,1));
         List<RoleMenu> roleMenus = roleMenuMapper.selectList(new LambdaQueryWrapper<RoleMenu>().eq(RoleMenu::getRoleId, roleId));
         List<Long> menuIds = roleMenus.stream().map(RoleMenu::getMenuId).collect(Collectors.toList());
-        return this.listByIds(menuIds);
+        List<Menu> menus = menuMapper.selectBatchIds(menuIds);
+        return menus;
     }
 
     @Override
@@ -164,8 +165,13 @@ public class MenuServiceImpl extends ServiceImpl<MenuMapper, Menu> implements Me
     }
 
     @Override
-    public void deleteMenuType(int i) {
+    public void deleteMenuType(Integer i) {
         //删除出i以外的全部数据
-        menuMapper.delete(new LambdaQueryWrapper<Menu>().ne(Menu::getMenuType,i));
+        menuMapper.deleteNeMenuType(i);
+    }
+
+    @Override
+    public List<Menu> getMenuList() {
+        return menuMapper.selectList(null);
     }
 }

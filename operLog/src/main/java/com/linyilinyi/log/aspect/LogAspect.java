@@ -2,6 +2,7 @@ package com.linyilinyi.log.aspect;
 
 import com.linyilinyi.common.exception.LinyiException;
 import com.linyilinyi.common.utils.AuthContextUser;
+import com.linyilinyi.common.utils.AuthContextUsers;
 import com.linyilinyi.common.utils.IpUtil;
 import com.linyilinyi.log.annotation.Log;
 import com.linyilinyi.model.entity.log.OperLog;
@@ -112,14 +113,14 @@ public class LogAspect {
             String methoname = className + "." + name + "()";
             //获取ip
             String ip = IpUtil.getIpAddress(request);
-
             //获取用户名
+            String username = null;
+
             Integer userId = AuthContextUser.getUserId();
 
-            String username = CompletableFuture.supplyAsync(()->{
-                return userClient.getUserById(userId).getData().getUsername();
-            }).get();
-//            String username = userClient.getUserById(userId).getData().getUsername();
+            if (Optional.ofNullable(userId).isPresent()) {
+                username = userClient.getUserById(userId).getData().getUsername();
+            }
             operLog.setMethod(methoname); //设置请求方法
             operLog.setRequestMethod(request.getMethod());//设置请求方式
             operLog.setRequestParam(jsonString); // 请求参数
@@ -133,14 +134,12 @@ public class LogAspect {
             Long takeTime = System.currentTimeMillis() - startTime.get();//记录方法执行耗时时间（单位：毫秒）
             operLog.setTakeTime(takeTime);
             //异步调用
-            CompletableFuture.runAsync(()->{
+            CompletableFuture.runAsync(() -> {
                 systemClient.operLog(operLog);
             });
-//            systemClient.operLog(operLog);
         } catch (Exception e) {
-            throw new LinyiException("日志记录出错");
-        }finally {
-
+            throw new LinyiException("日志记录出错" + e.getMessage());
+        } finally {
             startTime.remove();
         }
     }
@@ -174,8 +173,18 @@ public class LogAspect {
             String ip = IpUtil.getIpAddress(request);
 
             //获取用户名
-            Integer userId = AuthContextUser.getUserId();
-            String username = userClient.getUserById(userId).getData().getUsername();
+            String username = null;
+            Integer userId = null;
+            int i = 0;
+            try {
+                do {
+                    userId = AuthContextUser.getUserId();
+                    i++;
+                }while (userId == null && i < 6);
+            } catch (Exception ex) {}
+            if (Optional.ofNullable(userId).isPresent()) {
+                username = userClient.getUserById(userId).getData().getUsername();
+            }
 
             operLog.setMethod(methoname); //设置请求方法
             operLog.setRequestMethod(request.getMethod());//设置请求方式

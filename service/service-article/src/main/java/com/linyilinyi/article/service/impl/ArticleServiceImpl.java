@@ -12,6 +12,7 @@ import com.linyilinyi.common.exception.LinyiException;
 import com.linyilinyi.common.model.PageResult;
 import com.linyilinyi.common.model.ResultCodeEnum;
 import com.linyilinyi.common.utils.AuthContextUser;
+import com.linyilinyi.common.utils.AuthContextUsers;
 import com.linyilinyi.model.entity.article.Article;
 import com.linyilinyi.model.entity.article.ArticleData;
 import com.linyilinyi.model.entity.user.User;
@@ -71,6 +72,7 @@ public class ArticleServiceImpl extends ServiceImpl<ArticleMapper, Article> impl
         if (Optional.ofNullable(articleAddVo).isEmpty()) {
             throw new LinyiException(ResultCodeEnum.DATA_NULL);
         }
+
         Article article = new Article();
         BeanUtils.copyProperties(articleAddVo, article);
         article.setUserId(AuthContextUser.getUserId());

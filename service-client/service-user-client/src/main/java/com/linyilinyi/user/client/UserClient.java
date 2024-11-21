@@ -80,4 +80,7 @@ public interface UserClient {
 
     @GetMapping("/menu/getMenuByName/{name}")
     public Result<Menu> getMenuByName(@PathVariable String name);
+
+    @GetMapping("getMenuList")
+    public Result<List<Menu>> getMenuList();
 }

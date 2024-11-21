@@ -25,7 +25,7 @@ public interface MenuService extends IService<Menu> {
 
     void updateMenu(Menu menu);
 
-    List<Menu> getMenuList();
+    List<Menu> getMenuListTree();
 
     List<Menu> getMenuListByRoleId(Long roleId);
 
@@ -34,5 +34,8 @@ public interface MenuService extends IService<Menu> {
 
     Menu getMenuByName(String name);
 
-    void deleteMenuType(int i);
+    void deleteMenuType(Integer i);
+
+    List<Menu> getMenuList();
+
 }
