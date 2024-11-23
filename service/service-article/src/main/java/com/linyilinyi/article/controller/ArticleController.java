@@ -10,6 +10,7 @@ import com.linyilinyi.model.vo.article.ArticleQueryVo;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.annotation.Resource;
+import jakarta.servlet.http.HttpServletRequest;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotNull;
 import lombok.extern.slf4j.Slf4j;
@@ -32,6 +33,12 @@ public class ArticleController {
 
     @Resource
     private ArticleService articleService;
+
+    @Operation(summary = "获取token信息")
+    @GetMapping(value = "/getToken")
+    public Result<Integer> getByToken(HttpServletRequest request) {
+        return Result.ok(articleService.getByToken(request));
+    }
 
     @Operation(summary = "分页获取文章列表")
     @PostMapping("/getArticleList")

@@ -17,7 +17,6 @@ import org.springframework.stereotype.Service;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.stream.Collectors;
-import java.util.stream.Stream;
 
 /**
  * <p>
@@ -37,7 +36,7 @@ public class UserRoleServiceImpl extends ServiceImpl<UserRoleMapper, UserRole> i
     @Resource
     private RoleService roleService;
     @Override
-    public String addUserRole(Long userId, Long roleId) {
+    public String addUserRole(Integer userId, Long roleId) {
         UserRole userRole = new UserRole();
         userRole.setUserId(userId);
         userRole.setRoleId(roleId);
@@ -57,7 +56,7 @@ public class UserRoleServiceImpl extends ServiceImpl<UserRoleMapper, UserRole> i
     }
 
     @Override
-    public List<Role> getUserRoleList(Long userId) {
+    public List<Role> getUserRoleList(Integer userId) {
         LambdaQueryWrapper<UserRole> queryWrapper = new LambdaQueryWrapper<>();
         List<Long> roleIds = userRoleMapper.selectList(queryWrapper.eq(UserRole::getUserId, userId)).stream().map(UserRole::getRoleId).collect(Collectors.toList());
         List<Role> roles = roleService.listByIds(roleIds);

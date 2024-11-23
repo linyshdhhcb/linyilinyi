@@ -10,18 +10,17 @@ import com.linyilinyi.model.vo.notice.NoticeSystemVo;
 import com.linyilinyi.model.vo.notice.NoticeVo;
 import com.linyilinyi.notice.mapper.NoticeInfoMapper;
 import com.linyilinyi.notice.service.NoticeSendService;
-import com.mysql.cj.protocol.x.Notice;
 import jakarta.annotation.Resource;
-import org.apache.ibatis.annotations.Case;
+import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.amqp.rabbit.core.RabbitTemplate;
 import org.springframework.beans.BeanUtils;
+import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.stream.Collectors;
 
 /**
  * @Description
@@ -32,6 +31,9 @@ import java.util.stream.Collectors;
 @Service
 @SuppressWarnings({"unchecked", "rawtypes"})
 public class NoticeSendServiceImpl implements NoticeSendService {
+
+    @Resource
+    private RedisTemplate redisTemplate;
 
     @Resource
     private RabbitTemplate rabbitTemplate;
@@ -187,5 +189,11 @@ public class NoticeSendServiceImpl implements NoticeSendService {
             }
         });
         return map;
+    }
+
+    @Override
+    public Integer getByToken(HttpServletRequest request) {
+        Object o = redisTemplate.opsForValue().get("satoken:login:token:" + request.getCookies()[1].getValue());
+        return Integer.parseInt(String.valueOf(o));
     }
 }

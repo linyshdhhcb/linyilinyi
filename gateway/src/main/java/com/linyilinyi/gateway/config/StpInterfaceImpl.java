@@ -1,6 +1,7 @@
 package com.linyilinyi.gateway.config;
 
 import cn.dev33.satoken.stp.StpInterface;
+import cn.dev33.satoken.stp.StpUtil;
 import com.linyilinyi.common.exception.LinyiException;
 import com.linyilinyi.model.entity.user.Menu;
 import com.linyilinyi.model.entity.user.Role;
@@ -95,10 +96,9 @@ public class StpInterfaceImpl implements StpInterface {
     @Override
     public List<String> getRoleList(Object loginId, String loginType) {
         // 将登录ID转换为Long类型，以便与用户角色查询接口兼容
-        Long longLoginId = Long.valueOf((String) loginId);
+        Integer longLoginId = Integer.parseInt(StpUtil.getLoginId().toString());
         // 使用CompletableFuture异步获取用户角色列表，提高响应性能
-        CompletableFuture<List<String>> listCompletableFuture =
-                CompletableFuture.supplyAsync(() -> {
+        CompletableFuture<List<String>> listCompletableFuture = CompletableFuture.supplyAsync(() -> {
                     // 从用户角色查询接口获取角色列表，并提取角色代码
                     return userClient.getUserRoleList(longLoginId).getData().stream().map(Role::getCode).collect(Collectors.toList());
                 });

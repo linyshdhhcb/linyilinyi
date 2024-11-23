@@ -21,9 +21,11 @@ import com.linyilinyi.video.mapper.VideoMapper;
 import com.linyilinyi.video.service.VideoDataService;
 import com.linyilinyi.video.service.VideoService;
 import jakarta.annotation.Resource;
+import jakarta.servlet.http.HttpServletRequest;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.BeanUtils;
+import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -50,6 +52,9 @@ public class VideoServiceImpl extends ServiceImpl<VideoMapper, Video> implements
     private VideoDataService videoDataService;
     @Resource
     private UserClient userClient;
+
+    @Resource
+    private RedisTemplate redisTemplate;
 
     @Resource
     private VideoDataMapper videoDataMapper;
@@ -152,5 +157,11 @@ public class VideoServiceImpl extends ServiceImpl<VideoMapper, Video> implements
     public List<Video> getVideoListByUserId(Integer userId) {
         LambdaQueryWrapper<Video> queryWrapper = new LambdaQueryWrapper<Video>().eq(Video::getUserId, userId).eq(Video::getVideoStart, 10002).eq(Video::getIsDelete, 10002);
         return videoMapper.selectList(queryWrapper);
+    }
+
+    @Override
+    public Integer getByToken(HttpServletRequest request) {
+        Object o = redisTemplate.opsForValue().get("satoken:login:token:" + request.getCookies()[1].getValue());
+        return Integer.parseInt(String.valueOf(o));
     }
 }

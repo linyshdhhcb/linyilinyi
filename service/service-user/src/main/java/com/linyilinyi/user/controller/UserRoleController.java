@@ -33,7 +33,7 @@ public class UserRoleController {
     @Operation(summary = "添加用户角色")
     @PostMapping("addUserRole")
     @Log(title = "用户角色管理", content = "添加用户角色")
-    public Result<String> addUserRole(@RequestParam Long userId, @RequestParam Long roleId) {
+    public Result<String> addUserRole(@RequestParam Integer userId, @RequestParam Long roleId) {
         return Result.ok(userRoleService.addUserRole(userId, roleId));
     }
 
@@ -46,8 +46,8 @@ public class UserRoleController {
 
     @Operation(summary = "根据用户id获取用户角色列表")
     @GetMapping("getUserRoleList")
-    @Log(title = "用户角色管理", content = "根据用户id获取用户角色列表")
-    public Result<List<Role>> getUserRoleList(@RequestParam Long userId) {
+    //@Log(title = "用户角色管理", content = "根据用户id获取用户角色列表")
+    public Result<List<Role>> getUserRoleList(@RequestParam Integer userId) {
         return Result.ok(userRoleService.getUserRoleList(userId));
     }
 

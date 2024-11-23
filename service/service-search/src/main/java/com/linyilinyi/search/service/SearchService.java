@@ -6,6 +6,7 @@ import com.linyilinyi.model.vo.article.ArticleEsQueryVo;
 import com.linyilinyi.model.vo.user.UserQueryVo;
 import com.linyilinyi.model.vo.video.VideoEsQueryVo;
 import com.linyilinyi.model.vo.video.VideoQueryVo;
+import jakarta.servlet.http.HttpServletRequest;
 
 import java.io.IOException;
 import java.util.List;
@@ -18,6 +19,7 @@ import java.util.Map;
  * @ClassName: VideoEsService
  */
 public interface SearchService {
+
 
     String addVideoDoc() throws IOException;
 
@@ -36,4 +38,5 @@ public interface SearchService {
 
     Video getLatestVideo();
 
+    Integer getByToken(HttpServletRequest request);
 }

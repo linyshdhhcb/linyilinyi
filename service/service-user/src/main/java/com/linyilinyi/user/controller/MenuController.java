@@ -92,7 +92,7 @@ public class MenuController {
 
     @Operation(summary = "根据角色名称code获取菜单")
     @GetMapping("getMenuListByRoleCode/{roleCode}")
-    @Log(title = "菜单管理",content = "根据角色名称code获取菜单")
+    //@Log(title = "菜单管理",content = "根据角色名称code获取菜单")
     public Result<List<Menu>> getMenuListByRoleCode(@PathVariable String roleCode) {
         return Result.ok(menuService.getMenuListByRoleCode(roleCode));
     }

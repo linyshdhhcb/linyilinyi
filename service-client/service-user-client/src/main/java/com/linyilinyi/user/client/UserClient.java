@@ -8,6 +8,7 @@ import com.linyilinyi.model.entity.user.User;
 import com.linyilinyi.model.vo.user.LoginVo;
 import com.linyilinyi.model.vo.user.MenuAdd;
 import com.linyilinyi.model.vo.user.UserQueryVo;
+import jakarta.servlet.http.HttpServletRequest;
 import jakarta.validation.Valid;
 import lombok.extern.java.Log;
 import org.springframework.cloud.openfeign.FeignClient;
@@ -54,7 +55,7 @@ public interface UserClient {
      * @return
      */
     @GetMapping("/userRole/getUserRoleList")
-    public Result<List<Role>> getUserRoleList(@RequestParam Long userId);
+    public Result<List<Role>> getUserRoleList(@RequestParam Integer userId);
 
     /**
      * 根据角色id获取菜单列表
@@ -81,6 +82,9 @@ public interface UserClient {
     @GetMapping("/menu/getMenuByName/{name}")
     public Result<Menu> getMenuByName(@PathVariable String name);
 
-    @GetMapping("getMenuList")
+    @GetMapping("/menu/getMenuList")
     public Result<List<Menu>> getMenuList();
+
+    @GetMapping("/user/getToken")
+    public Result<String> tokenInfo();
 }

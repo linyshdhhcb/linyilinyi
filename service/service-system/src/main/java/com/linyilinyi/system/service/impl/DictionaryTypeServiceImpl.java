@@ -1,7 +1,6 @@
 package com.linyilinyi.system.service.impl;
 
 import com.linyilinyi.common.exception.LinyiException;
-import com.linyilinyi.common.model.Result;
 import com.linyilinyi.common.model.ResultCodeEnum;
 import com.linyilinyi.common.utils.AuthContextUser;
 import com.linyilinyi.model.entity.dictionary.DictionaryType;

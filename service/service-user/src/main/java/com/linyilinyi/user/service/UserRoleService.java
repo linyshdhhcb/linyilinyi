@@ -1,7 +1,6 @@
 package com.linyilinyi.user.service;
 
 import com.baomidou.mybatisplus.extension.service.IService;
-import com.linyilinyi.common.model.ResultCodeEnum;
 import com.linyilinyi.model.entity.user.Role;
 import com.linyilinyi.model.entity.user.UserRole;
 
@@ -18,9 +17,9 @@ import java.util.List;
 public interface UserRoleService extends IService<UserRole> {
 
 
-    String addUserRole(Long userId, Long roleId);
+    String addUserRole(Integer userId, Long roleId);
 
     String deleteUserRoleById(List<Long> ids);
 
-    List<Role> getUserRoleList(Long userId);
+    List<Role> getUserRoleList(Integer userId);
 }

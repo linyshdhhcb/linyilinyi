@@ -4,6 +4,7 @@ import com.baomidou.mybatisplus.extension.service.IService;
 import com.linyilinyi.common.model.PageResult;
 import com.linyilinyi.model.entity.log.OperLog;
 import com.linyilinyi.model.vo.log.OperLogQueryVo;
+import jakarta.servlet.http.HttpServletRequest;
 
 /**
  * <p>
@@ -16,4 +17,6 @@ import com.linyilinyi.model.vo.log.OperLogQueryVo;
 public interface OperLogService extends IService<OperLog> {
 
     PageResult<OperLog> pageList(OperLogQueryVo operLogQueryVo, long pageNo, long pageSize);
+
+    Integer getByToken(HttpServletRequest request);
 }

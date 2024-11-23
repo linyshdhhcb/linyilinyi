@@ -11,7 +11,6 @@ import com.linyilinyi.model.vo.dictionary.DictionaryLabelAddVo;
 import com.linyilinyi.model.vo.dictionary.DictionaryLabelQueryVo;
 import com.linyilinyi.model.vo.dictionary.DictionaryTypeTreeList;
 import com.linyilinyi.system.mapper.DictionaryLabelMapper;
-import com.linyilinyi.system.mapper.DictionaryTypeMapper;
 import com.linyilinyi.system.service.DictionaryLabelService;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.linyilinyi.system.service.DictionaryTypeService;

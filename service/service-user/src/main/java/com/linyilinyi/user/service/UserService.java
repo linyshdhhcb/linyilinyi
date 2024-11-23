@@ -5,6 +5,7 @@ import com.linyilinyi.common.model.PageResult;
 import com.linyilinyi.model.entity.user.User;
 import com.linyilinyi.model.vo.code.Code;
 import com.linyilinyi.model.vo.user.*;
+import jakarta.servlet.http.HttpServletRequest;
 
 import java.util.List;
 
@@ -38,4 +39,5 @@ public interface UserService extends IService<User> {
 
     String forgetPassword(ForgetPasswordVo forgetPasswordVo);
 
+    Integer getByToken(HttpServletRequest request);
 }

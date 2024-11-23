@@ -5,6 +5,7 @@ import com.linyilinyi.common.model.PageResult;
 import com.linyilinyi.model.entity.article.Article;
 import com.linyilinyi.model.vo.article.ArticleAddVo;
 import com.linyilinyi.model.vo.article.ArticleQueryVo;
+import jakarta.servlet.http.HttpServletRequest;
 
 import java.util.List;
 
@@ -31,4 +32,6 @@ public interface ArticleService extends IService<Article> {
     PageResult<Article> getArticleListByIsDelete(long pageNo, long pageSize);
 
     String deleteArticleByPhysical(List<Integer> ids);
+
+    Integer getByToken(HttpServletRequest request);
 }

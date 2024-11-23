@@ -10,23 +10,18 @@ import cn.dev33.satoken.router.SaHttpMethod;
 import cn.dev33.satoken.router.SaRouter;
 import cn.dev33.satoken.stp.StpUtil;
 import com.alibaba.fastjson2.JSON;
-import com.linyilinyi.common.exception.LinyiException;
 import com.linyilinyi.common.model.Result;
 import com.linyilinyi.common.model.ResultCodeEnum;
-import com.linyilinyi.common.utils.AuthContextUser;
 import jakarta.annotation.Resource;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.core.annotation.Order;
 import org.springframework.data.redis.core.RedisTemplate;
+import org.springframework.web.context.request.RequestAttributes;
+import org.springframework.web.context.request.RequestContextHolder;
 
-import java.security.AuthProvider;
 import java.util.Arrays;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 /**
  * @Description 注册 Sa-Token全局过滤器
@@ -79,9 +74,6 @@ public class SaTokenConfigure {
         for (String path : EXCLUDED_PATHS) {
             saReactorFilter.addExclude(path);
         }
-
-
-
         // 配置认证逻辑
         configureAuth(saReactorFilter);
         // 配置错误处理逻辑
@@ -113,16 +105,21 @@ public class SaTokenConfigure {
     private void configureAuth(SaReactorFilter saReactorFilter) {
         saReactorFilter.setAuth(obj -> {
             try {
+
+                // 全局登录校验，确保在其他具体路径匹配规则之前执行，除了,
+                //路径"/*/*/log/**"直接结束
+                if (SaHolder.getRequest().getRequestPath().contains("/*/*/log/**")) {
+                    return;
+                }
+                SaRouter.match("/**",() -> StpUtil.isLogin());
+                //获取请求信息
+                System.out.println("请求路径:" + SaHolder.getRequest().getRequestPath());
                 System.out.println("id:" + StpUtil.getLoginId());
                 System.out.println("全部角色:" + StpUtil.getRoleList());
                 System.out.println("全部权限:" + StpUtil.getPermissionList());
-                // 全局登录校验，确保在其他具体路径匹配规则之前执行
-                SaRouter.match("/**", () -> StpUtil.isLogin());
                 //通过集合的url拦截 为每个 URL 模式设置权限检查
                 String path = SaHolder.getRequest().getRequestPath();
-                System.out.println("path:" + path);
                 SaRouter.match(path, r -> StpUtil.checkRoleOr(String.join(",", StpUtil.getRoleList())));
-
             } catch (NotLoginException e) {
                 log.error("用户未登录，拦截请求信息：{},用户登录信息：{}", e.getMessage(), StpUtil.getTokenInfo());
                 throw e; // 直接抛出原始的 NotLoginException

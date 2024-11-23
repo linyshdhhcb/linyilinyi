@@ -10,6 +10,7 @@ import com.linyilinyi.search.service.SearchService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.annotation.Resource;
+import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.web.bind.annotation.*;
 
 import java.io.IOException;
@@ -85,6 +86,12 @@ public class SearchController {
     @Log(title = "视频管理",content = "获取视频在es中最新的数据")
     public Result<Video> getLatestVideo() throws IOException {
         return Result.ok(videoEsService.getLatestVideo());
+    }
+
+    @Operation(summary = "获取token信息")
+    @GetMapping(value = "/getByToken")
+    public Result<Integer> getByToken(HttpServletRequest request) {
+        return Result.ok(videoEsService.getByToken(request));
     }
 
 

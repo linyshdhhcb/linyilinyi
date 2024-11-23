@@ -9,6 +9,7 @@ import com.linyilinyi.notice.service.NoticeSendService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.annotation.Resource;
+import jakarta.servlet.http.HttpServletRequest;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.*;
 
@@ -71,6 +72,11 @@ public class NoticeSendController {
     @Log(title = "通知管理",content = "获取信息：私信")
     public Result<Map<Integer,List<NoticeInfo>>> sendPrivateMessage(){
          return Result.ok(noticeSendService.sendPrivateMessage());
+    }
 
+    @Operation(summary = "获取token信息")
+    @GetMapping(value = "/getToken")
+    public Result<Integer> getByToken(HttpServletRequest request) {
+        return Result.ok(noticeSendService.getByToken(request));
     }
 }

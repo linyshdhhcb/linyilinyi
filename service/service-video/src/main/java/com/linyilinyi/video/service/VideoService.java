@@ -6,6 +6,7 @@ import com.linyilinyi.model.entity.video.Video;
 import com.linyilinyi.model.vo.video.VideoAddVo;
 import com.linyilinyi.model.vo.video.VideoQueryVo;
 import com.linyilinyi.model.vo.video.VideoVo;
+import jakarta.servlet.http.HttpServletRequest;
 
 import java.util.List;
 
@@ -31,4 +32,6 @@ public interface VideoService extends IService<Video> {
     String updateVideo(Video video);
 
     List<Video> getVideoListByUserId(Integer userId);
+
+    Integer getByToken(HttpServletRequest request);
 }

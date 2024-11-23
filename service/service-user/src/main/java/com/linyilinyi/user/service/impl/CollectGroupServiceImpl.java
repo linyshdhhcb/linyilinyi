@@ -10,7 +10,6 @@ import com.linyilinyi.user.mapper.CollectGroupMapper;
 import com.linyilinyi.user.service.CollectGroupService;
 import jakarta.annotation.Resource;
 import lombok.extern.slf4j.Slf4j;
-import org.redisson.mapreduce.CollectionMapperTask;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;

@@ -56,3 +56,4 @@ knife4j:
       # OpenAPI 3.0 规范
       version: openapi3
       enabled: true
+

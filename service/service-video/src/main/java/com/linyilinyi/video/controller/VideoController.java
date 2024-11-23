@@ -1,10 +1,7 @@
 package com.linyilinyi.video.controller;
 
-import com.alibaba.nacos.shaded.com.google.protobuf.Message;
-import com.linyilinyi.common.exception.LinyiException;
 import com.linyilinyi.common.model.PageResult;
 import com.linyilinyi.common.model.Result;
-import com.linyilinyi.common.model.ResultCodeEnum;
 import com.linyilinyi.common.utils.AuthContextUser;
 import com.linyilinyi.log.annotation.Log;
 import com.linyilinyi.model.entity.video.Video;
@@ -15,12 +12,10 @@ import com.linyilinyi.video.service.VideoService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.annotation.Resource;
+import jakarta.servlet.http.HttpServletRequest;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotNull;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.validation.BindingResult;
-import org.springframework.validation.annotation.Validated;
-import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -92,6 +87,12 @@ public class VideoController {
     @Log(title = "视频管理",content = "获取当前用户的全部视频列表")
     public Result<List<Video>> getVideoList() {
         return Result.ok(videoService.getVideoListByUserId(AuthContextUser.getUserId()));
+    }
+
+    @Operation(summary = "获取token信息")
+    @GetMapping(value = "/getToken")
+    public Result<Integer> getByToken(HttpServletRequest request) {
+        return Result.ok(videoService.getByToken(request));
     }
 
 }

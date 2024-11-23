@@ -33,7 +33,7 @@ public class UserRole implements Serializable {
     private Long id;
 
     @Schema(description = "用户ID")
-    private Long userId;
+    private Integer userId;
 
     @Schema(description = "角色ID")
     private Long roleId;

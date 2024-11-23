@@ -1,5 +1,6 @@
 package com.linyilinyi.common.exception;
 
+import cn.dev33.satoken.exception.NotLoginException;
 import com.linyilinyi.common.model.Result;
 import com.linyilinyi.common.model.ResultCodeEnum;
 import feign.codec.DecodeException;
@@ -178,5 +179,14 @@ public class GlobalExceptionHandler {
         log.error("数据访问异常: " + e.getMessage(), e);
         // 返回包含错误信息的响应体
         return Result.success(e.getMessage(), ResultCodeEnum.DATABASE_ERROR);
+    }
+
+    @ExceptionHandler(NotLoginException.class)
+    @ResponseBody
+    public Result<String> handleNotLoginException(NotLoginException ex) {
+        // 记录详细的错误信息
+        log.error("用户未登录，拦截请求", ex);
+        // 返回未登录的提示信息
+        return new Result<>(401,"用户未登录，请先登录");
     }
 }

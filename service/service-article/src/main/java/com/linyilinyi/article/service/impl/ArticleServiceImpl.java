@@ -12,7 +12,6 @@ import com.linyilinyi.common.exception.LinyiException;
 import com.linyilinyi.common.model.PageResult;
 import com.linyilinyi.common.model.ResultCodeEnum;
 import com.linyilinyi.common.utils.AuthContextUser;
-import com.linyilinyi.common.utils.AuthContextUsers;
 import com.linyilinyi.model.entity.article.Article;
 import com.linyilinyi.model.entity.article.ArticleData;
 import com.linyilinyi.model.entity.user.User;
@@ -20,8 +19,10 @@ import com.linyilinyi.model.vo.article.ArticleAddVo;
 import com.linyilinyi.model.vo.article.ArticleQueryVo;
 import com.linyilinyi.user.client.UserClient;
 import jakarta.annotation.Resource;
+import jakarta.servlet.http.HttpServletRequest;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.BeanUtils;
+import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -46,6 +47,12 @@ public class ArticleServiceImpl extends ServiceImpl<ArticleMapper, Article> impl
 
     @Resource
     private ArticleDataMapper articleDataMapper;
+
+    @Resource
+    private RedisTemplate redisTemplate;
+
+    @Resource
+    private HttpServletRequest request;
 
     @Override
     public PageResult<Article> getArticleList(long pageNo, long pageSize, ArticleQueryVo articleQueryVo) {
@@ -146,5 +153,11 @@ public class ArticleServiceImpl extends ServiceImpl<ArticleMapper, Article> impl
 
         return "删除成功";
 
+    }
+
+    @Override
+    public Integer getByToken(HttpServletRequest request) {
+        Object o = redisTemplate.opsForValue().get("satoken:login:token:" + request.getCookies()[1].getValue());
+        return Integer.parseInt(String.valueOf(o));
     }
 }

@@ -3,6 +3,7 @@ package com.linyilinyi.notice.service;
 import com.linyilinyi.model.entity.notice.NoticeInfo;
 import com.linyilinyi.model.vo.notice.NoticeSystemVo;
 import com.linyilinyi.model.vo.notice.NoticeVo;
+import jakarta.servlet.http.HttpServletRequest;
 
 import java.util.List;
 import java.util.Map;
@@ -29,4 +30,5 @@ public interface NoticeSendService {
 
     Map<Integer,List<NoticeInfo>> sendPrivateMessage();
 
+    Integer getByToken(HttpServletRequest request);
 }

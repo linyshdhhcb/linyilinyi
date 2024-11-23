@@ -1,8 +1,6 @@
 package com.linyilinyi.user.service.impl;
 
-import ch.qos.logback.core.testUtil.RandomUtil;
 import cn.dev33.satoken.stp.StpUtil;
-import com.alibaba.fastjson2.JSON;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
@@ -19,9 +17,9 @@ import com.linyilinyi.model.vo.user.*;
 import com.linyilinyi.user.mapper.UserMapper;
 import com.linyilinyi.user.service.UserService;
 import jakarta.annotation.Resource;
+import jakarta.servlet.http.HttpServletRequest;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.RandomStringUtils;
-import org.apache.commons.lang3.RandomUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.BeanUtils;
 import org.springframework.data.redis.core.RedisTemplate;
@@ -31,7 +29,6 @@ import javax.mail.MessagingException;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
-import java.util.Random;
 import java.util.UUID;
 import java.util.concurrent.TimeUnit;
 
@@ -135,15 +132,12 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements Us
         if (byUsername == null) {
             throw new LinyiException(ResultCodeEnum.ACCOUNT_NULL);
         }
-
         if (PasswordEncoder.encode(loginVo.getPassword(), byUsername.getPassword(), byUsername.getSalt())) {
             //satoken登录
             StpUtil.login(byUsername.getId());
             //获取登录信息
             String tokenValue = StpUtil.getTokenValue();
-            //StpUtil.getSession().set("USER_INFO", JSON.toJSONString(byUsername));
             StpUtil.getSession().setToken(tokenValue);
-            AuthContextUser.setUserId(byUsername.getId());
             return tokenValue;
         }
         throw new LinyiException(ResultCodeEnum.PASSWORD_ERROR);
@@ -226,5 +220,11 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements Us
         }
         redisTemplate.delete("user:code:" + forgetPasswordVo.getCodeKey());
         return "修改成功";
+    }
+
+    @Override
+    public Integer getByToken(HttpServletRequest request) {
+        Object o = redisTemplate.opsForValue().get("satoken:login:token:" + request.getCookies()[1].getValue());
+        return Integer.parseInt(String.valueOf(o));
     }
 }

@@ -18,6 +18,7 @@ import com.linyilinyi.search.service.SearchService;
 import com.linyilinyi.user.client.UserClient;
 import com.linyilinyi.video.client.VideoClient;
 import jakarta.annotation.Resource;
+import jakarta.servlet.http.HttpServletRequest;
 import lombok.extern.slf4j.Slf4j;
 import org.elasticsearch.action.bulk.BulkRequest;
 import org.elasticsearch.action.bulk.BulkResponse;
@@ -31,6 +32,7 @@ import org.elasticsearch.index.query.BoolQueryBuilder;
 import org.elasticsearch.index.query.QueryBuilders;
 import org.elasticsearch.search.SearchHit;
 import org.elasticsearch.search.builder.SearchSourceBuilder;
+import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Service;
 
 import java.io.IOException;
@@ -61,6 +63,9 @@ public class VideoEsServiceImpl implements SearchService {
 
     @Resource
     private UserClient userClient;
+
+    @Resource
+    private RedisTemplate redisTemplate;
 
     @Override
     public String addVideoDoc() throws IOException {
@@ -301,5 +306,11 @@ public class VideoEsServiceImpl implements SearchService {
 
         //根据di降序
         return null;
+    }
+
+    @Override
+    public Integer getByToken(HttpServletRequest request) {
+        Object o = redisTemplate.opsForValue().get("satoken:login:token:" + request.getCookies()[1].getValue());
+        return Integer.parseInt(String.valueOf(o));
     }
 }

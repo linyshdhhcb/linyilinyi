@@ -9,9 +9,13 @@ import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.linyilinyi.model.vo.log.OperLogQueryVo;
 import com.linyilinyi.system.mapper.OperLogMapper;
 import com.linyilinyi.system.service.OperLogService;
+import com.linyilinyi.user.client.UserClient;
 import jakarta.annotation.Resource;
+import jakarta.servlet.http.Cookie;
+import jakarta.servlet.http.HttpServletRequest;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
+import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Service;
 
 import java.util.Optional;
@@ -31,6 +35,9 @@ public class OperLogServiceImpl extends ServiceImpl<OperLogMapper, OperLog> impl
     @Resource
     private OperLogMapper operLogMapper;
 
+    @Resource
+    private RedisTemplate redisTemplate;
+
     @Override
     public PageResult<OperLog> pageList(OperLogQueryVo operLogQueryVo, long pageNo, long pageSize) {
         LambdaQueryWrapper<OperLog> queryWrapper = new LambdaQueryWrapper<>();
@@ -48,8 +55,26 @@ public class OperLogServiceImpl extends ServiceImpl<OperLogMapper, OperLog> impl
         queryWrapper.lt(operLogQueryVo.getEndTime() != null, OperLog::getOperTime, operLogQueryVo.getEndTime());
         queryWrapper.gt(operLogQueryVo.getMinTakeTime() != null, OperLog::getTakeTime, operLogQueryVo.getMinTakeTime());
         queryWrapper.lt(operLogQueryVo.getMaxTakeTime() != null, OperLog::getTakeTime, operLogQueryVo.getMaxTakeTime());
-        Page<OperLog> operLogPage = new Page<>(pageNo,pageSize);
+        Page<OperLog> operLogPage = new Page<>(pageNo, pageSize);
         Page<OperLog> logPage = operLogMapper.selectPage(operLogPage, queryWrapper);
-        return new PageResult<>(logPage.getRecords(), logPage.getTotal(),pageNo , pageSize);
+        return new PageResult<>(logPage.getRecords(), logPage.getTotal(), pageNo, pageSize);
     }
+
+    @Override
+    public Integer getByToken(HttpServletRequest request) {
+        Cookie[] cookies = request.getCookies();
+        if (cookies == null || cookies.length < 2) {
+            return null;
+        }
+        String token = cookies[1].getValue();
+        if (Optional.ofNullable(token).isEmpty()) {
+            return null;
+        }
+        Object o = redisTemplate.opsForValue().get("satoken:login:token:" + token);
+        if (o == null) {
+            return null;
+        }
+        return Integer.parseInt(String.valueOf(o));
+    }
+
 }
