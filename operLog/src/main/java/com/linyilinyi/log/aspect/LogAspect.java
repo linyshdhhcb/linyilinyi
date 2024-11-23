@@ -89,17 +89,12 @@ public class LogAspect {
             //获取请求方法名
             String name = method.getName();
             String methoname = className + "." + name + "()";
-            String username = null;
-            try {
-                String userid = request.getHeader("userid");
-                Integer userId = null;
-                if (Optional.ofNullable(userid).isPresent()) {
-                    userId = Integer.parseInt(userid);
-                }
-                username = (userId != null) ? userClient.getUserById(userId).getData().getUsername() : "未登录";
-            } catch (Exception e) {
-                throw new LinyiException("日志记录出错" + e.getMessage());
+            String userid = request.getHeader("userid");
+            Integer userId = null;
+            if (Optional.ofNullable(userid).isPresent()) {
+                userId = Integer.parseInt(userid);
             }
+            String username = (userId != null) ? userClient.getUserById(userId).getData().getUsername() : "未登录";
             //获取ip
             String ip = IpUtil.getIpAddress(request);
             operLog.setMethod(methoname); //设置请求方法
@@ -127,11 +122,6 @@ public class LogAspect {
     public void doAfterThrowing(JoinPoint joinPoint, Throwable e) {
         RequestAttributes requestAttributes = RequestContextHolder.getRequestAttributes();
         HttpServletRequest request = (HttpServletRequest) requestAttributes.resolveReference(RequestAttributes.REFERENCE_REQUEST);
-//        Enumeration<String> userid = request.getHeaders("userid");
-//        Integer userIds = null;
-//        if (Optional.ofNullable(userid.nextElement()).isPresent()) {
-//            userIds = Integer.parseInt(userid.nextElement());
-//        }
         try {
             //从切面入点通过放射机制获取织入点的方法
             MethodSignature signature = (MethodSignature) joinPoint.getSignature();
@@ -156,20 +146,12 @@ public class LogAspect {
             String ip = IpUtil.getIpAddress(request);
 
             //获取用户名
-            String username = null;
+            String userid = request.getHeader("userid");
             Integer userId = null;
-            int i = 0;
-            try {
-                do {
-                    userId = AuthContextUser.getUserId();
-                    i++;
-                } while (userId == null && i < 6);
-            } catch (Exception ex) {
+            if (Optional.ofNullable(userid).isPresent()) {
+                userId = Integer.parseInt(userid);
             }
-            if (Optional.ofNullable(userId).isPresent()) {
-                username = userClient.getUserById(userId).getData().getUsername();
-            }
-
+            String username = (userId != null) ? userClient.getUserById(userId).getData().getUsername() : "未登录";
             operLog.setMethod(methoname); //设置请求方法
             operLog.setRequestMethod(request.getMethod());//设置请求方式
             operLog.setRequestParam(jsonString); // 请求参数

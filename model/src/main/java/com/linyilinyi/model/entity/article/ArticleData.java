@@ -30,6 +30,7 @@ public class ArticleData implements Serializable {
 
     private static final long serialVersionUID = 1L;
 
+    @TableId(value = "id", type = IdType.ASSIGN_ID)
     @Schema(description = "主键ID")
     private Integer id;
 

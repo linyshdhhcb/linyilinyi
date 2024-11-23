@@ -64,7 +64,8 @@ public class AuthGlobalFilter implements GlobalFilter, Ordered {
                     log.warn("Redis 未找到对应的 userId，satoken: {}", satokenValue);
                     exchange.getResponse().setStatusCode(HttpStatus.UNAUTHORIZED);
                     log.info("Redis未找到userId，直接返回 Mono.empty()，终止请求处理");
-                    return Mono.empty();  // Redis未找到userId时，直接返回，避免继续调用过滤器
+                    // Redis未找到userId时，直接返回，避免继续调用过滤器
+                    return Mono.empty();
                 }
                 // 添加 userId 到请求头
                 ServerHttpRequest modifiedRequest = exchange.getRequest().mutate()

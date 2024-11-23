@@ -20,7 +20,9 @@ import com.linyilinyi.model.vo.article.ArticleQueryVo;
 import com.linyilinyi.user.client.UserClient;
 import jakarta.annotation.Resource;
 import jakarta.servlet.http.HttpServletRequest;
+import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
+import org.apache.ibatis.logging.Log;
 import org.springframework.beans.BeanUtils;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Service;
@@ -36,6 +38,7 @@ import java.util.Optional;
  * @Date 2024/9/20
  * @ClassName: ArticleServiceImpl
  */
+@Slf4j
 @Service
 @SuppressWarnings({"unchecked", "rawtypes"})
 public class ArticleServiceImpl extends ServiceImpl<ArticleMapper, Article> implements ArticleService {
@@ -82,8 +85,9 @@ public class ArticleServiceImpl extends ServiceImpl<ArticleMapper, Article> impl
 
         Article article = new Article();
         BeanUtils.copyProperties(articleAddVo, article);
-        article.setUserId(AuthContextUser.getUserId());
-        User data = userClient.getUserById(AuthContextUser.getUserId()).getData();
+        Integer userId = Integer.parseInt(request.getHeader("userid"));
+        article.setUserId(userId);
+        User data = userClient.getUserById(userId).getData();
         article.setUsername(data.getUsername());
         article.setNickname(data.getNickname());
         article.setCreateTime(LocalDateTime.now());

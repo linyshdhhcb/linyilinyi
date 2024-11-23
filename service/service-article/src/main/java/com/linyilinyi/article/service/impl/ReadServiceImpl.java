@@ -36,6 +36,8 @@ public class ReadServiceImpl extends ServiceImpl<ReadMapper, Read> implements Re
 
     @Resource
     private ReadMapper readMapper;
+
+
     @Override
     public PageResult<Read> getReadList(long pageNo, long pageSize, ReadQueryVo readQueryVo) {
         LambdaQueryWrapper<Read> queryWrapper = new LambdaQueryWrapper<>();
