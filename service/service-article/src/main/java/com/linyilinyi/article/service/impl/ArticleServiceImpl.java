@@ -146,6 +146,7 @@ public class ArticleServiceImpl extends ServiceImpl<ArticleMapper, Article> impl
     public PageResult<Article> getArticleListByIsDelete(long pageNo, long pageSize) {
         Page<Article> articlePage = new Page<>(pageNo, pageSize);
         IPage<Article> iPage = articleMapper.getArticleListByIsDelete(articlePage);
+
         return new PageResult<>(iPage.getRecords(), iPage.getTotal(), pageNo, pageSize);
     }
 
@@ -156,15 +157,7 @@ public class ArticleServiceImpl extends ServiceImpl<ArticleMapper, Article> impl
                 throw new LinyiException(ResultCodeEnum.VALID_ERROR);
             }
         }
-        List<Integer> idList =null;
-        try {
-             idList = articleDataMapper.selectBatchIds(ids).stream().map(ArticleData::getId).collect(Collectors.toList());
-        } catch (Exception e) {
-            log.error("{}",e.getMessage());
-            throw new LinyiException("删除文章数据时，删除文章数据记录出错");
-        }
-        //删除文章数据
-        articleDataMapper.deleteBatchIds(idList);
+        articleDataMapper.deleteArticleDataByPhysical(ids);
         articleMapper.deleteArticleByPhysical(ids);
 
         return "删除成功";

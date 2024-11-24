@@ -20,4 +20,6 @@ public interface ArticleMapper extends BaseMapper<Article> {
     IPage<Article> getArticleListByIsDelete(Page<Article> articlePage);
 
     int deleteArticleByPhysical(List<Integer> ids);
+
+
 }
