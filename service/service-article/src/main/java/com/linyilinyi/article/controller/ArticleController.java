@@ -64,7 +64,7 @@ public class ArticleController {
         return Result.ok(articleService.addArticle(articleAddVo));
     }
 
-    @Operation(summary = "逻辑删除文章")
+    @Operation(summary = "删除文章")
     @DeleteMapping("/deleteArticle/{ids}")
     @Log(title = "文章管理",content = "逻辑删除文章")
     public Result<String> deleteArticle(@PathVariable List<Integer> ids) {

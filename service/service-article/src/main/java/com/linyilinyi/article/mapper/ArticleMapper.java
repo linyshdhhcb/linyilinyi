@@ -19,5 +19,5 @@ public interface ArticleMapper extends BaseMapper<Article> {
 
     IPage<Article> getArticleListByIsDelete(Page<Article> articlePage);
 
-    String deleteArticleByPhysical(List<Integer> ids);
+    int deleteArticleByPhysical(List<Integer> ids);
 }
