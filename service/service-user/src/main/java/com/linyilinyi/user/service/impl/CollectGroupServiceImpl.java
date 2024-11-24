@@ -9,6 +9,7 @@ import com.linyilinyi.model.entity.collect.CollectGroup;
 import com.linyilinyi.user.mapper.CollectGroupMapper;
 import com.linyilinyi.user.service.CollectGroupService;
 import jakarta.annotation.Resource;
+import jakarta.servlet.http.HttpServletRequest;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
@@ -33,6 +34,9 @@ public class CollectGroupServiceImpl extends ServiceImpl<CollectGroupMapper, Col
     @Resource
     private CollectGroupMapper collectGroupMapper;
 
+    @Resource
+    private HttpServletRequest request;
+
     @Override
     @Cacheable(cacheNames = "collectGroupList")
     public List<CollectGroup> getCollectGroupList() {
@@ -45,7 +49,7 @@ public class CollectGroupServiceImpl extends ServiceImpl<CollectGroupMapper, Col
         CollectGroup collectGroup = new CollectGroup();
         collectGroup.setName(name);
         collectGroup.setCreateTime(LocalDateTime.now());
-        collectGroup.setUserId(AuthContextUser.getUserId());
+        collectGroup.setUserId(Integer.parseInt(request.getHeader("userid")));
         if (Optional.ofNullable(status).isPresent()){
             collectGroup.setStatus(status);
         }

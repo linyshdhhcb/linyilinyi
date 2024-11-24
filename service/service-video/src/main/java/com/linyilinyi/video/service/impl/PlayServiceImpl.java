@@ -13,6 +13,7 @@ import com.linyilinyi.model.vo.video.PlayQueryVo;
 import com.linyilinyi.video.mapper.PlayMapper;
 import com.linyilinyi.video.service.PlayService;
 import jakarta.annotation.Resource;
+import jakarta.servlet.http.HttpServletRequest;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
@@ -35,6 +36,9 @@ public class PlayServiceImpl extends ServiceImpl<PlayMapper, Play> implements Pl
     @Resource
     private PlayMapper playMapper;
 
+    @Resource
+    private HttpServletRequest request;
+
     @Override
     public PageResult<Play> getPlayList(long pageNo, long pageSize, PlayQueryVo playQueryVo) {
         LambdaQueryWrapper<Play> queryWrapper = new LambdaQueryWrapper<>();
@@ -49,7 +53,7 @@ public class PlayServiceImpl extends ServiceImpl<PlayMapper, Play> implements Pl
 
     @Override
     public List<Play> getPlayListByUser() {
-        Integer userId = AuthContextUser.getUserId();
+        Integer userId = Integer.parseInt(request.getHeader("userid"));
         if (Optional.ofNullable(userId).isEmpty()){
             throw new LinyiException(ResultCodeEnum.LOGIN_AUTH);
         }
@@ -61,7 +65,7 @@ public class PlayServiceImpl extends ServiceImpl<PlayMapper, Play> implements Pl
         if (Optional.ofNullable(playAddVo.getVideoId()).isEmpty()){
             throw new LinyiException(ResultCodeEnum.DATA_NULL);
         }
-       Play play = playMapper.selectOne(new LambdaQueryWrapper<Play>().eq(Play::getVideoId, playAddVo.getVideoId()).eq(Play::getUserId, AuthContextUser.getUserId()));
+       Play play = playMapper.selectOne(new LambdaQueryWrapper<Play>().eq(Play::getVideoId, playAddVo.getVideoId()).eq(Play::getUserId, Integer.parseInt(request.getHeader("userid"))));
         if (Optional.ofNullable(play).isEmpty()){
             Play playNew = new Play();
             playNew.setCreateTime(LocalDateTime.now());

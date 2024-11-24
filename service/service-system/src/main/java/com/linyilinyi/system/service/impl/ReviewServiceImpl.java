@@ -16,6 +16,7 @@ import com.linyilinyi.system.mapper.ReviewMapper;
 import com.linyilinyi.system.service.ReviewService;
 import com.linyilinyi.user.client.UserClient;
 import com.linyilinyi.video.client.VideoClient;
+import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.beans.BeanUtils;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -46,6 +47,9 @@ public class ReviewServiceImpl implements ReviewService {
     @Resource
     private ReviewMapper reviewMapper;
 
+    @Resource
+    private HttpServletRequest request;
+
     @Override
     @Transactional
     public String video(Integer videoId, Integer status, String reason) {
@@ -59,7 +63,7 @@ public class ReviewServiceImpl implements ReviewService {
         review.setMediaId(videoId);
         review.setMediaType(11102);
         review.setStatus(status);
-        review.setReviewer(userClient.getUserById(AuthContextUser.getUserId()).getData().getUsername());
+        review.setReviewer(userClient.getUserById(Integer.parseInt(request.getHeader("userid"))).getData().getUsername());
         review.setReviewDate(LocalDateTime.now());
         if (Optional.ofNullable(reason).isPresent()) {
             review.setRemarks(reason);
@@ -84,7 +88,7 @@ public class ReviewServiceImpl implements ReviewService {
         review.setMediaId(articleId);
         review.setMediaType(11103);
         review.setStatus(status);
-        review.setReviewer(userClient.getUserById(AuthContextUser.getUserId()).getData().getUsername());
+        review.setReviewer(userClient.getUserById(Integer.parseInt(request.getHeader("userid"))).getData().getUsername());
         review.setReviewDate(LocalDateTime.now());
         if (Optional.ofNullable(reason).isPresent()) {
             review.setRemarks(reason);

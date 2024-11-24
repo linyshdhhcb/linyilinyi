@@ -8,6 +8,7 @@ import com.linyilinyi.system.mapper.DictionaryTypeMapper;
 import com.linyilinyi.system.service.DictionaryTypeService;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import jakarta.annotation.Resource;
+import jakarta.servlet.http.HttpServletRequest;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
@@ -27,13 +28,16 @@ public class DictionaryTypeServiceImpl extends ServiceImpl<DictionaryTypeMapper,
 
     @Resource
     private DictionaryTypeMapper dictionaryTypeMapper;
+
+    @Resource
+    private HttpServletRequest request;
     @Override
     public String addDictionaryType(String type, String name) {
         DictionaryType dictionaryType = new DictionaryType();
         dictionaryType.setType(type);
         dictionaryType.setName(name);
         dictionaryType.setCreateTime(LocalDateTime.now());
-        dictionaryType.setCreateUserId(AuthContextUser.getUserId());
+        dictionaryType.setCreateUserId(Integer.parseInt(request.getHeader("userid")));
         int insert = dictionaryTypeMapper.insert(dictionaryType);
         if (insert != 1) {
             throw new LinyiException(ResultCodeEnum.INSERT_FAIL);
@@ -54,7 +58,7 @@ public class DictionaryTypeServiceImpl extends ServiceImpl<DictionaryTypeMapper,
     @Override
     public String updateDictionaryType(DictionaryType dictionaryType) {
         dictionaryType.setUpdateTime(LocalDateTime.now());
-        dictionaryType.setUpdateUserId(AuthContextUser.getUserId());
+        dictionaryType.setUpdateUserId(Integer.parseInt(request.getHeader("userid")));
         int i = dictionaryTypeMapper.updateById(dictionaryType);
         if (i!=1){
             throw new LinyiException("修改失败");

@@ -41,6 +41,9 @@ public class NoticeSendServiceImpl implements NoticeSendService {
     @Resource
     private NoticeInfoMapper noticeInfoMapper;
 
+    @Resource
+    private HttpServletRequest request;
+
     /**
      * 发送通知消息到相应的消息队列
      * 根据通知消息的类型，将消息发送到不同的交换机和路由键所指定的消息队列中
@@ -95,7 +98,7 @@ public class NoticeSendServiceImpl implements NoticeSendService {
 
     @Override
     public List<NoticeVo> readNotice() {
-        LambdaQueryWrapper<NoticeInfo> queryWrapper = new LambdaQueryWrapper<NoticeInfo>().eq(NoticeInfo::getReceiverId, AuthContextUser.getUserId()).eq(NoticeInfo::getIsRead, 0).orderByDesc(NoticeInfo::getSenderId);
+        LambdaQueryWrapper<NoticeInfo> queryWrapper = new LambdaQueryWrapper<NoticeInfo>().eq(NoticeInfo::getReceiverId, Integer.parseInt(request.getHeader("userid"))).eq(NoticeInfo::getIsRead, 0).orderByDesc(NoticeInfo::getSenderId);
         ArrayList<NoticeVo> noticeVos = new ArrayList<>();
         noticeInfoMapper.selectList(queryWrapper).stream().forEach(e -> {
             NoticeVo noticeVo = new NoticeVo();
@@ -107,11 +110,11 @@ public class NoticeSendServiceImpl implements NoticeSendService {
 
     @Override
     public List<NoticeInfo> read(Integer senderId) {
-        LambdaQueryWrapper<NoticeInfo> queryWrapper = new LambdaQueryWrapper<NoticeInfo>().eq(NoticeInfo::getSenderId, senderId).eq(NoticeInfo::getReceiverId, AuthContextUser.getUserId()).eq(NoticeInfo::getIsRead, 0).orderByDesc(NoticeInfo::getSenderId);
+        LambdaQueryWrapper<NoticeInfo> queryWrapper = new LambdaQueryWrapper<NoticeInfo>().eq(NoticeInfo::getSenderId, senderId).eq(NoticeInfo::getReceiverId, Integer.parseInt(request.getHeader("userid"))).eq(NoticeInfo::getIsRead, 0).orderByDesc(NoticeInfo::getSenderId);
         noticeInfoMapper.selectList(queryWrapper).stream().forEach(e -> {
             e.setIsRead(1);
         });
-        return noticeInfoMapper.selectList(new LambdaQueryWrapper<NoticeInfo>().eq(NoticeInfo::getSenderId, senderId).eq(NoticeInfo::getReceiverId, AuthContextUser.getUserId()).orderByAsc(NoticeInfo::getCreatedTime));
+        return noticeInfoMapper.selectList(new LambdaQueryWrapper<NoticeInfo>().eq(NoticeInfo::getSenderId, senderId).eq(NoticeInfo::getReceiverId, Integer.parseInt(request.getHeader("userid"))).orderByAsc(NoticeInfo::getCreatedTime));
     }
 
     @Override
@@ -123,7 +126,7 @@ public class NoticeSendServiceImpl implements NoticeSendService {
         String PRIVATE = "private";
         String SYSTEM = "system";
         //获取通知列表
-        List<NoticeInfo> noticeList = noticeInfoMapper.selectList(new LambdaQueryWrapper<NoticeInfo>().eq(NoticeInfo::getReceiverId, AuthContextUser.getUserId()).orderByDesc(NoticeInfo::getMessageType).orderByDesc(NoticeInfo::getCreatedTime));
+        List<NoticeInfo> noticeList = noticeInfoMapper.selectList(new LambdaQueryWrapper<NoticeInfo>().eq(NoticeInfo::getReceiverId, Integer.parseInt(request.getHeader("userid"))).orderByDesc(NoticeInfo::getMessageType).orderByDesc(NoticeInfo::getCreatedTime));
         HashMap<String, List<NoticeInfo>> map = new HashMap<>();
         List<NoticeInfo> noticeInfoLikeList = new ArrayList<>();
         List<NoticeInfo> noticeInfoCommentList = new ArrayList<>();
@@ -177,7 +180,7 @@ public class NoticeSendServiceImpl implements NoticeSendService {
 
     @Override
     public Map<Integer,List<NoticeInfo>> sendPrivateMessage() {
-        List<NoticeInfo> noticeInfos = noticeInfoMapper.selectList(new LambdaQueryWrapper<NoticeInfo>().eq(NoticeInfo::getReceiverId, AuthContextUser.getUserId()).eq(NoticeInfo::getMessageType, NoticeTypeConstant.PRIVATE_MESSAGE_NOTICE).orderByDesc(NoticeInfo::getCreatedTime));
+        List<NoticeInfo> noticeInfos = noticeInfoMapper.selectList(new LambdaQueryWrapper<NoticeInfo>().eq(NoticeInfo::getReceiverId, Integer.parseInt(request.getHeader("userid"))).eq(NoticeInfo::getMessageType, NoticeTypeConstant.PRIVATE_MESSAGE_NOTICE).orderByDesc(NoticeInfo::getCreatedTime));
         HashMap<Integer, List<NoticeInfo>> map = new HashMap<>();
         noticeInfos.stream().forEach(e -> {
             if (map.containsKey(e.getSenderId())) {

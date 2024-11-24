@@ -21,6 +21,7 @@ import com.j256.simplemagic.ContentInfo;
 import com.j256.simplemagic.ContentInfoUtil;
 import io.minio.messages.Item;
 import jakarta.annotation.Resource;
+import jakarta.servlet.http.HttpServletRequest;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -70,6 +71,9 @@ public class FileServiceImpl extends ServiceImpl<FileMapper, File> implements Fi
     @Resource
     private RedisTemplate redisTemplate;
 
+    @Resource
+    private HttpServletRequest request;
+
     private String bucketName;
 
 
@@ -84,7 +88,7 @@ public class FileServiceImpl extends ServiceImpl<FileMapper, File> implements Fi
         }
         bucketName = minioVo.getBucketName();
         file.setBucket(bucketName);
-        file.setUserId(AuthContextUser.getUserId());
+        file.setUserId(Integer.parseInt(request.getHeader("userid")));
         file.setCreateTime(LocalDateTime.now());
         String object = bucketNamea + getPathTime() + fileMd5(new java.io.File(absolutePath)) + file.getFileType();
         file.setFileName(fileMd5(new java.io.File(absolutePath)) + file.getFileType());
@@ -121,7 +125,7 @@ public class FileServiceImpl extends ServiceImpl<FileMapper, File> implements Fi
         }
         bucketName = minioVo.getBucketName();
         file.setBucket(bucketName);
-        file.setUserId(AuthContextUser.getUserId());
+        file.setUserId(Integer.parseInt(request.getHeader("userid")));
         file.setCreateTime(LocalDateTime.now());
         String object = bucketNamea + getPathTime() + fileMd5(new java.io.File(absolutePath)) + file.getFileType();
         file.setFileName(fileMd5(new java.io.File(absolutePath)) + file.getFileType());
@@ -294,7 +298,7 @@ public class FileServiceImpl extends ServiceImpl<FileMapper, File> implements Fi
             file.setFilePath(minioVo.getBucketName() + "/chunk/" + md5);
             file.setFileSize(new java.io.File(absolutePath).length() / 1024.0);
             file.setFileMd5(fileMd5(new java.io.File(absolutePath)));
-            file.setUserId(AuthContextUser.getUserId());
+            file.setUserId(Integer.parseInt(request.getHeader("userid")));
             file.setFileType("11003");
             file.setStart(10001);
             file.setCreateTime(LocalDateTime.now());
@@ -351,7 +355,7 @@ public class FileServiceImpl extends ServiceImpl<FileMapper, File> implements Fi
         file.setStart(10001);
         file.setFilePath(object);
         file.setFileName(md5 + fileName.substring(fileName.lastIndexOf(".")));
-        file.setUserId(AuthContextUser.getUserId());
+        file.setUserId(Integer.parseInt(request.getHeader("userid")));
         file.setFileMd5(md5);
         file.setBucket(minioVo.getBucketName());
         file.setCreateTime(LocalDateTime.now());

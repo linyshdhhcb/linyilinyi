@@ -15,6 +15,7 @@ import com.linyilinyi.system.service.DictionaryLabelService;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.linyilinyi.system.service.DictionaryTypeService;
 import jakarta.annotation.Resource;
+import jakarta.servlet.http.HttpServletRequest;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.BeanUtils;
@@ -42,6 +43,9 @@ public class DictionaryLabelServiceImpl extends ServiceImpl<DictionaryLabelMappe
     @Resource
     private DictionaryTypeService dictionaryTypeService;
 
+    @Resource
+    private HttpServletRequest request;
+
     @Override
     public PageResult<DictionaryLabel> pageList(long pageNo, long pageSize, DictionaryLabelQueryVo dictionaryLabelQueryVo) {
         LambdaQueryWrapper<DictionaryLabel> queryWrapper = new LambdaQueryWrapper<>();
@@ -62,7 +66,7 @@ public class DictionaryLabelServiceImpl extends ServiceImpl<DictionaryLabelMappe
         DictionaryLabel dictionaryLabel = new DictionaryLabel();
         BeanUtils.copyProperties(dictionaryLabelAddVo, dictionaryLabel);
         dictionaryLabel.setCreateTime(LocalDateTime.now());
-        dictionaryLabel.setCreateUserId(AuthContextUser.getUserId());
+        dictionaryLabel.setCreateUserId(Integer.parseInt(request.getHeader("userid")));
         if (dictionaryLabelMapper.insert(dictionaryLabel) != 1) {
             throw new RuntimeException("添加失败");
         }
@@ -82,7 +86,7 @@ public class DictionaryLabelServiceImpl extends ServiceImpl<DictionaryLabelMappe
     @Override
     public String updateDictionaryLabel(DictionaryLabel dictionaryLabel) {
         dictionaryLabel.setUpdateTime(LocalDateTime.now());
-        dictionaryLabel.setUpdateUserId(AuthContextUser.getUserId());
+        dictionaryLabel.setUpdateUserId(Integer.parseInt(request.getHeader("userid")));
         int i = dictionaryLabelMapper.updateById(dictionaryLabel);
         if (i != 1) {
             throw new LinyiException("修改失败");

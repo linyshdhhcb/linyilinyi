@@ -141,32 +141,4 @@ public class UserController {
         return Result.ok(userService.getByToken(request));
     }
 
-
-    @GetMapping(value = "/a")
-    public void a() {
-        log.info("a:{}",Thread.currentThread().getName());
-        AuthContextUser.setUserId(1111);
-    }
-
-
-    @GetMapping(value = "/b")
-    public Result<Integer> b() {
-        log.info("b:{}",Thread.currentThread().getName());
-        Integer userId = AuthContextUser.getUserId();
-        return Result.ok(userId);
-    }
-
-    @GetMapping(value = "/c")
-    public Result<Integer> c() {
-        log.info("c:{}",Thread.currentThread().getName());
-        Integer userId = AuthContextUser.getUserId();
-        return Result.ok(userId);
-    }
-
-    @GetMapping(value = "/d")
-    public Result<Integer> d() {
-        log.info("d:{}",Thread.currentThread().getName());
-        Integer userId = AuthContextUser.getUserId();
-        return Result.ok(userId);
-    }
 }

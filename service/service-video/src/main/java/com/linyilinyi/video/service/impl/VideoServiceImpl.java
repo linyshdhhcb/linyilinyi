@@ -59,6 +59,9 @@ public class VideoServiceImpl extends ServiceImpl<VideoMapper, Video> implements
     @Resource
     private VideoDataMapper videoDataMapper;
 
+    @Resource
+    private HttpServletRequest request;
+
     @Override
     public PageResult getList(long pageNo, long pageSize, VideoQueryVo videoQueryVo) {
         LambdaQueryWrapper<Video> queryWrapper = new LambdaQueryWrapper<>();
@@ -91,7 +94,7 @@ public class VideoServiceImpl extends ServiceImpl<VideoMapper, Video> implements
     @Override
     @Transactional
     public Video addVideo(VideoAddVo video) {
-        Result<User> userById = userClient.getUserById(AuthContextUser.getUserId());
+        Result<User> userById = userClient.getUserById(Integer.parseInt(request.getHeader("userid")));
         User user = userById.getData();
         if (Optional.ofNullable(user).isEmpty()) {
             throw new LinyiException(ResultCodeEnum.ACCOUNT_NULL);

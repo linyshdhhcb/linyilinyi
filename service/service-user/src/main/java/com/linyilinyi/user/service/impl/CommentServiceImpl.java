@@ -17,6 +17,7 @@ import com.linyilinyi.user.mapper.LikesMapper;
 import com.linyilinyi.user.service.CommentService;
 import com.linyilinyi.user.service.UserService;
 import jakarta.annotation.Resource;
+import jakarta.servlet.http.HttpServletRequest;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.BeanUtils;
 import org.springframework.data.redis.core.RedisTemplate;
@@ -45,15 +46,18 @@ public class CommentServiceImpl extends ServiceImpl<CommentMapper, Comment> impl
     private UserService userService;
     @Resource
     private LikesMapper likesMapper;
+
+    @Resource
+    private HttpServletRequest request;
     @Resource
     private RedisTemplate<String, Object> redisTemplate;
 
     @Override
     public CommentsVo addComment(CommentAddVo commentAddVo) {
         CommentsVo commentsVo = new CommentsVo();
-        User user = userService.getUserById(AuthContextUser.getUserId());
+        User user = userService.getUserById(Integer.parseInt(request.getHeader("userid")));
         BeanUtils.copyProperties(commentAddVo, commentsVo);
-        commentsVo.setUserId(AuthContextUser.getUserId());
+        commentsVo.setUserId(Integer.parseInt(request.getHeader("userid")));
         commentsVo.setImage(user.getImage());
         commentsVo.setCreateTime(LocalDateTime.now());
         commentsVo.setNickName(user.getNickname());

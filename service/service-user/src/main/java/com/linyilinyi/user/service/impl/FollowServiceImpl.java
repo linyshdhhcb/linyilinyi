@@ -12,6 +12,7 @@ import com.linyilinyi.user.mapper.FollowMapper;
 import com.linyilinyi.user.mapper.UserMapper;
 import com.linyilinyi.user.service.FollowService;
 import jakarta.annotation.Resource;
+import jakarta.servlet.http.HttpServletRequest;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
@@ -38,9 +39,12 @@ public class FollowServiceImpl extends ServiceImpl<FollowMapper, Follow> impleme
     @Resource
     private UserMapper userMapper;
 
+    @Resource
+    private HttpServletRequest request;
+
     @Override
     public List<FanVo> getFansList() {
-        List<Follow> follows = followMapper.selectList(new LambdaQueryWrapper<Follow>().eq(Follow::getIdolId, AuthContextUser.getUserId()));
+        List<Follow> follows = followMapper.selectList(new LambdaQueryWrapper<Follow>().eq(Follow::getIdolId, Integer.parseInt(request.getHeader("userid"))));
         List<FanVo> fanVos = new ArrayList<>();
         ArrayList<Integer> ids = new ArrayList<>();
         for (Follow follow : follows) {
@@ -52,7 +56,7 @@ public class FollowServiceImpl extends ServiceImpl<FollowMapper, Follow> impleme
 
     @Override
     public List<FollowVo> getFollowList() {
-        List<Follow> follows = followMapper.selectList(new LambdaQueryWrapper<Follow>().eq(Follow::getFansId, AuthContextUser.getUserId()));
+        List<Follow> follows = followMapper.selectList(new LambdaQueryWrapper<Follow>().eq(Follow::getFansId, Integer.parseInt(request.getHeader("userid"))));
         ArrayList<Integer> ids = new ArrayList<>();
         ArrayList<FollowVo> followVos = new ArrayList<>();
         for (Follow follow : follows) {
@@ -65,7 +69,7 @@ public class FollowServiceImpl extends ServiceImpl<FollowMapper, Follow> impleme
     @Override
     public String addFollow(Integer id) {
         if (isFollow(id)) {
-            LambdaQueryWrapper<Follow> queryWrapper = new LambdaQueryWrapper<Follow>().eq(Follow::getIdolId, AuthContextUser.getUserId()).eq(Follow::getFansId, id);
+            LambdaQueryWrapper<Follow> queryWrapper = new LambdaQueryWrapper<Follow>().eq(Follow::getIdolId, Integer.parseInt(request.getHeader("userid"))).eq(Follow::getFansId, id);
             int delete = followMapper.delete(queryWrapper);
             if (delete!=1){
                 throw new LinyiException(ResultCodeEnum.DELETE_FAIL);
@@ -74,7 +78,7 @@ public class FollowServiceImpl extends ServiceImpl<FollowMapper, Follow> impleme
         }
         Follow follow = new Follow();
         follow.setCreateTime(LocalDateTime.now());
-        follow.setFansId(AuthContextUser.getUserId());
+        follow.setFansId(Integer.parseInt(request.getHeader("userid")));
         follow.setIdolId(id);
         int insert = followMapper.insert(follow);
         if (insert != 1) {
@@ -85,7 +89,7 @@ public class FollowServiceImpl extends ServiceImpl<FollowMapper, Follow> impleme
 
     @Override
     public Boolean isFollow(Integer id) {
-        LambdaQueryWrapper<Follow> queryWrapper = new LambdaQueryWrapper<Follow>().eq(Follow::getIdolId, AuthContextUser.getUserId()).eq(Follow::getFansId, id);
+        LambdaQueryWrapper<Follow> queryWrapper = new LambdaQueryWrapper<Follow>().eq(Follow::getIdolId,Integer.parseInt(request.getHeader("userid"))).eq(Follow::getFansId, id);
         Follow follow = followMapper.selectOne(queryWrapper);
         return Optional.ofNullable(follow).isPresent() ? true : false;
     }

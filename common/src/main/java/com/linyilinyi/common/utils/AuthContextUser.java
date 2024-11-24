@@ -17,10 +17,15 @@ public class AuthContextUser {
     }
 
     public static Integer getUserId(HttpServletRequest request) {
-//        int i = Integer.parseInt(request.getHeader("userid"));
-//        setUserId(i);
-        return Optional.ofNullable(userId.get())
-                .orElseThrow(() -> new LinyiException(401, "没登录"));
+        int i = Integer.parseInt(request.getHeader("userid"));
+        setUserId(i);
+        try {
+            return Optional.ofNullable(userId.get())
+                    .orElseThrow(() -> new LinyiException(401, "没登录"));
+        } finally {
+           removeUserId();
+        }
+
     }
 
     public static void removeUserId() {

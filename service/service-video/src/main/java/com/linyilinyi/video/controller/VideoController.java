@@ -37,6 +37,9 @@ public class VideoController {
     @Resource
     private VideoService videoService;
 
+    @Resource
+    private HttpServletRequest request;
+
     @Operation(summary = "视频列表")
     @PostMapping("/list")
     @Log(title = "视频管理",content = "视频列表")
@@ -86,7 +89,7 @@ public class VideoController {
     @GetMapping("/getVideoList")
     @Log(title = "视频管理",content = "获取当前用户的全部视频列表")
     public Result<List<Video>> getVideoList() {
-        return Result.ok(videoService.getVideoListByUserId(AuthContextUser.getUserId()));
+        return Result.ok(videoService.getVideoListByUserId(Integer.parseInt(request.getHeader("userid"))));
     }
 
     @Operation(summary = "获取token信息")

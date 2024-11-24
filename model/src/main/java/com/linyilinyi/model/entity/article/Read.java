@@ -23,6 +23,7 @@ import com.baomidou.mybatisplus.annotation.TableName;
  * @author linyi
  */
 @Data
+@TableName("read_history")
 @Schema(name = "Read", description = "阅读记录表")
 public class Read implements Serializable {
 

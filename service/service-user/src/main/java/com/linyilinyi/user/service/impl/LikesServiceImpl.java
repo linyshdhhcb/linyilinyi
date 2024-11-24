@@ -10,7 +10,9 @@ import com.linyilinyi.model.entity.likes.Likes;
 import com.linyilinyi.user.mapper.LikesMapper;
 import com.linyilinyi.user.service.LikesService;
 import jakarta.annotation.Resource;
+import jakarta.servlet.http.HttpServletRequest;
 import lombok.extern.slf4j.Slf4j;
+import org.json.HTTP;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Service;
 
@@ -32,6 +34,9 @@ public class LikesServiceImpl extends ServiceImpl<LikesMapper, Likes> implements
     private LikesMapper likesMapper;
 
     @Resource
+    private HttpServletRequest request;
+
+    @Resource
     private RedisTemplate<String,Integer> redisTemplate;
     @Override
     public String addLikes(Integer id, Integer targetType) {
@@ -41,32 +46,32 @@ public class LikesServiceImpl extends ServiceImpl<LikesMapper, Likes> implements
             if (delete!=1){
                 throw new RuntimeException("删除失败");
             }
-            redisTemplate.delete("isLikes:userId:"+AuthContextUser.getUserId().toString()+":"+id.toString()+":"+targetType.toString());
+            redisTemplate.delete("isLikes:userId:"+request.getHeader("userid")+":"+id.toString()+":"+targetType.toString());
             return "取消点赞成功";
         }else {
             Likes likes = new Likes();
             likes.setCreateTime(LocalDateTime.now());
             likes.setTargetId(id);
             likes.setTargetType(targetType);
-            likes.setUserId(AuthContextUser.getUserId());
+            likes.setUserId(Integer.parseInt(request.getHeader("userid")));
             int insert = likesMapper.insert(likes);
             if (insert!=1){
                 throw new LinyiException(ResultCodeEnum.INSERT_FAIL);
             }
-            redisTemplate.opsForValue().set("isLikes:userId:"+AuthContextUser.getUserId().toString()+":"+id.toString()+":"+targetType.toString(),id);
+            redisTemplate.opsForValue().set("isLikes:userId:"+Integer.parseInt(request.getHeader("userid"))+":"+id.toString()+":"+targetType.toString(),id);
             return "点赞成功";
         }
         }
 
     @Override
     public Boolean isLikes(Integer id, Integer targetType) {
-        Integer i = redisTemplate.opsForValue().get("isLikes:userId:"+AuthContextUser.getUserId().toString()+":"+id.toString()+":"+targetType.toString());
+        Integer i = redisTemplate.opsForValue().get("isLikes:userId:"+Integer.parseInt(request.getHeader("userid"))+":"+id.toString()+":"+targetType.toString());
         if (i==id){
             return true;
         }
         LambdaQueryWrapper<Likes> queryWrapper = new LambdaQueryWrapper<Likes>()
                 .eq(Likes::getTargetId,id).eq(Likes::getTargetType,targetType)
-                .eq(Likes::getUserId,AuthContextUser.getUserId());
+                .eq(Likes::getUserId,Integer.parseInt(request.getHeader("userid")));
         Likes likes = likesMapper.selectOne(queryWrapper);
         return likes != null ? true : false;
     }
