@@ -9,16 +9,17 @@
         <result column="receiver_id" property="receiverId" />
         <result column="message_type" property="messageType" />
         <result column="content" property="content" />
-        <result column="is_read" property="read" />
+        <result column="is_read" property="isRead" />
         <result column="created_time" property="createdTime" />
         <result column="read_time" property="readTime" />
         <result column="announcement_title" property="announcementTitle" />
-        <result column="service_agent_id" property="serviceAgentId" />
+        <result column="object_id" property="objectId" />
+        <result column="object_type" property="objectType" />
     </resultMap>
 
     <!-- 通用查询结果列 -->
     <sql id="Base_Column_List">
-        id, sender_id, receiver_id, message_type, content, is_read, created_time, read_time, announcement_title, service_agent_id
+        id, sender_id, receiver_id, message_type, content, is_read, created_time, read_time, announcement_title,object_id,object_type
     </sql>
 
 </mapper>

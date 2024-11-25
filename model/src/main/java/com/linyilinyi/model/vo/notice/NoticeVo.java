@@ -30,4 +30,7 @@ public class NoticeVo {
 
     @Schema(description = "对象id")
     private Integer objectId;
+
+    @Schema(description = "对象id")
+    private Integer objectType;
 }

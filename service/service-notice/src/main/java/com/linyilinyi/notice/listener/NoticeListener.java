@@ -79,7 +79,7 @@ public class NoticeListener {
     public void commentListener(NoticeVo noticeVo) throws InterruptedException {
         //信息插入数据库
         NoticeInfo noticeInfo = new NoticeInfo();
-        BeanUtils.copyProperties(noticeInfo,noticeInfo);
+        BeanUtils.copyProperties(noticeVo,noticeInfo);
         noticeInfo.setCreatedTime(LocalDateTime.now());
         noticeInfo.setMessageType(21002);
         int i = noticeInfoMapper.insert(noticeInfo);
@@ -103,7 +103,7 @@ public class NoticeListener {
 
         //信息插入数据库
         NoticeInfo noticeInfo = new NoticeInfo();
-        BeanUtils.copyProperties(noticeInfo,noticeInfo);
+        BeanUtils.copyProperties(noticeVo,noticeInfo);
         noticeInfo.setCreatedTime(LocalDateTime.now());
         noticeInfo.setMessageType(21003);
         int i = noticeInfoMapper.insert(noticeInfo);
@@ -127,7 +127,7 @@ public class NoticeListener {
 
         //信息插入数据库
         NoticeInfo noticeInfo = new NoticeInfo();
-        BeanUtils.copyProperties(noticeInfo,noticeInfo);
+        BeanUtils.copyProperties(noticeVo,noticeInfo);
         noticeInfo.setCreatedTime(LocalDateTime.now());
         noticeInfo.setMessageType(21004);
         int i = noticeInfoMapper.insert(noticeInfo);
@@ -151,7 +151,7 @@ public class NoticeListener {
 
         //信息插入数据库
         NoticeInfo noticeInfo = new NoticeInfo();
-        BeanUtils.copyProperties(noticeInfo,noticeInfo);
+        BeanUtils.copyProperties(noticeVo,noticeInfo);
         noticeInfo.setCreatedTime(LocalDateTime.now());
         noticeInfo.setMessageType(21005);
         int i = noticeInfoMapper.insert(noticeInfo);
@@ -174,7 +174,7 @@ public class NoticeListener {
 
         //信息插入数据库
         NoticeInfo noticeInfo = new NoticeInfo();
-        BeanUtils.copyProperties(noticeInfo,noticeInfo);
+        BeanUtils.copyProperties(noticeSystemVo,noticeInfo);
         noticeInfo.setCreatedTime(LocalDateTime.now());
         noticeInfo.setMessageType(21006);
         int i = noticeInfoMapper.insert(noticeInfo);
@@ -197,7 +197,7 @@ public class NoticeListener {
 
         //信息插入数据库
         NoticeInfo noticeInfo = new NoticeInfo();
-        BeanUtils.copyProperties(noticeInfo,noticeInfo);
+        BeanUtils.copyProperties(noticeSystemVo,noticeInfo);
         noticeInfo.setCreatedTime(LocalDateTime.now());
         noticeInfo.setMessageType(21007);
         int i = noticeInfoMapper.insert(noticeInfo);
