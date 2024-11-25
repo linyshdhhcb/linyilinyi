@@ -42,8 +42,8 @@ public class CollectController {
     @Operation(summary = "根据收藏夹ID添加收藏")
     @PostMapping("/addCollect")
     @Log(title = "收藏管理",content = "根据收藏夹ID添加收藏")
-    public Result<String> addCollect(@NotNull(message = "收藏夹ID不能为空") @RequestParam Integer collectGroupId, @NotNull(message = "收藏对象id不能为空") @RequestParam Integer targetId) {
-        return Result.ok(collectService.addCollect(collectGroupId, targetId));
+    public Result<String> addCollect(@NotNull(message = "收藏夹ID不能为空") @RequestParam Integer collectGroupId, @NotNull(message = "收藏对象id不能为空") @RequestParam Integer targetId,@NotNull(message = "收藏对象类型不能为空") @RequestParam Integer targetType) {
+        return Result.ok(collectService.addCollect(collectGroupId, targetId,targetType));
     }
 
     @Operation(summary = "根据收藏对象ID删除收藏")
@@ -70,7 +70,7 @@ public class CollectController {
     @Operation(summary = "判读该对象是否收藏")
     @GetMapping("/isCollect/{targetId}")
     @Log(title = "收藏管理",content = "判读该对象是否收藏")
-    public Result<Boolean> isCollect(@NotNull(message = "收藏对象id不能为空") @PathVariable Integer targetId) {
-        return Result.ok(collectService.isCollect(targetId));
+    public Result<Boolean> isCollect(@NotNull(message = "收藏对象id不能为空") @PathVariable Integer targetId,@NotNull(message = "收藏对象类型不能为空") @RequestParam Integer targetType) {
+        return Result.ok(collectService.isCollect(targetId,targetType));
     }
 }

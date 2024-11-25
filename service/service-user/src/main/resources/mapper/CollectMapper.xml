@@ -6,6 +6,7 @@
     <resultMap id="BaseResultMap" type="com.linyilinyi.model.entity.collect.Collect">
         <id column="id" property="id" />
         <result column="target_id" property="targetId" />
+        <result column="target_type" property="targetType" />
         <result column="collect_group_id" property="collectGroupId" />
         <result column="create_time" property="createTime" />
         <result column="update_time" property="updateTime" />
@@ -14,7 +15,7 @@
 
     <!-- 通用查询结果列 -->
     <sql id="Base_Column_List">
-        id, target_id, collect_group_id, create_time, update_time, is_delete
+        id, target_id,target_type, collect_group_id, create_time, update_time, is_delete
     </sql>
 
 </mapper>

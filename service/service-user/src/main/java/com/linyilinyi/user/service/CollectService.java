@@ -18,12 +18,12 @@ public interface CollectService extends IService<Collect> {
 
     List<VideoVo> getCollectList(Integer collectGroupId);
 
-    String addCollect(Integer collectGroupId, Integer targetId);
+    String addCollect(Integer collectGroupId, Integer targetId, Integer targetType);
 
 
     String deleteCollectList(List<Integer> ids);
 
     String updateCollect(Collect collect);
 
-    Boolean isCollect(Integer targetId);
+    Boolean isCollect(Integer targetId, Integer targetType);
 }

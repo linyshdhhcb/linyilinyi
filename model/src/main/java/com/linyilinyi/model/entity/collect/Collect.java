@@ -33,8 +33,11 @@ public class Collect implements Serializable {
     @TableId(value = "id", type = IdType.AUTO)
     private Integer id;
 
-    @Schema(description = "收藏的视频ID")
+    @Schema(description = "收藏的对象ID")
     private Integer targetId;
+
+    @Schema(description = "收藏的对象类型")
+    private Integer targetType;
 
     @Schema(description = "所属收藏夹ID")
     private Integer collectGroupId;

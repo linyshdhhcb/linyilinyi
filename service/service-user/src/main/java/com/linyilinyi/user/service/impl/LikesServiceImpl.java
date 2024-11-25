@@ -152,7 +152,9 @@ public class LikesServiceImpl extends ServiceImpl<LikesMapper, Likes> implements
                     }
                     yield article.getUserId();
                 }
-                case 11203 -> throw new LinyiException("该类型暂不支持");
+                case 11203 -> {
+                    throw new LinyiException("该类型不存在");
+                }
                 default -> throw new LinyiException("该类型不存在");
             };
         });
@@ -198,7 +200,7 @@ public class LikesServiceImpl extends ServiceImpl<LikesMapper, Likes> implements
                             // 异步发送通知
                             CompletableFuture.runAsync(() -> {
                                 try {
-                                    noticeClient.sendLikeNotice(new NoticeVo(parsedUserId, receiverId, 21001, "点赞", id));
+                                    noticeClient.sendLikeNotice(new NoticeVo(parsedUserId, receiverId, 21001, "点赞", id, targetType));
                                 } catch (Exception e) {
                                     log.error("发送点赞通知失败", e); // 异常时记录日志
                                 }
