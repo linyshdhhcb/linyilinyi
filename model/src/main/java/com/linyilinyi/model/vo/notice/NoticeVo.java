@@ -1,7 +1,9 @@
 package com.linyilinyi.model.vo.notice;
 
 import io.swagger.v3.oas.annotations.media.Schema;
+import lombok.AllArgsConstructor;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 
 /**
  * @Description
@@ -10,15 +12,17 @@ import lombok.Data;
  * @ClassName: NoticeVo
  */
 @Data
+@AllArgsConstructor
+@NoArgsConstructor
 public class NoticeVo {
 
-    @Schema(description = "收藏的用户ID")
+    @Schema(description = "发送者用户ID")
     private Integer senderId;
 
-    @Schema(description = "接收者的用户ID")
+    @Schema(description = "接收者用户ID")
     private Integer receiverId;
 
-    @Schema(description = "信息类型（收藏）")
+    @Schema(description = "信息类型")
     private Integer messageType;
 
     @Schema(description = "信息的内容")

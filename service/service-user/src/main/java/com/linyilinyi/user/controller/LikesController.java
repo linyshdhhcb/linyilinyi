@@ -11,10 +11,7 @@ import jakarta.annotation.Resource;
 import jakarta.validation.constraints.Max;
 import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotNull;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 
@@ -39,15 +36,15 @@ public class LikesController {
 
     @Operation(summary = "点赞/取消")
     @GetMapping("/addLikes/{targetId}/{targetType}")
-    @Log(title = "点赞管理",content = "点赞/取消")
-    public Result<String> addLikes(@NotNull(message = "targetId不能为空") @PathVariable Integer targetId,@NotNull(message = "targetType不能为空") @PathVariable Integer targetType) {
-        return Result.ok(likesService.addLikes(targetId,targetType));
+    @Log(title = "点赞管理", content = "点赞/取消")
+    public Result<String> addLikes(@NotNull(message = "targetId不能为空") @PathVariable Integer targetId, @NotNull(message = "targetType不能为空") @PathVariable Integer targetType) {
+        return Result.ok(likesService.addLikes(targetId, targetType));
     }
 
     @Operation(summary = "判断是否点赞过")
     @GetMapping("/isLikes/{targetId}/{targetType}")
-    @Log(title = "点赞管理",content = "判断是否点赞过")
-    public Result<Boolean> isLikes(@NotNull(message = "targetId不能为空") @PathVariable Integer targetId,@NotNull(message = "targetType不能为空") @PathVariable Integer targetType) {
-        return Result.ok(likesService.isLikes(targetId,targetType));
+    @Log(title = "点赞管理", content = "判断是否点赞过")
+    public Result<Boolean> isLikes(@RequestHeader("userid") Object userId, @NotNull(message = "targetId不能为空") @PathVariable Integer targetId, @NotNull(message = "targetType不能为空") @PathVariable Integer targetType) {
+        return Result.ok(likesService.isLikes(targetId, targetType, Integer.parseInt(userId.toString())));
     }
 }

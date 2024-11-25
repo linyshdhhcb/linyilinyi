@@ -1,6 +1,7 @@
 package com.linyilinyi.model.entity.video;
 
 import com.baomidou.mybatisplus.annotation.IdType;
+import com.baomidou.mybatisplus.annotation.TableField;
 import com.baomidou.mybatisplus.annotation.TableId;
 import java.time.LocalDateTime;
 import com.baomidou.mybatisplus.annotation.TableLogic;
@@ -101,6 +102,9 @@ public class Video implements Serializable {
     @NotBlank(message = "图片MD5不能为空")
    @Schema(description = "图片MD5")
     private String imageMd5;
+
+    @TableField(exist = false)
+    private Integer target_type;
 
 
 }

@@ -29,8 +29,10 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
+import java.util.concurrent.CompletableFuture;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
@@ -120,11 +122,19 @@ public class ArticleServiceImpl extends ServiceImpl<ArticleMapper, Article> impl
                 throw new LinyiException(ResultCodeEnum.VALID_ERROR);
             }
         }
-        int i = articleMapper.deleteBatchIds(ids);
-        int i1 = articleDataMapper.deleteBatchIds(ids);
-        if (i != ids.size() && i1 != ids.size()) {
-            throw new LinyiException(ResultCodeEnum.DELETE_FAIL);
-        }
+        CompletableFuture.runAsync(() -> {
+            int i = articleMapper.deleteBatchIds(ids);
+            List<Integer> idList = new ArrayList<>();
+            //删除文章数据表数据
+            for (Integer id : ids) {
+                idList.add(articleDataMapper.selectOne(new LambdaQueryWrapper<ArticleData>().eq(ArticleData::getArticleId, id)).getId());
+            }
+            int i1 = articleDataMapper.deleteBatchIds(idList);
+            if (i != ids.size() && i1 != ids.size()) {
+                throw new LinyiException(ResultCodeEnum.DELETE_FAIL);
+            }
+        });
+
         return "删除成功";
     }
 
@@ -157,9 +167,11 @@ public class ArticleServiceImpl extends ServiceImpl<ArticleMapper, Article> impl
                 throw new LinyiException(ResultCodeEnum.VALID_ERROR);
             }
         }
-        articleDataMapper.deleteArticleDataByPhysical(ids);
-        articleMapper.deleteArticleByPhysical(ids);
-
+        int i = articleDataMapper.deleteArticleDataByPhysical(ids);
+        int i1 = articleMapper.deleteArticleByPhysical(ids);
+        if (i1 != ids.size() || i != ids.size()) {
+            throw new LinyiException(ResultCodeEnum.DELETE_FAIL);
+        }
         return "删除成功";
 
     }

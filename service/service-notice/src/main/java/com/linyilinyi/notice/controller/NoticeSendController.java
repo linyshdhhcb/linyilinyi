@@ -74,9 +74,4 @@ public class NoticeSendController {
          return Result.ok(noticeSendService.sendPrivateMessage());
     }
 
-    @Operation(summary = "获取token信息")
-    @GetMapping(value = "/getToken")
-    public Result<Integer> getByToken(HttpServletRequest request) {
-        return Result.ok(noticeSendService.getByToken(request));
-    }
 }

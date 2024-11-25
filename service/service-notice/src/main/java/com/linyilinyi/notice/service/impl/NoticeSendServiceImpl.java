@@ -193,10 +193,4 @@ public class NoticeSendServiceImpl implements NoticeSendService {
         });
         return map;
     }
-
-    @Override
-    public Integer getByToken(HttpServletRequest request) {
-        Object o = redisTemplate.opsForValue().get("satoken:login:token:" + request.getCookies()[1].getValue());
-        return Integer.parseInt(String.valueOf(o));
-    }
 }

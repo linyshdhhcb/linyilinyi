@@ -42,7 +42,7 @@ public class ArticleDataServiceImpl extends ServiceImpl<ArticleDataMapper, Artic
     public ArticleData getArticleDataById(Integer id) {
         ArticleData articleData = articleDataMapper.selectById(id);
         if (Optional.ofNullable(articleData).isEmpty()) {
-            throw new LinyiException(ResultCodeEnum.DATA_ERROR);
+            throw new LinyiException(ResultCodeEnum.DATA_NULL);
         }
         return articleData;
     }

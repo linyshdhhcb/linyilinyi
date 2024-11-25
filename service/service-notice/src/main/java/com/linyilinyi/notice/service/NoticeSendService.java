@@ -30,5 +30,4 @@ public interface NoticeSendService {
 
     Map<Integer,List<NoticeInfo>> sendPrivateMessage();
 
-    Integer getByToken(HttpServletRequest request);
 }
