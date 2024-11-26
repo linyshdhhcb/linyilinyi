@@ -73,9 +73,9 @@ public class DictionaryLabelController {
         return Result.ok(dictionaryLabelService.getById(id));
     }
 
-    @Operation(summary = "获取全部数据字典内容列表")
+    @Operation(summary = "根据数据类型id获取数据字典内容列表（不填获取全部）")
     @GetMapping("getDictionaryLabelTreeList")
-    @Log(title = "数据字典内容管理器",content = "获取全部数据字典内容列表")
+    @Log(title = "数据字典内容管理器",content = "根据数据类型id获取数据字典内容列表（不填获取全部）")
     public Result<List<DictionaryTypeTreeList>> getDictionaryLabelTreeList(@RequestParam(required = false) Integer dictionaryTypeId) {
         return Result.ok(dictionaryLabelService.getDictionaryLabelTreeList(dictionaryTypeId));
     }

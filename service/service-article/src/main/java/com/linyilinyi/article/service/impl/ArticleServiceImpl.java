@@ -175,10 +175,4 @@ public class ArticleServiceImpl extends ServiceImpl<ArticleMapper, Article> impl
         return "删除成功";
 
     }
-
-    @Override
-    public Integer getByToken(HttpServletRequest request) {
-        Object o = redisTemplate.opsForValue().get("satoken:login:token:" + request.getCookies()[1].getValue());
-        return Integer.parseInt(String.valueOf(o));
-    }
 }

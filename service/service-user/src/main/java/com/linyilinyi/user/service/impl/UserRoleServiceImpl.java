@@ -12,10 +12,12 @@ import com.linyilinyi.user.service.RoleService;
 import com.linyilinyi.user.service.UserRoleService;
 import jakarta.annotation.Resource;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
 
 /**
@@ -35,6 +37,9 @@ public class UserRoleServiceImpl extends ServiceImpl<UserRoleMapper, UserRole> i
 
     @Resource
     private RoleService roleService;
+
+    @Resource
+    private RedisTemplate redisTemplate;
     @Override
     public String addUserRole(Integer userId, Long roleId) {
         UserRole userRole = new UserRole();
@@ -60,6 +65,7 @@ public class UserRoleServiceImpl extends ServiceImpl<UserRoleMapper, UserRole> i
         LambdaQueryWrapper<UserRole> queryWrapper = new LambdaQueryWrapper<>();
         List<Long> roleIds = userRoleMapper.selectList(queryWrapper.eq(UserRole::getUserId, userId)).stream().map(UserRole::getRoleId).collect(Collectors.toList());
         List<Role> roles = roleService.listByIds(roleIds);
+        redisTemplate.opsForValue().set("user:role:"+userId+":", roles,1, TimeUnit.MINUTES);
         return roles;
     }
 }

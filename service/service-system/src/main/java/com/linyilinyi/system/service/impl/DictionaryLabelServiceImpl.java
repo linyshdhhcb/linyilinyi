@@ -76,9 +76,10 @@ public class DictionaryLabelServiceImpl extends ServiceImpl<DictionaryLabelMappe
     @Override
     public String deleteDictionaryLabel(List<Integer> ids) {
         ids = ids.stream().filter(id -> id > 0).toList();
+        if (ids.isEmpty()) throw new LinyiException("id不符合条件，删除失败");
         int i = dictionaryLabelMapper.deleteBatchIds(ids);
         if (i <= 0) {
-            throw new LinyiException("删除失败");
+            throw new LinyiException("id不存在，删除失败");
         }
         return i + "条数据删除成功";
     }
@@ -112,10 +113,8 @@ public class DictionaryLabelServiceImpl extends ServiceImpl<DictionaryLabelMappe
                 BeanUtils.copyProperties(e, dictionaryTypeTreeList);
                 dictionaryTypeTreeList.setDictionaryLabelChild(dictionaryLabels);
                 dictionaryTypeTreeLists.add(dictionaryTypeTreeList);
-
             });
-            return dictionaryTypeTreeLists;
         }
-        throw new LinyiException("参数错误");
+        return dictionaryTypeTreeLists;
     }
 }

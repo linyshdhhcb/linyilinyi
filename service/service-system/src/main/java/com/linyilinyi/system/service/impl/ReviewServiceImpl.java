@@ -1,11 +1,11 @@
 package com.linyilinyi.system.service.impl;
 
+import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.linyilinyi.article.client.ArticleClient;
 import com.linyilinyi.common.exception.LinyiException;
 import com.linyilinyi.common.model.PageResult;
 import com.linyilinyi.common.model.Result;
 import com.linyilinyi.common.model.ResultCodeEnum;
-import com.linyilinyi.common.utils.AuthContextUser;
 import com.linyilinyi.model.entity.article.Article;
 import com.linyilinyi.model.entity.reviewer.Review;
 import com.linyilinyi.model.entity.video.Video;
@@ -18,6 +18,7 @@ import com.linyilinyi.user.client.UserClient;
 import com.linyilinyi.video.client.VideoClient;
 import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.beans.BeanUtils;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -33,25 +34,24 @@ import java.util.Optional;
  */
 @Service
 @SuppressWarnings({"unchecked", "rawtypes"})
-public class ReviewServiceImpl implements ReviewService {
+public class ReviewServiceImpl extends ServiceImpl<ReviewMapper, Review> implements ReviewService {
 
-    @Resource
+    @Autowired
     private VideoClient videoClient;
 
-    @Resource
-    private ArticleClient articleClient;
-
-    @Resource
-    private UserClient userClient;
-
-    @Resource
+    @Autowired
     private ReviewMapper reviewMapper;
 
-    @Resource
+    @Autowired
     private HttpServletRequest request;
 
+    @Autowired
+    private  ArticleClient articleClient;
+
+    @Autowired
+    private  UserClient userClient;
+
     @Override
-    @Transactional
     public String video(Integer videoId, Integer status, String reason) {
         VideoVo data = videoClient.getVideoById(videoId).getData();
         Video video = new Video();
@@ -81,6 +81,7 @@ public class ReviewServiceImpl implements ReviewService {
     @Override
     public String article(Integer articleId, Integer status, String reason) {
         Article article = articleClient.getArticleById(articleId).getData();
+        Optional.ofNullable(article).orElseThrow(() -> new LinyiException("文章数据为空时抛出异常"));
         article.setArticleStatus(status);
         article.setImageStatus(status);
         article.setUpdateTime(LocalDateTime.now());

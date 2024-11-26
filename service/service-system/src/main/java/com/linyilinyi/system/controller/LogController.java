@@ -65,15 +65,5 @@ public class LogController {
         return Result.ok(operLogService.pageList(operLogQueryVo, pageNo, pageSize));
     }
 
-    @Operation(summary = "通过token信息获取用户ID")
-    @GetMapping(value = "/getByToken")
-    public Result<Integer> getByToken() {
-        return Result.ok(operLogService.getByToken(request));
-    }
 
-    @GetMapping("/getRequesUserId")
-    public Result<Integer> getRequesUserId() {
-        Enumeration<String> userid = request.getHeaders("userid");
-        return Result.ok(Integer.parseInt(userid.nextElement()));
-    }
 }

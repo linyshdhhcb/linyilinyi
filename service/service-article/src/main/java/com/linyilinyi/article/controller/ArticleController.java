@@ -34,11 +34,6 @@ public class ArticleController {
     @Resource
     private ArticleService articleService;
 
-    @Operation(summary = "获取token信息")
-    @GetMapping(value = "/getToken")
-    public Result<Integer> getByToken(HttpServletRequest request) {
-        return Result.ok(articleService.getByToken(request));
-    }
 
     @Operation(summary = "分页获取文章列表")
     @PostMapping("/getArticleList")

@@ -17,7 +17,7 @@ import org.springframework.web.bind.annotation.*;
  * @Date 2024/10/26
  * @ClassName: ArticleClient
  */
-@FeignClient(value = "service-article")
+@FeignClient(name = "service-article")
 public interface ArticleClient {
 
     /**
@@ -33,8 +33,8 @@ public interface ArticleClient {
                                                       @RequestBody ArticleQueryVo articleQueryVo);
 
     @GetMapping("/article/getArticleById/{id}")
-    public Result<Article> getArticleById(@NotNull(message = "id不能为空") @PathVariable Integer id);
+    public Result<Article> getArticleById(@PathVariable Integer id);
 
     @PutMapping("/article/updateArticle")
-    public Result<String> updateArticle(@Valid @RequestBody Article article);
+    public Result<String> updateArticle(@RequestBody Article article);
 }

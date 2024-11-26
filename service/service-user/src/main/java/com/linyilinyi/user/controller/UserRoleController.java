@@ -46,7 +46,6 @@ public class UserRoleController {
 
     @Operation(summary = "根据用户id获取用户角色列表")
     @GetMapping("getUserRoleList")
-    //@Log(title = "用户角色管理", content = "根据用户id获取用户角色列表")
     public Result<List<Role>> getUserRoleList(@RequestParam Integer userId) {
         return Result.ok(userRoleService.getUserRoleList(userId));
     }

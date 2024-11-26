@@ -111,8 +111,10 @@ public class NoticeSendServiceImpl implements NoticeSendService {
     @Override
     public List<NoticeInfo> read(Integer senderId) {
         LambdaQueryWrapper<NoticeInfo> queryWrapper = new LambdaQueryWrapper<NoticeInfo>().eq(NoticeInfo::getSenderId, senderId).eq(NoticeInfo::getReceiverId, Integer.parseInt(request.getHeader("userid"))).eq(NoticeInfo::getIsRead, 0).orderByDesc(NoticeInfo::getSenderId);
+        List<NoticeInfo> list = new ArrayList<>();
         noticeInfoMapper.selectList(queryWrapper).stream().forEach(e -> {
             e.setIsRead(1);
+            noticeInfoMapper.updateById(e);
         });
         return noticeInfoMapper.selectList(new LambdaQueryWrapper<NoticeInfo>().eq(NoticeInfo::getSenderId, senderId).eq(NoticeInfo::getReceiverId, Integer.parseInt(request.getHeader("userid"))).orderByAsc(NoticeInfo::getCreatedTime));
     }

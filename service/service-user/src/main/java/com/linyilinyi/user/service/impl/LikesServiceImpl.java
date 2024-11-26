@@ -179,7 +179,7 @@ public class LikesServiceImpl extends ServiceImpl<LikesMapper, Likes> implements
                                 throw new RuntimeException("取消点赞失败"); // 删除数据库记录失败时抛出异常
                             }
                             // 删除 Redis 缓存
-                            redisTemplate.delete("isLikes:userId:" + userId + ":" + id + ":" + targetType);
+                            redisTemplate.delete("isLikes:" + targetType + ":" + id);
                             return "取消点赞成功";
                         } else {
                             // 新增点赞
@@ -194,8 +194,7 @@ public class LikesServiceImpl extends ServiceImpl<LikesMapper, Likes> implements
                                 throw new LinyiException(ResultCodeEnum.INSERT_FAIL); // 插入数据库失败时抛出异常
                             }
                             // 更新 Redis 缓存
-                            redisTemplate.opsForValue().set(
-                                    "isLikes:userId:" + userId + ":" + targetType, id);
+                            redisTemplate.opsForValue().set("isLikes:" + targetType + ":" + id + ":", id);
 
                             // 异步发送通知
                             CompletableFuture.runAsync(() -> {
@@ -212,6 +211,7 @@ public class LikesServiceImpl extends ServiceImpl<LikesMapper, Likes> implements
                     }
                 }).join(); // 阻塞获取最终结果
     }
+
     @Override
     public Boolean isLikes(Integer id, Integer targetType, Integer userId) {
         // 从 Redis 检查是否已点赞

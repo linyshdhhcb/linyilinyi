@@ -12,5 +12,4 @@ import org.springframework.stereotype.Repository;
  * @author linyi
  */
 public interface ReviewMapper extends BaseMapper<Review> {
-
 }

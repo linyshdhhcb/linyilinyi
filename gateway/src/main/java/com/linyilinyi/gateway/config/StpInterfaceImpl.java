@@ -10,11 +10,13 @@ import com.linyilinyi.user.client.UserClient;
 import jakarta.annotation.Resource;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.context.annotation.Lazy;
+import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Component;
 
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.Optional;
 import java.util.concurrent.*;
 import java.util.function.Supplier;
 import java.util.stream.Collectors;
@@ -33,6 +35,9 @@ public class StpInterfaceImpl implements StpInterface {
 
     @Resource
     private UserClient userClient;
+
+    @Resource
+    private RedisTemplate redisTemplate;
 
     //获取全部权限
     public List<String> UrlList() {
@@ -99,9 +104,13 @@ public class StpInterfaceImpl implements StpInterface {
         Integer longLoginId = Integer.parseInt(StpUtil.getLoginId().toString());
         // 使用CompletableFuture异步获取用户角色列表，提高响应性能
         CompletableFuture<List<String>> listCompletableFuture = CompletableFuture.supplyAsync(() -> {
-                    // 从用户角色查询接口获取角色列表，并提取角色代码
-                    return userClient.getUserRoleList(longLoginId).getData().stream().map(Role::getCode).collect(Collectors.toList());
-                });
+            // 从用户角色查询接口获取角色列表，并提取角色代码
+            Object o = redisTemplate.opsForValue().get("user:role:" + longLoginId);
+            if (Optional.ofNullable(o).isPresent() && o instanceof List) {
+                return (List<String>) o;
+            }
+            return userClient.getUserRoleList(longLoginId).getData().stream().map(Role::getCode).collect(Collectors.toList());
+        });
         try {
             // 判断异步获取的角色列表是否为null，如果为null则返回空列表
             if (listCompletableFuture.get() == null) {

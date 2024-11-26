@@ -9,7 +9,6 @@ import org.springframework.scheduling.annotation.EnableScheduling;
 
 @SpringBootApplication(scanBasePackages = {"com.linyilinyi.common.exception", "com.linyilinyi.common.config","com.linyilinyi.log","com.linyilinyi.system"})
 @EnableDiscoveryClient
-@EnableScheduling
 @EnableFeignClients("com.linyilinyi")
 @MapperScan("com.linyilinyi.system.mapper")
 public class SystemApplication {

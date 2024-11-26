@@ -33,5 +33,4 @@ public interface ArticleService extends IService<Article> {
 
     String deleteArticleByPhysical(List<Integer> ids);
 
-    Integer getByToken(HttpServletRequest request);
 }

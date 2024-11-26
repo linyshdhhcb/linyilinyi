@@ -60,21 +60,4 @@ public class OperLogServiceImpl extends ServiceImpl<OperLogMapper, OperLog> impl
         return new PageResult<>(logPage.getRecords(), logPage.getTotal(), pageNo, pageSize);
     }
 
-    @Override
-    public Integer getByToken(HttpServletRequest request) {
-        Cookie[] cookies = request.getCookies();
-        if (cookies == null || cookies.length < 2) {
-            return null;
-        }
-        String token = cookies[1].getValue();
-        if (Optional.ofNullable(token).isEmpty()) {
-            return null;
-        }
-        Object o = redisTemplate.opsForValue().get("satoken:login:token:" + token);
-        if (o == null) {
-            return null;
-        }
-        return Integer.parseInt(String.valueOf(o));
-    }
-
 }

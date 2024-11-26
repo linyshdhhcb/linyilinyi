@@ -18,5 +18,4 @@ public interface OperLogService extends IService<OperLog> {
 
     PageResult<OperLog> pageList(OperLogQueryVo operLogQueryVo, long pageNo, long pageSize);
 
-    Integer getByToken(HttpServletRequest request);
 }
