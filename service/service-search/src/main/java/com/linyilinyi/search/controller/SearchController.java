@@ -88,11 +88,6 @@ public class SearchController {
         return Result.ok(videoEsService.getLatestVideo());
     }
 
-    @Operation(summary = "获取token信息")
-    @GetMapping(value = "/getByToken")
-    public Result<Integer> getByToken(HttpServletRequest request) {
-        return Result.ok(videoEsService.getByToken(request));
-    }
 
 
 }

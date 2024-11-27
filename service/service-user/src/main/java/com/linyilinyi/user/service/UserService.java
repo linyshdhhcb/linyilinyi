@@ -39,5 +39,5 @@ public interface UserService extends IService<User> {
 
     String forgetPassword(ForgetPasswordVo forgetPasswordVo);
 
-    Integer getByToken(HttpServletRequest request);
+    Code getUserCode(String mail);
 }

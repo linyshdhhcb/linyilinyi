@@ -67,7 +67,14 @@ public class StpInterfaceImpl implements StpInterface {
         CompletableFuture<List<String>> arrayListCompletableFuture = CompletableFuture.supplyAsync(() -> {
             for (String role : roleList) {
                 // 根据角色代码获取菜单列表，并筛选出权限码
-                userClient.getMenuListByRoleCode(role).getData().stream().forEach(menu -> {
+                Object o = redisTemplate.opsForValue().get("role:menu:" + role);
+                List<Menu> menuList = null;
+                if (Optional.ofNullable(o).isPresent() && o instanceof List) {
+                    menuList = (List<Menu>) o;
+                } else {
+                    menuList = userClient.getMenuListByRoleCode(role).getData();
+                }
+                menuList.stream().forEach(menu -> {
                     paths.add(menu.getPath());
                 });
             }
@@ -104,12 +111,16 @@ public class StpInterfaceImpl implements StpInterface {
         Integer longLoginId = Integer.parseInt(StpUtil.getLoginId().toString());
         // 使用CompletableFuture异步获取用户角色列表，提高响应性能
         CompletableFuture<List<String>> listCompletableFuture = CompletableFuture.supplyAsync(() -> {
+            List<String> collect = null;
             // 从用户角色查询接口获取角色列表，并提取角色代码
             Object o = redisTemplate.opsForValue().get("user:role:" + longLoginId);
             if (Optional.ofNullable(o).isPresent() && o instanceof List) {
-                return (List<String>) o;
+                List<Role> list = (List<Role>) o;
+                collect = list.stream().map(Role::getCode).collect(Collectors.toList());
+            } else {
+                collect = userClient.getUserRoleList(longLoginId).getData().stream().map(Role::getCode).collect(Collectors.toList());
             }
-            return userClient.getUserRoleList(longLoginId).getData().stream().map(Role::getCode).collect(Collectors.toList());
+            return collect;
         });
         try {
             // 判断异步获取的角色列表是否为null，如果为null则返回空列表

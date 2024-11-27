@@ -10,6 +10,7 @@
 //import org.springframework.beans.factory.annotation.Autowired;
 //import org.springframework.context.annotation.Bean;
 //import org.springframework.context.annotation.Configuration;
+//import org.springframework.data.redis.core.RedisTemplate;
 //import org.springframework.scheduling.annotation.EnableScheduling;
 //import org.springframework.scheduling.concurrent.ThreadPoolTaskScheduler;
 //
@@ -40,6 +41,8 @@
 //
 //    @Autowired
 //    private MenuService menuService;
+//@Autowired
+//private RedisTemplate redisTemplate;
 //
 //    @Bean
 //    public ThreadPoolTaskScheduler threadPoolTaskScheduler() {
@@ -65,6 +68,7 @@
 //
 //    @PostConstruct
 //    public void init() {
+//        redisTemplate.delete("role:menu");
 //        //删除（除12001）的全部菜单
 //        menuService.deleteMenuType(12001);
 //

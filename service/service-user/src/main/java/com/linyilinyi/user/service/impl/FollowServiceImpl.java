@@ -1,13 +1,16 @@
 package com.linyilinyi.user.service.impl;
 
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
+import com.baomidou.mybatisplus.core.toolkit.CollectionUtils;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.linyilinyi.common.exception.LinyiException;
 import com.linyilinyi.common.model.ResultCodeEnum;
 import com.linyilinyi.common.utils.AuthContextUser;
 import com.linyilinyi.model.entity.other.Follow;
+import com.linyilinyi.model.vo.notice.NoticeVo;
 import com.linyilinyi.model.vo.user.FanVo;
 import com.linyilinyi.model.vo.user.FollowVo;
+import com.linyilinyi.notice.client.NoticeClient;
 import com.linyilinyi.user.mapper.FollowMapper;
 import com.linyilinyi.user.mapper.UserMapper;
 import com.linyilinyi.user.service.FollowService;
@@ -42,6 +45,9 @@ public class FollowServiceImpl extends ServiceImpl<FollowMapper, Follow> impleme
     @Resource
     private HttpServletRequest request;
 
+    @Resource
+    private NoticeClient noticeClient;
+
     @Override
     public List<FanVo> getFansList() {
         List<Follow> follows = followMapper.selectList(new LambdaQueryWrapper<Follow>().eq(Follow::getIdolId, Integer.parseInt(request.getHeader("userid"))));
@@ -50,6 +56,7 @@ public class FollowServiceImpl extends ServiceImpl<FollowMapper, Follow> impleme
         for (Follow follow : follows) {
             ids.add(follow.getFansId());
         }
+        if (CollectionUtils.isEmpty(ids)) throw new LinyiException(ResultCodeEnum.DATA_NULL);
         userMapper.selectBatchIds(ids).stream().forEach(user -> fanVos.add(new FanVo(user.getId(), user.getNickname(), user.getImage())));
         return fanVos;
     }
@@ -67,9 +74,10 @@ public class FollowServiceImpl extends ServiceImpl<FollowMapper, Follow> impleme
     }
 
     @Override
-    public String addFollow(Integer id) {
-        if (isFollow(id)) {
-            LambdaQueryWrapper<Follow> queryWrapper = new LambdaQueryWrapper<Follow>().eq(Follow::getIdolId, Integer.parseInt(request.getHeader("userid"))).eq(Follow::getFansId, id);
+    public String addFollow(Integer idolId) {
+        Integer userId = Integer.parseInt(request.getHeader("userid"));
+        if (isFollow(userId,idolId)) {
+            LambdaQueryWrapper<Follow> queryWrapper = new LambdaQueryWrapper<Follow>().eq(Follow::getIdolId, idolId).eq(Follow::getFansId, userId);
             int delete = followMapper.delete(queryWrapper);
             if (delete!=1){
                 throw new LinyiException(ResultCodeEnum.DELETE_FAIL);
@@ -79,17 +87,18 @@ public class FollowServiceImpl extends ServiceImpl<FollowMapper, Follow> impleme
         Follow follow = new Follow();
         follow.setCreateTime(LocalDateTime.now());
         follow.setFansId(Integer.parseInt(request.getHeader("userid")));
-        follow.setIdolId(id);
+        follow.setIdolId(idolId);
         int insert = followMapper.insert(follow);
         if (insert != 1) {
             throw new LinyiException(ResultCodeEnum.INSERT_FAIL);
         }
+        noticeClient.sendLikeNotice(new NoticeVo(userId,idolId,21004,"关注",null,null));
         return "关注成功";
     }
 
     @Override
-    public Boolean isFollow(Integer id) {
-        LambdaQueryWrapper<Follow> queryWrapper = new LambdaQueryWrapper<Follow>().eq(Follow::getIdolId,Integer.parseInt(request.getHeader("userid"))).eq(Follow::getFansId, id);
+    public Boolean isFollow(Integer fanId,Integer idolId) {
+        LambdaQueryWrapper<Follow> queryWrapper = new LambdaQueryWrapper<Follow>().eq(Follow::getIdolId,idolId).eq(Follow::getFansId, fanId);
         Follow follow = followMapper.selectOne(queryWrapper);
         return Optional.ofNullable(follow).isPresent() ? true : false;
     }

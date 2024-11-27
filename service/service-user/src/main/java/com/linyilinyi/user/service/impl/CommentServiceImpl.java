@@ -12,6 +12,8 @@ import com.linyilinyi.model.entity.likes.Likes;
 import com.linyilinyi.model.entity.user.User;
 import com.linyilinyi.model.vo.comment.CommentAddVo;
 import com.linyilinyi.model.vo.comment.CommentsVo;
+import com.linyilinyi.model.vo.notice.NoticeVo;
+import com.linyilinyi.notice.client.NoticeClient;
 import com.linyilinyi.user.mapper.CommentMapper;
 import com.linyilinyi.user.mapper.LikesMapper;
 import com.linyilinyi.user.service.CommentService;
@@ -49,6 +51,10 @@ public class CommentServiceImpl extends ServiceImpl<CommentMapper, Comment> impl
 
     @Resource
     private HttpServletRequest request;
+
+    @Resource
+    private NoticeClient noticeClient;
+
     @Resource
     private RedisTemplate<String, Object> redisTemplate;
 
@@ -68,6 +74,7 @@ public class CommentServiceImpl extends ServiceImpl<CommentMapper, Comment> impl
             throw new LinyiException(ResultCodeEnum.INSERT_FAIL);
         }
         commentsVo.setId(comment.getId());
+        noticeClient.sendLikeNotice(new NoticeVo(commentsVo.getUserId(), user.getId(), 21005, "评论", commentAddVo.getTopId(), commentAddVo.getTargetType()));
         return commentsVo;
     }
 
@@ -146,6 +153,9 @@ public class CommentServiceImpl extends ServiceImpl<CommentMapper, Comment> impl
 
     private void deleteCommentLikes(Integer id) {
         List<Likes> likes = likesMapper.selectList(new LambdaQueryWrapper<Likes>().eq(Likes::getTargetId, 11203).eq(Likes::getId, id));
+        if (likes.isEmpty()){
+            return;
+        }
         int i = likesMapper.deleteBatchIds(likes.stream().map(Likes::getId).collect(Collectors.toList()));
         if (i != likes.size()) {
             throw new LinyiException(ResultCodeEnum.DELETE_FAIL);

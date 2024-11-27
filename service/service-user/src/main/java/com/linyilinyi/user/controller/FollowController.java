@@ -9,10 +9,7 @@ import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.annotation.Resource;
 import jakarta.validation.constraints.NotNull;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 import lombok.extern.slf4j.Slf4j;
 
 import java.util.List;
@@ -56,11 +53,9 @@ public class FollowController {
     }
 
     @Operation(summary = "判断是否关注了")
-    @GetMapping("/isFollow/{id}")
+    @GetMapping("/isFollow")
     @Log(title = "粉丝管理", content = "判断是否关注了")
-    public Result<Boolean> isFollow(@NotNull(message = "id不能为空") @PathVariable Integer id) {
-        return Result.ok(followService.isFollow(id));
+    public Result<Boolean> isFollow(@NotNull(message = "用户id不能为空") @RequestParam Integer fanId, @NotNull(message = "查询id不能为空") @RequestParam Integer idolId) {
+        return Result.ok(followService.isFollow(fanId, idolId));
     }
-
-
 }

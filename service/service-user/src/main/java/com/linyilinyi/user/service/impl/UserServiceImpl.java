@@ -223,8 +223,18 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements Us
     }
 
     @Override
-    public Integer getByToken(HttpServletRequest request) {
-        Object o = redisTemplate.opsForValue().get("satoken:login:token:" + request.getCookies()[1].getValue());
-        return Integer.parseInt(String.valueOf(o));
+    public Code getUserCode(String mail) {
+        Code code1 = new Code();
+        try {
+            String code = RandomStringUtils.randomNumeric(6);
+            String keyCode = UUID.randomUUID().toString().replace("-", "");
+            code1.setCode(code);
+            code1.setCodeKey(keyCode);
+            EmailUtil.sendEmail(mail, "验证码", "linyilinyi  您的验证码为：" + code + "。有效期10分钟。");
+        } catch (MessagingException e) {
+            throw new LinyiException(ResultCodeEnum.SEND_EMAIL_ERROR);
+        }
+        redisTemplate.opsForValue().set("user:code:" + code1.getCodeKey(), code1, 10, TimeUnit.MINUTES);
+        return code1;
     }
 }

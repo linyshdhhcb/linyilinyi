@@ -49,7 +49,7 @@ public class AuthGlobalFilter implements GlobalFilter, Ordered {
             log.info("调用线程{}", Thread.currentThread().getName());
             // 获取 satoken Cookie
             List<HttpCookie> satokenCookies = exchange.getRequest().getCookies().get("satoken");
-            if (!b) {
+            if (!b && satokenCookies != null) {
                 if (satokenCookies == null || satokenCookies.isEmpty()) {
                     log.warn("未找到Cookie的satoken");
                     exchange.getResponse().setStatusCode(HttpStatus.UNAUTHORIZED);
@@ -74,7 +74,7 @@ public class AuthGlobalFilter implements GlobalFilter, Ordered {
                 ServerWebExchange modifiedExchange = exchange.mutate().request(modifiedRequest).build();
                 return chain.filter(modifiedExchange);  // 正常情况下，继续执行过滤器链
             }
-            if (b) {
+            if (b || satokenCookies == null) {
                 return chain.filter(exchange);
             }
         } catch (RedisConnectionFailureException e) {

@@ -33,6 +33,9 @@ public class MenuAdd {
     @Schema(description = "权限标识")
     private String perms;
 
+    @Schema(description = "状态")
+    private Integer status;
+
     @Schema(description = "备注")
     private String remark;
 

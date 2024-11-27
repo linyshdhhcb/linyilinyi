@@ -55,7 +55,6 @@ public class WebSocketHandler extends TextWebSocketHandler {
         Matcher matcher = USER_ID_PATTERN.matcher(uri);
         if (matcher.find()) {
             String username = matcher.group(1);
-            // 处理收到的消息（如有需要）
             log.info("用户{}发送信息：{}",username, message.getPayload());
         }
     }

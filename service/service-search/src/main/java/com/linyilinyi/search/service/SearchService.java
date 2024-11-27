@@ -38,5 +38,4 @@ public interface SearchService {
 
     Video getLatestVideo();
 
-    Integer getByToken(HttpServletRequest request);
 }

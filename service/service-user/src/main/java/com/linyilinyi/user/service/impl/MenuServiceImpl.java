@@ -1,8 +1,8 @@
 package com.linyilinyi.user.service.impl;
 
 
-import com.alibaba.fastjson2.JSON;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
+import com.baomidou.mybatisplus.core.toolkit.CollectionUtils;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.linyilinyi.common.exception.LinyiException;
 import com.linyilinyi.common.model.ResultCodeEnum;
@@ -10,7 +10,6 @@ import com.linyilinyi.model.entity.user.Menu;
 import com.linyilinyi.model.entity.user.Role;
 import com.linyilinyi.model.entity.user.RoleMenu;
 import com.linyilinyi.model.vo.user.MenuAdd;
-import com.linyilinyi.user.client.UserClient;
 import com.linyilinyi.user.mapper.MenuMapper;
 import com.linyilinyi.user.mapper.RoleMapper;
 import com.linyilinyi.user.mapper.RoleMenuMapper;
@@ -25,6 +24,7 @@ import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
+import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
 
 /**
@@ -54,10 +54,10 @@ public class MenuServiceImpl extends ServiceImpl<MenuMapper, Menu> implements Me
     @Override
     public void addMenu(MenuAdd menuAdd) {
         Menu menu = new Menu();
-        BeanUtils.copyProperties(menuAdd,menu);
+        BeanUtils.copyProperties(menuAdd, menu);
         menu.setCreateTime(LocalDateTime.now());
         int insert = menuMapper.insert(menu);
-        if (insert != 1){
+        if (insert != 1) {
             throw new LinyiException(ResultCodeEnum.INSERT_FAIL);
         }
     }
@@ -66,13 +66,13 @@ public class MenuServiceImpl extends ServiceImpl<MenuMapper, Menu> implements Me
     public String deleteMenu(List<Long> ids) {
         ids = ids.stream().filter(id -> id > 0).collect(Collectors.toList());
         int i = menuMapper.deleteBatchIds(ids);
-        return i+"条数据删除成功";
+        return i + "条数据删除成功";
     }
 
     @Override
-    public Menu getMenuById(Integer id) {
+    public Menu getMenuById(Long id) {
         Menu menu = menuMapper.selectById(id);
-        if (Optional.ofNullable(menu).isEmpty()){
+        if (Optional.ofNullable(menu).isEmpty()) {
             throw new LinyiException(ResultCodeEnum.DATA_NULL);
         }
         return menu;
@@ -82,15 +82,15 @@ public class MenuServiceImpl extends ServiceImpl<MenuMapper, Menu> implements Me
     public void updateMenu(Menu menu) {
         menu.setUpdateTime(LocalDateTime.now());
         int update = menuMapper.updateById(menu);
-        if (update != 1){
+        if (update != 1) {
             throw new LinyiException(ResultCodeEnum.UPDATE_FAIL);
         }
     }
 
     @Override
     public List<Menu> getMenuListTree() {
-        List<Menu> menus = menuMapper.selectList(new LambdaQueryWrapper<Menu>().eq(Menu::getStatus,1));
-        if (Optional.ofNullable(menus).isEmpty()){
+        List<Menu> menus = menuMapper.selectList(new LambdaQueryWrapper<Menu>().eq(Menu::getStatus, 1));
+        if (Optional.ofNullable(menus).isEmpty()) {
             return null;
         }
         List<Menu> menus1 = buildTree(menus);
@@ -101,8 +101,15 @@ public class MenuServiceImpl extends ServiceImpl<MenuMapper, Menu> implements Me
     @Override
     public List<Menu> getMenuListByRoleId(Long roleId) {
         List<RoleMenu> roleMenus = roleMenuMapper.selectList(new LambdaQueryWrapper<RoleMenu>().eq(RoleMenu::getRoleId, roleId));
+        if (Optional.ofNullable(roleMenus).isEmpty()) {
+            throw new LinyiException("该用户没有分配角色");
+        }
         List<Long> menuIds = roleMenus.stream().map(RoleMenu::getMenuId).collect(Collectors.toList());
-        List<Menu> menus = menuMapper.selectBatchIds(menuIds);
+        if (CollectionUtils.isEmpty(menuIds)) {
+            throw new LinyiException("该角色没有分配权限");
+        }
+        List<Menu> menus = menuMapper.selectBatchIds(menuIds).stream().filter(e->e.getStatus()==1).collect(Collectors.toList());
+        redisTemplate.opsForValue().set("role:menu:" + roleMapper.selectById(roleId).getCode(), menus, 100, TimeUnit.MINUTES);
         return menus;
     }
 
@@ -136,7 +143,8 @@ public class MenuServiceImpl extends ServiceImpl<MenuMapper, Menu> implements Me
     /**
      * 递归查找子节点
      * 该方法用于在给定的树节点列表中，递归地查找并设置指定节点的所有子节点
-     * @param sysMenu 当前正在查找子节点的菜单对象，即父节点
+     *
+     * @param sysMenu   当前正在查找子节点的菜单对象，即父节点
      * @param treeNodes 包含所有菜单的列表，从这个列表中查找子节点
      * @return 返回包含所有子节点的菜单对象
      */
@@ -147,13 +155,13 @@ public class MenuServiceImpl extends ServiceImpl<MenuMapper, Menu> implements Me
         // 遍历所有节点，查找当前节点的子节点
         for (Menu it : treeNodes) {
             // 如果当前节点的ID与遍历节点的父节点ID相等，则说明遍历节点是当前节点的子节点
-            if(sysMenu.getId().longValue() == it.getParentId().longValue()) {
+            if (sysMenu.getId().longValue() == it.getParentId().longValue()) {
                 // 如果当前节点的子节点列表为空，则初始化
                 if (sysMenu.getChildren() == null) {
                     sysMenu.setChildren(new ArrayList<>());
                 }
                 // 递归调用自身，为找到的子节点继续查找其子节点，并将其添加到当前节点的子节点列表中
-                sysMenu.getChildren().add(findChildren(it,treeNodes));
+                sysMenu.getChildren().add(findChildren(it, treeNodes));
             }
         }
         // 返回包含所有子节点的菜单对象

@@ -31,6 +31,6 @@ public class NoticeVo {
     @Schema(description = "对象id")
     private Integer objectId;
 
-    @Schema(description = "对象id")
+    @Schema(description = "对象类型")
     private Integer objectType;
 }

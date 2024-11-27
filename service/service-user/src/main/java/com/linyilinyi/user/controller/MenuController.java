@@ -49,7 +49,7 @@ public class MenuController {
     @Operation(summary = "根据id查询菜单信息（回显）")
     @GetMapping("getMenuById/{id}")
     @Log(title = "菜单管理",content = "根据id查询菜单信息（回显）")
-    public Result<Menu> getMenuById(@PathVariable Integer id) {
+    public Result<Menu> getMenuById(@PathVariable Long id) {
         return Result.ok(menuService.getMenuById(id));
     }
 
@@ -92,7 +92,6 @@ public class MenuController {
 
     @Operation(summary = "根据角色名称code获取菜单")
     @GetMapping("getMenuListByRoleCode/{roleCode}")
-    //@Log(title = "菜单管理",content = "根据角色名称code获取菜单")
     public Result<List<Menu>> getMenuListByRoleCode(@PathVariable String roleCode) {
         return Result.ok(menuService.getMenuListByRoleCode(roleCode));
     }

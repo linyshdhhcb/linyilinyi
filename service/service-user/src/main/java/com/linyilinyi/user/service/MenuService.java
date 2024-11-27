@@ -1,7 +1,6 @@
 package com.linyilinyi.user.service;
 
 import com.baomidou.mybatisplus.extension.service.IService;
-import com.linyilinyi.common.model.ResultCodeEnum;
 import com.linyilinyi.model.entity.user.Menu;
 import com.linyilinyi.model.vo.user.MenuAdd;
 
@@ -21,7 +20,7 @@ public interface MenuService extends IService<Menu> {
 
     String deleteMenu(List<Long> ids);
 
-    Menu getMenuById(Integer id);
+    Menu getMenuById(Long id);
 
     void updateMenu(Menu menu);
 

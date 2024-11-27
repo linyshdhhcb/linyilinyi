@@ -1,6 +1,7 @@
 package com.linyilinyi.user.service.impl;
 
 
+import com.alibaba.fastjson.JSON;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
@@ -50,7 +51,7 @@ public class RoleServiceImpl extends ServiceImpl<RoleMapper, Role> implements Ro
         role.setCode(code);
         role.setCreateTime(LocalDateTime.now());
         int insert = roleMapper.insert(role);
-        if (insert != 1){
+        if (insert != 1) {
             log.error("新增角色失败");
             throw new LinyiException(ResultCodeEnum.INSERT_FAIL);
         }
@@ -59,21 +60,32 @@ public class RoleServiceImpl extends ServiceImpl<RoleMapper, Role> implements Ro
     @Override
     public String deleteRoleById(List<Long> ids) {
         List<Long> collect = new ArrayList<>();
-        ArrayList<Long> longs = new ArrayList<>();
+        ArrayList<Long> eList = new ArrayList<>();
+        ArrayList<Long> sList = new ArrayList<>();
         ids.stream().filter(id -> id > 0).forEach(id -> {
             UserRole userRole = userRoleMapper.selectOne(new LambdaQueryWrapper<UserRole>().eq(UserRole::getRoleId, id));
-            if (Optional.ofNullable(userRole).isEmpty()){
+            if (Optional.ofNullable(userRole).isEmpty()) {
                 collect.add(id);
             }
         });
-        if (collect.isEmpty()){
+        StringBuilder sb = new StringBuilder();
+        if (collect.isEmpty()) {
             throw new LinyiException("请输入合法的id");
-        }else {
-            longs.addAll(collect);
+        } else {
+            for (int i = 0; i < collect.size(); i++) {
+                int i1 = roleMapper.deleteById(collect.get(i));
+                if (i1 != 1) {
+                    eList.add(collect.get(i));
+                    continue;
+                }
+                sList.add(collect.get(i));
+            }
+            sb.append(JSON.toJSONString(sList)).append(sList.size()).append("条数据删除成功。");
+            if (eList.size() != 0) {
+                sb.append(JSON.toJSONString(eList)).append(eList.size()).append("条数据删除失败。");
+            }
+            return sb.toString();
         }
-
-        int i = roleMapper.deleteBatchIds(collect);
-        return i + "条数据删除成功。\n"+longs.toString()+"有用户拥有该角色，删除失败";
     }
 
     @Override
@@ -93,7 +105,7 @@ public class RoleServiceImpl extends ServiceImpl<RoleMapper, Role> implements Ro
     public void updateRole(Role role) {
         role.setUpdateTime(LocalDateTime.now());
         int i = roleMapper.updateById(role);
-        if (i != 1){
+        if (i != 1) {
             throw new LinyiException(ResultCodeEnum.UPDATE_FAIL);
         }
     }
@@ -102,4 +114,5 @@ public class RoleServiceImpl extends ServiceImpl<RoleMapper, Role> implements Ro
     public List<Role> getList() {
         return roleMapper.selectList(null);
     }
+
 }

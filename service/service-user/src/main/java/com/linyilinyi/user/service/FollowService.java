@@ -24,5 +24,5 @@ public interface FollowService extends IService<Follow> {
 
     String addFollow(Integer id);
 
-    Boolean isFollow(Integer id);
+    Boolean isFollow(Integer fanId,Integer idolId);
 }

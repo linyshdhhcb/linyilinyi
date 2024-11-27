@@ -65,7 +65,7 @@ public class UserRoleServiceImpl extends ServiceImpl<UserRoleMapper, UserRole> i
         LambdaQueryWrapper<UserRole> queryWrapper = new LambdaQueryWrapper<>();
         List<Long> roleIds = userRoleMapper.selectList(queryWrapper.eq(UserRole::getUserId, userId)).stream().map(UserRole::getRoleId).collect(Collectors.toList());
         List<Role> roles = roleService.listByIds(roleIds);
-        redisTemplate.opsForValue().set("user:role:"+userId+":", roles,1, TimeUnit.MINUTES);
+        redisTemplate.opsForValue().set("user:role:"+userId+":", roles,100, TimeUnit.MINUTES);
         return roles;
     }
 }

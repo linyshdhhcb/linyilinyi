@@ -106,7 +106,7 @@ public class UserController {
         return Result.ok(b);
     }
 
-    @Operation(summary = "获取token信息")
+    @Operation(summary = "获取token")
     @GetMapping("/getToken")
     public Result<String> tokenInfo() {
         return Result.ok(StpUtil.getTokenValue());
@@ -135,10 +135,11 @@ public class UserController {
         return Result.ok(userService.getRegisterCode(mail));
     }
 
-    @Operation(summary = "获取token信息")
-    @GetMapping(value = "/getByToken")
-    public Result<Integer> getByToken(HttpServletRequest request) {
-        return Result.ok(userService.getByToken(request));
+    @Operation(summary = "获取用户验证码")
+    @GetMapping("/getUserCode")
+    @Log(title = "用户管理", content = "获取用户验证码")
+    public Result<Code> getUserCode(@RequestParam String mail) {
+        return Result.ok(userService.getUserCode(mail));
     }
 
 }

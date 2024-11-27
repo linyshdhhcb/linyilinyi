@@ -3,7 +3,6 @@ package com.linyilinyi.model.vo.file;
 import com.baomidou.mybatisplus.annotation.TableField;
 import com.baomidou.mybatisplus.annotation.TableLogic;
 import com.linyilinyi.common.model.FrameTime;
-import com.linyilinyi.common.model.SizeRange;
 import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.validation.constraints.Max;
 import jakarta.validation.constraints.Min;
