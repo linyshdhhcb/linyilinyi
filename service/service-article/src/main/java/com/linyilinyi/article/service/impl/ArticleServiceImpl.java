@@ -1,6 +1,7 @@
 package com.linyilinyi.article.service.impl;
 
 
+import com.alibaba.fastjson2.JSON;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
@@ -12,6 +13,7 @@ import com.linyilinyi.common.exception.LinyiException;
 import com.linyilinyi.common.model.PageResult;
 import com.linyilinyi.common.model.ResultCodeEnum;
 import com.linyilinyi.common.utils.AuthContextUser;
+import com.linyilinyi.common.utils.SensitiveWordsUtils;
 import com.linyilinyi.model.entity.article.Article;
 import com.linyilinyi.model.entity.article.ArticleData;
 import com.linyilinyi.model.entity.user.User;
@@ -86,7 +88,9 @@ public class ArticleServiceImpl extends ServiceImpl<ArticleMapper, Article> impl
         if (Optional.ofNullable(articleAddVo).isEmpty()) {
             throw new LinyiException(ResultCodeEnum.DATA_NULL);
         }
-
+        if (SensitiveWordsUtils.isSensitiveWords(articleAddVo)){
+            throw new LinyiException(ResultCodeEnum.SENSITIVE_WORDS);
+        }
         Article article = new Article();
         BeanUtils.copyProperties(articleAddVo, article);
         Integer userId = Integer.parseInt(request.getHeader("userid"));
@@ -144,6 +148,9 @@ public class ArticleServiceImpl extends ServiceImpl<ArticleMapper, Article> impl
             throw new LinyiException(ResultCodeEnum.DATA_NULL);
         }
         article.setUpdateTime(LocalDateTime.now());
+        if (SensitiveWordsUtils.isSensitiveWords(article)){
+            throw new LinyiException(ResultCodeEnum.SENSITIVE_WORDS);
+        }
         int i = articleMapper.updateById(article);
         if (i != 1) {
             throw new LinyiException(ResultCodeEnum.UPDATE_FAIL);

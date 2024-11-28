@@ -90,4 +90,11 @@ public class ArticleDataServiceImpl extends ServiceImpl<ArticleDataMapper, Artic
             default -> throw new LinyiException("没有该类型");
         }
     }
+
+    @Override
+    public void updateArticleRead(Integer id) {
+        ArticleData articleDataById = getArticleDataById(id);
+        articleDataById.setReadCount(articleDataById.getReadCount() + 1);
+        updateArticleData(articleDataById);
+    }
 }

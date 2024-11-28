@@ -3,6 +3,7 @@ package com.linyilinyi.article.client;
 import com.linyilinyi.common.model.PageResult;
 import com.linyilinyi.common.model.Result;
 import com.linyilinyi.model.entity.article.Article;
+import com.linyilinyi.model.entity.article.ArticleData;
 import com.linyilinyi.model.vo.article.ArticleQueryVo;
 import io.swagger.oas.annotations.Operation;
 import jakarta.validation.Valid;
@@ -37,4 +38,7 @@ public interface ArticleClient {
 
     @PutMapping("/article/updateArticle")
     public Result<String> updateArticle(@RequestBody Article article);
+
+    @PostMapping("/articleData/updateArticleData")
+    public Result<String> updateArticleData(@RequestBody ArticleData articleData);
 }
