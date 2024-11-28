@@ -11,6 +11,7 @@ import com.linyilinyi.common.model.ResultCodeEnum;
 import com.linyilinyi.common.utils.AuthContextUser;
 import com.linyilinyi.common.utils.EmailUtil;
 import com.linyilinyi.common.utils.PasswordEncoder;
+import com.linyilinyi.common.utils.SensitiveWordsUtils;
 import com.linyilinyi.model.entity.user.User;
 import com.linyilinyi.model.vo.code.Code;
 import com.linyilinyi.model.vo.user.*;
@@ -99,6 +100,9 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements Us
 
     @Override
     public String addUser(UserAddVo userAddVo) {
+        if (SensitiveWordsUtils.isSensitiveWords(userAddVo)){
+            throw new LinyiException(ResultCodeEnum.SENSITIVE_WORDS);
+        }
         userAddVo.setImage(SystemConstant.USER_DEFAULT_AVATAR);
         if (!userAddVo.getPassword().equals(userAddVo.getPasswords())) {
             throw new LinyiException(ResultCodeEnum.PASSWORDS_ERROR);
@@ -145,6 +149,9 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements Us
 
     @Override
     public String register(UserRegisterVo userRegisterVo) {
+        if (SensitiveWordsUtils.isSensitiveWords(userRegisterVo)){
+            throw new LinyiException(ResultCodeEnum.SENSITIVE_WORDS);
+        }
         //验证码校验
         Code code = null;
         try {

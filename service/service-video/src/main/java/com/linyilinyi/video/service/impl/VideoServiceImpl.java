@@ -9,6 +9,7 @@ import com.linyilinyi.common.model.PageResult;
 import com.linyilinyi.common.model.Result;
 import com.linyilinyi.common.model.ResultCodeEnum;
 import com.linyilinyi.common.utils.AuthContextUser;
+import com.linyilinyi.common.utils.SensitiveWordsUtils;
 import com.linyilinyi.model.entity.user.User;
 import com.linyilinyi.model.entity.video.Video;
 import com.linyilinyi.model.entity.video.VideoData;
@@ -94,6 +95,9 @@ public class VideoServiceImpl extends ServiceImpl<VideoMapper, Video> implements
     @Override
     @Transactional
     public Video addVideo(VideoAddVo video) {
+        if (SensitiveWordsUtils.isSensitiveWords(video)){
+            throw new LinyiException(ResultCodeEnum.SENSITIVE_WORDS);
+        }
         Result<User> userById = userClient.getUserById(Integer.parseInt(request.getHeader("userid")));
         User user = userById.getData();
         if (Optional.ofNullable(user).isEmpty()) {
@@ -145,6 +149,9 @@ public class VideoServiceImpl extends ServiceImpl<VideoMapper, Video> implements
 
     @Override
     public String updateVideo(Video video) {
+        if (SensitiveWordsUtils.isSensitiveWords(video)){
+            throw new LinyiException(ResultCodeEnum.SENSITIVE_WORDS);
+        }
         if (Optional.ofNullable(video).isEmpty()) {
             throw new LinyiException(ResultCodeEnum.DATA_ERROR);
         }

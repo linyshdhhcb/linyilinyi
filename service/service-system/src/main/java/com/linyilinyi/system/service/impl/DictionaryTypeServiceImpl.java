@@ -3,6 +3,7 @@ package com.linyilinyi.system.service.impl;
 import com.linyilinyi.common.exception.LinyiException;
 import com.linyilinyi.common.model.ResultCodeEnum;
 import com.linyilinyi.common.utils.AuthContextUser;
+import com.linyilinyi.common.utils.SensitiveWordsUtils;
 import com.linyilinyi.model.entity.dictionary.DictionaryType;
 import com.linyilinyi.system.mapper.DictionaryTypeMapper;
 import com.linyilinyi.system.service.DictionaryTypeService;
@@ -34,6 +35,9 @@ public class DictionaryTypeServiceImpl extends ServiceImpl<DictionaryTypeMapper,
     private HttpServletRequest request;
     @Override
     public String addDictionaryType(String type, String name) {
+        if (SensitiveWordsUtils.isSensitiveWords(type) || SensitiveWordsUtils.isSensitiveWords(name)){
+            throw new LinyiException(ResultCodeEnum.SENSITIVE_WORDS);
+        }
         DictionaryType dictionaryType = new DictionaryType();
         dictionaryType.setType(type);
         dictionaryType.setName(name);
@@ -60,6 +64,10 @@ public class DictionaryTypeServiceImpl extends ServiceImpl<DictionaryTypeMapper,
     public String updateDictionaryType(DictionaryType dictionaryType) {
         dictionaryType.setUpdateTime(LocalDateTime.now());
         dictionaryType.setUpdateUserId(Integer.parseInt(request.getHeader("userid")));
+        //检测敏感字
+        if (SensitiveWordsUtils.isSensitiveWords(dictionaryType)){
+            throw new LinyiException(ResultCodeEnum.SENSITIVE_WORDS);
+        }
         int i = dictionaryTypeMapper.updateById(dictionaryType);
         if (i!=1){
             throw new LinyiException("修改失败");

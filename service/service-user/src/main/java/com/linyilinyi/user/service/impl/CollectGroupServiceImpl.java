@@ -5,6 +5,7 @@ import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.linyilinyi.common.exception.LinyiException;
 import com.linyilinyi.common.model.ResultCodeEnum;
 import com.linyilinyi.common.utils.AuthContextUser;
+import com.linyilinyi.common.utils.SensitiveWordsUtils;
 import com.linyilinyi.model.entity.collect.CollectGroup;
 import com.linyilinyi.user.mapper.CollectGroupMapper;
 import com.linyilinyi.user.service.CollectGroupService;
@@ -46,6 +47,10 @@ public class CollectGroupServiceImpl extends ServiceImpl<CollectGroupMapper, Col
 
     @Override
     public String addCollectGroup(String name, Integer status) {
+        //检测敏感字
+        if (SensitiveWordsUtils.isSensitiveWords(name)){
+            throw new LinyiException(ResultCodeEnum.SENSITIVE_WORDS);
+        }
         CollectGroup collectGroup = new CollectGroup();
         collectGroup.setName(name);
         collectGroup.setCreateTime(LocalDateTime.now());
@@ -74,6 +79,10 @@ public class CollectGroupServiceImpl extends ServiceImpl<CollectGroupMapper, Col
     @Override
     public String updateCollectGroup(CollectGroup collectGroup) {
         collectGroup.setUpdateTime(LocalDateTime.now());
+        //检测敏感字
+        if (SensitiveWordsUtils.isSensitiveWords(collectGroup)){
+            throw new LinyiException(ResultCodeEnum.SENSITIVE_WORDS);
+        }
         int i = collectGroupMapper.updateById(collectGroup);
         if (i!=1){
             throw new LinyiException(ResultCodeEnum.UPDATE_ERROR);

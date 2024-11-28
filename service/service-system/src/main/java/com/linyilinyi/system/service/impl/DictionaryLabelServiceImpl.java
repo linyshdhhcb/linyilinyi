@@ -4,7 +4,9 @@ import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.linyilinyi.common.exception.LinyiException;
 import com.linyilinyi.common.model.PageResult;
+import com.linyilinyi.common.model.ResultCodeEnum;
 import com.linyilinyi.common.utils.AuthContextUser;
+import com.linyilinyi.common.utils.SensitiveWordsUtils;
 import com.linyilinyi.model.entity.dictionary.DictionaryLabel;
 import com.linyilinyi.model.entity.dictionary.DictionaryType;
 import com.linyilinyi.model.vo.dictionary.DictionaryLabelAddVo;
@@ -63,10 +65,17 @@ public class DictionaryLabelServiceImpl extends ServiceImpl<DictionaryLabelMappe
 
     @Override
     public String addDictionaryLabel(DictionaryLabelAddVo dictionaryLabelAddVo) {
+        if (Optional.ofNullable(dictionaryLabelAddVo.getDictionaryId()).isEmpty()){
+            throw new LinyiException("字典类型id为空，添加失败");
+        }
         DictionaryLabel dictionaryLabel = new DictionaryLabel();
         BeanUtils.copyProperties(dictionaryLabelAddVo, dictionaryLabel);
         dictionaryLabel.setCreateTime(LocalDateTime.now());
         dictionaryLabel.setCreateUserId(Integer.parseInt(request.getHeader("userid")));
+        //检测敏感字
+        if (SensitiveWordsUtils.isSensitiveWords(dictionaryLabel)){
+            throw new LinyiException(ResultCodeEnum.SENSITIVE_WORDS);
+        }
         if (dictionaryLabelMapper.insert(dictionaryLabel) != 1) {
             throw new RuntimeException("添加失败");
         }
@@ -88,6 +97,10 @@ public class DictionaryLabelServiceImpl extends ServiceImpl<DictionaryLabelMappe
     public String updateDictionaryLabel(DictionaryLabel dictionaryLabel) {
         dictionaryLabel.setUpdateTime(LocalDateTime.now());
         dictionaryLabel.setUpdateUserId(Integer.parseInt(request.getHeader("userid")));
+        //检测敏感字
+        if (SensitiveWordsUtils.isSensitiveWords(dictionaryLabel)){
+            throw new LinyiException(ResultCodeEnum.SENSITIVE_WORDS);
+        }
         int i = dictionaryLabelMapper.updateById(dictionaryLabel);
         if (i != 1) {
             throw new LinyiException("修改失败");

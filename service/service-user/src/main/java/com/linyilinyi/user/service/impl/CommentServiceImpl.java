@@ -7,6 +7,7 @@ import com.linyilinyi.common.exception.LinyiException;
 import com.linyilinyi.common.model.PageResult;
 import com.linyilinyi.common.model.ResultCodeEnum;
 import com.linyilinyi.common.utils.AuthContextUser;
+import com.linyilinyi.common.utils.SensitiveWordsUtils;
 import com.linyilinyi.model.entity.comment.Comment;
 import com.linyilinyi.model.entity.likes.Likes;
 import com.linyilinyi.model.entity.user.User;
@@ -60,6 +61,10 @@ public class CommentServiceImpl extends ServiceImpl<CommentMapper, Comment> impl
 
     @Override
     public CommentsVo addComment(CommentAddVo commentAddVo) {
+        //检测敏感字
+        if (SensitiveWordsUtils.isSensitiveWords(commentAddVo)){
+            throw new LinyiException(ResultCodeEnum.SENSITIVE_WORDS);
+        }
         CommentsVo commentsVo = new CommentsVo();
         User user = userService.getUserById(Integer.parseInt(request.getHeader("userid")));
         BeanUtils.copyProperties(commentAddVo, commentsVo);
@@ -99,7 +104,6 @@ public class CommentServiceImpl extends ServiceImpl<CommentMapper, Comment> impl
                 commentsVoArrayList.add(commentsVo);
             }
         }
-
         //将list转map，以备使用
         Map<Integer, CommentsVo> commentsVoMap = commentsVoArrayList.stream().collect(Collectors.toMap(k -> k.getId(), v -> v, (k1, k2) -> k2));
         //最终返回list
@@ -121,7 +125,6 @@ public class CommentServiceImpl extends ServiceImpl<CommentMapper, Comment> impl
 
         List<CommentsVo> collect = topList.stream().skip((pageNo - 1) * pageSize).limit(pageSize).collect(Collectors.toList());
         return new PageResult<>(collect, commentsVoArrayList.size(), pageNo, pageSize);
-
     }
 
     @Override
