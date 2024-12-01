@@ -6,6 +6,7 @@
     <resultMap id="BaseResultMap" type="com.linyilinyi.model.entity.other.Leaderboard">
         <id column="id" property="id" />
         <result column="target_id" property="targetId" />
+        <result column="target_type" property="targetType" />
         <result column="score" property="score" />
         <result column="rank" property="rank" />
         <result column="leaderboard_type" property="leaderboardType" />
@@ -16,7 +17,7 @@
 
     <!-- 通用查询结果列 -->
     <sql id="Base_Column_List">
-        id, target_id, score, rank, leaderboard_type, record_date, created_at, updated_at
+        id, target_id, target_type,score, rank, leaderboard_type, record_date, created_at, updated_at
     </sql>
 
 </mapper>

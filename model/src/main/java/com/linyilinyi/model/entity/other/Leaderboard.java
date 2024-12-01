@@ -35,6 +35,9 @@ public class Leaderboard implements Serializable {
     @Schema(description = "对象ID")
     private Long targetId;
 
+    @Schema(description = "对象类型")
+    private Integer targetType;
+
     @Schema(description = "得分")
     private Double score;
 
