@@ -1,10 +1,8 @@
 import com.linyilinyi.model.entity.user.Menu;
 import com.linyilinyi.model.entity.user.RoleMenu;
 import com.linyilinyi.user.UserApplication;
-import com.linyilinyi.user.mapper.MenuMapper;
 import com.linyilinyi.user.mapper.RoleMenuMapper;
 import com.linyilinyi.user.service.MenuService;
-import org.apache.commons.lang3.RandomStringUtils;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -36,7 +34,6 @@ public class a {
 
     @Test
     public void test() {
-
         List<Menu> menuList = menuService.getMenuList();
         List<Long> collect = menuList.stream()
                 .filter(menu -> menu.getMenuType() == 12003) // 使用 equals 方法进行比较

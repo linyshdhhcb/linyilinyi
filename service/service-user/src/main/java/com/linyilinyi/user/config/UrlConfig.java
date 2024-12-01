@@ -41,8 +41,9 @@
 //
 //    @Autowired
 //    private MenuService menuService;
-//@Autowired
-//private RedisTemplate redisTemplate;
+//
+//    @Autowired
+//    private RedisTemplate redisTemplate;
 //
 //    @Bean
 //    public ThreadPoolTaskScheduler threadPoolTaskScheduler() {
@@ -68,6 +69,7 @@
 //
 //    @PostConstruct
 //    public void init() {
+//        long l = System.currentTimeMillis();
 //        redisTemplate.delete("role:menu");
 //        //删除（除12001）的全部菜单
 //        menuService.deleteMenuType(12001);
@@ -82,6 +84,7 @@
 //                urlInfo(k, v);
 //            });
 //        }, new Date(System.currentTimeMillis() + 20000));
+//        System.out.println("#################耗时：" + (System.currentTimeMillis() - l));
 //    }
 //
 //    public void urlInfo(String url, Long n) {

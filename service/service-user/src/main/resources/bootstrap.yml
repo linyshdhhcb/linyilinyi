@@ -1,6 +1,6 @@
 #公共属性
 nacos:
-  #server.addr: 192.168.85.131:8848
+    #server.addr: 192.168.85.131:8848
     server.addr: 172.17.45.92:8848
     namespace: ff22ea3c-3c52-4537-9656-2e52fc5b15a4
     group: DEFAULT_GROUP

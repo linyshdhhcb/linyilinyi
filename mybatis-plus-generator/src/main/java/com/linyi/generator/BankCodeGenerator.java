@@ -17,8 +17,8 @@ public class BankCodeGenerator {
 
 	// TODO 修改服务名以及数据表名
 	private static final String SERVICE_NAME = "linyilinyi";
-	private static final String DATA_SOURCE_USER_NAME  = "root";
-	private static final String DATA_SOURCE_PASSWORD  = "123456";
+	private static final String DATA_SOURCE_USER_NAME  = "linyi";
+	private static final String DATA_SOURCE_PASSWORD  = "lpy.3826";
 	private static final String[] TABLE_NAMES = new String[]{
 //			"article",
 //			"article_data",
@@ -48,9 +48,10 @@ public class BankCodeGenerator {
 //			"dictionary_type"
 //			"notice_info"
 //		"oper_log"
-			"review"
+//			"review"
 //			"article_data",
 //			"video_data"
+			"leaderboard"
 
 	};
 
@@ -100,7 +101,7 @@ public class BankCodeGenerator {
 		// 设置数据库类型
 		dsc.setDbType(DbType.MYSQL);
 		// 设置数据库连接URL
-		dsc.setUrl("jdbc:mysql://192.168.85.131:3306/" + SERVICE_NAME
+		dsc.setUrl("jdbc:mysql://172.17.45.92:3303/" + SERVICE_NAME
 				+ "?characterEncoding=utf-8&useSSL=false");
 		// 设置数据库驱动名
 		dsc.setDriverName("com.mysql.cj.jdbc.Driver");

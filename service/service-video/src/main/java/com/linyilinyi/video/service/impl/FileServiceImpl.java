@@ -44,6 +44,7 @@ import java.time.temporal.ChronoUnit;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
+import java.util.concurrent.CompletableFuture;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
@@ -79,6 +80,7 @@ public class FileServiceImpl extends ServiceImpl<FileMapper, File> implements Fi
 
     @Override
     public File uploadVideoFile(File file, String absolutePath, String bucketNamea) {
+
 
         String mimeType = getMimeType(file.getFileType().replace(".", ""));
         LambdaQueryWrapper<File> queryWrapper = new LambdaQueryWrapper<File>().eq(File::getFileMd5, fileMd5(new java.io.File(absolutePath)));

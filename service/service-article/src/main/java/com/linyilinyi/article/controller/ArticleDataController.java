@@ -58,7 +58,7 @@ public class ArticleDataController {
     }
 
     @Operation(summary = "文章阅读+1")
-    @PostMapping("updateArticleData")
+    @PostMapping("updateArticleDataRead")
     @Log(title = "文章数据统计管理",content = "文章阅读")
     public void updateArticleRead(@RequestParam Integer id){
         articleDataService.updateArticleRead(id);

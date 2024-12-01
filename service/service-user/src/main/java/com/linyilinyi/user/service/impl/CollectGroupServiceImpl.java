@@ -48,18 +48,18 @@ public class CollectGroupServiceImpl extends ServiceImpl<CollectGroupMapper, Col
     @Override
     public String addCollectGroup(String name, Integer status) {
         //检测敏感字
-        if (SensitiveWordsUtils.isSensitiveWords(name)){
+        if (SensitiveWordsUtils.isSensitiveWords(name)) {
             throw new LinyiException(ResultCodeEnum.SENSITIVE_WORDS);
         }
         CollectGroup collectGroup = new CollectGroup();
         collectGroup.setName(name);
         collectGroup.setCreateTime(LocalDateTime.now());
         collectGroup.setUserId(Integer.parseInt(request.getHeader("userid")));
-        if (Optional.ofNullable(status).isPresent()){
+        if (Optional.ofNullable(status).isPresent()) {
             collectGroup.setStatus(status);
         }
         int insert = collectGroupMapper.insert(collectGroup);
-        if (insert!=1){
+        if (insert != 1) {
             throw new LinyiException(ResultCodeEnum.INSERT_FAIL);
         }
         return "添加成功";
@@ -70,7 +70,7 @@ public class CollectGroupServiceImpl extends ServiceImpl<CollectGroupMapper, Col
     public String deleteCollectGroup(Integer id) {
         // TODO 2024/9/24 远程调用，根据id删除文件夹中所有的收藏视频
         int i = collectGroupMapper.deleteById(id);
-        if (i!=1){
+        if (i != 1) {
             throw new LinyiException(ResultCodeEnum.DELETE_FAIL);
         }
         return "删除成功";
@@ -80,11 +80,11 @@ public class CollectGroupServiceImpl extends ServiceImpl<CollectGroupMapper, Col
     public String updateCollectGroup(CollectGroup collectGroup) {
         collectGroup.setUpdateTime(LocalDateTime.now());
         //检测敏感字
-        if (SensitiveWordsUtils.isSensitiveWords(collectGroup)){
+        if (SensitiveWordsUtils.isSensitiveWords(collectGroup)) {
             throw new LinyiException(ResultCodeEnum.SENSITIVE_WORDS);
         }
         int i = collectGroupMapper.updateById(collectGroup);
-        if (i!=1){
+        if (i != 1) {
             throw new LinyiException(ResultCodeEnum.UPDATE_ERROR);
         }
         return "修改成功";
