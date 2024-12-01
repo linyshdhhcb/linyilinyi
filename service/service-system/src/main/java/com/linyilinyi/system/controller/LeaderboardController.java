@@ -33,9 +33,13 @@ public class LeaderboardController {
 
     @Operation(summary = "分页获取全部排行榜列表")
     @PostMapping("getLeaderboardList")
-    public Result<PageResult<Leaderboard>> getLeaderboardList(long pageNo, long pageSize, @RequestBody LeaderboardQueryVo leaderboardQueryVo) {
+    public Result<PageResult<Leaderboard>> getLeaderboardList(@RequestParam(required = false, defaultValue = "1") long pageNo,
+                                                              @RequestParam(required = false, defaultValue = "5") long pageSize,
+                                                              @RequestBody LeaderboardQueryVo leaderboardQueryVo) {
         return Result.ok(leaderboardService.getLeaderboardList(pageNo, pageSize,leaderboardQueryVo));
     }
+
+    @Operation(summary = "添加排行榜")
 
 
 

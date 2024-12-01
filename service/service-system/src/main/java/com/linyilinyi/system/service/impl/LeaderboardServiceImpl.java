@@ -13,6 +13,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
+import java.util.Collections;
 import java.util.List;
 
 /**
@@ -33,32 +34,23 @@ public class LeaderboardServiceImpl extends ServiceImpl<LeaderboardMapper, Leade
     @Override
     public PageResult<Leaderboard> getLeaderboardList(long pageNo, long pageSize, LeaderboardQueryVo leaderboardQueryVo) {
         LambdaQueryWrapper<Leaderboard> queryWrapper = new LambdaQueryWrapper<>();
-        // 视频
-        if (leaderboardQueryVo.getTargetType() == 11201){
-            queryWrapper.eq(leaderboardQueryVo.getTargetId()!=null , Leaderboard::getTargetId, leaderboardQueryVo.getTargetId());
-            queryWrapper.lt(leaderboardQueryVo.getScoreMax()!=null, Leaderboard::getScore, leaderboardQueryVo.getScoreMax());
-            queryWrapper.gt(leaderboardQueryVo.getScoreMin()!=null, Leaderboard::getScore, leaderboardQueryVo.getScoreMin());
-            queryWrapper.lt(leaderboardQueryVo.getRankMax()!=null, Leaderboard::getRank, leaderboardQueryVo.getRankMax());
-            queryWrapper.gt(leaderboardQueryVo.getRankMin()!=null, Leaderboard::getRank, leaderboardQueryVo.getRankMin());
-            queryWrapper.eq(leaderboardQueryVo.getLeaderboardType()!=null, Leaderboard::getLeaderboardType, leaderboardQueryVo.getLeaderboardType());
-            queryWrapper.gt(leaderboardQueryVo.getStartTime()!=null, Leaderboard::getRecordDate, leaderboardQueryVo.getStartTime());
-            queryWrapper.lt(leaderboardQueryVo.getEndTime()!=null, Leaderboard::getRecordDate, leaderboardQueryVo.getEndTime());
-            Page<Leaderboard> leaderboardPage = new Page<>(pageNo, pageSize);
-            Page<Leaderboard> pageList = leaderboardMapper.selectPage(leaderboardPage, queryWrapper);
-            return new PageResult<>(pageList.getRecords(), pageList.getTotal(), pageNo, pageSize);
-        }else if (leaderboardQueryVo.getTargetType() == 11202){
-            queryWrapper.eq(leaderboardQueryVo.getTargetId()!=null , Leaderboard::getTargetId, leaderboardQueryVo.getTargetId());
-            queryWrapper.lt(leaderboardQueryVo.getScoreMax()!=null, Leaderboard::getScore, leaderboardQueryVo.getScoreMax());
-            queryWrapper.gt(leaderboardQueryVo.getScoreMin()!=null, Leaderboard::getScore, leaderboardQueryVo.getScoreMin());
-            queryWrapper.lt(leaderboardQueryVo.getRankMax()!=null, Leaderboard::getRank, leaderboardQueryVo.getRankMax());
-            queryWrapper.gt(leaderboardQueryVo.getRankMin()!=null, Leaderboard::getRank, leaderboardQueryVo.getRankMin());
-            queryWrapper.eq(leaderboardQueryVo.getLeaderboardType()!=null, Leaderboard::getLeaderboardType, leaderboardQueryVo.getLeaderboardType());
-            queryWrapper.gt(leaderboardQueryVo.getStartTime()!=null, Leaderboard::getRecordDate, leaderboardQueryVo.getStartTime());
-            queryWrapper.lt(leaderboardQueryVo.getEndTime()!=null, Leaderboard::getRecordDate, leaderboardQueryVo.getEndTime());
-            Page<Leaderboard> leaderboardPage = new Page<>(pageNo, pageSize);
+
+        if (leaderboardQueryVo.getTargetType() == 11201 || leaderboardQueryVo.getTargetType() == 11202) {
+            queryWrapper.eq(leaderboardQueryVo.getTargetId() != null, Leaderboard::getTargetId, leaderboardQueryVo.getTargetId());
+            queryWrapper.lt(leaderboardQueryVo.getScoreMax() != null, Leaderboard::getScore, leaderboardQueryVo.getScoreMax());
+            queryWrapper.gt(leaderboardQueryVo.getScoreMin() != null, Leaderboard::getScore, leaderboardQueryVo.getScoreMin());
+            queryWrapper.lt(leaderboardQueryVo.getRankMax() != null, Leaderboard::getRank, leaderboardQueryVo.getRankMax());
+            queryWrapper.gt(leaderboardQueryVo.getRankMin() != null, Leaderboard::getRank, leaderboardQueryVo.getRankMin());
+            queryWrapper.eq(leaderboardQueryVo.getLeaderboardType() != null, Leaderboard::getLeaderboardType, leaderboardQueryVo.getLeaderboardType());
+            queryWrapper.gt(leaderboardQueryVo.getStartTime() != null, Leaderboard::getRecordDate, leaderboardQueryVo.getStartTime());
+            queryWrapper.lt(leaderboardQueryVo.getEndTime() != null, Leaderboard::getRecordDate, leaderboardQueryVo.getEndTime());
+
+            // 使用对象池复用 Page 对象
+            Page<Leaderboard> leaderboardPage = Page.of(pageNo, pageSize);
             Page<Leaderboard> pageList = leaderboardMapper.selectPage(leaderboardPage, queryWrapper);
             return new PageResult<>(pageList.getRecords(), pageList.getTotal(), pageNo, pageSize);
         }
         return null;
     }
+
 }
