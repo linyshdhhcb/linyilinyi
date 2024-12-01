@@ -3,6 +3,7 @@ package com.linyilinyi.system.controller;
 import com.linyilinyi.common.model.PageResult;
 import com.linyilinyi.common.model.Result;
 import com.linyilinyi.model.entity.other.Leaderboard;
+import com.linyilinyi.model.vo.other.LeaderboardAddVo;
 import com.linyilinyi.model.vo.other.LeaderboardQueryVo;
 import com.linyilinyi.system.service.LeaderboardService;
 import io.swagger.v3.oas.annotations.Operation;
@@ -40,6 +41,10 @@ public class LeaderboardController {
     }
 
     @Operation(summary = "添加排行榜")
+    @PostMapping("addLeaderboard")
+    public Result<String> addLeaderboard(@RequestBody LeaderboardAddVo leaderboardAddVo) {
+        return Result.ok(leaderboardService.addLeaderboard(leaderboardAddVo));
+    }
 
 
 

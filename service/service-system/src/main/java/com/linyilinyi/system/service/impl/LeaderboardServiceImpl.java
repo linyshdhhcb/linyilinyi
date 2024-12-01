@@ -6,13 +6,18 @@ import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.linyilinyi.common.model.PageResult;
 import com.linyilinyi.model.entity.other.Leaderboard;
+import com.linyilinyi.model.vo.other.LeaderboardAddVo;
 import com.linyilinyi.model.vo.other.LeaderboardQueryVo;
 import com.linyilinyi.system.mapper.LeaderboardMapper;
 import com.linyilinyi.system.service.LeaderboardService;
+import lombok.Data;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.BeanUtils;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.Collections;
 import java.util.List;
 
@@ -51,6 +56,19 @@ public class LeaderboardServiceImpl extends ServiceImpl<LeaderboardMapper, Leade
             return new PageResult<>(pageList.getRecords(), pageList.getTotal(), pageNo, pageSize);
         }
         return null;
+    }
+
+    @Override
+    public String addLeaderboard(LeaderboardAddVo leaderboardAddVo) {
+        Leaderboard leaderboard = new Leaderboard();
+        BeanUtils.copyProperties(leaderboardAddVo,leaderboard);
+        leaderboard.setRecordDate(LocalDate.now());
+        leaderboard.setCreatedAt(LocalDateTime.now());
+        int i = leaderboardMapper.insert(leaderboard);
+        if (i != 1){
+            throw new RuntimeException("添加失败");
+        }
+        return "添加成功";
     }
 
 }
