@@ -4,6 +4,7 @@ package com.linyilinyi.system.service.impl;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
+import com.linyilinyi.common.exception.LinyiException;
 import com.linyilinyi.common.model.PageResult;
 import com.linyilinyi.model.entity.other.Leaderboard;
 import com.linyilinyi.model.vo.other.LeaderboardAddVo;
@@ -20,6 +21,9 @@ import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.Collections;
 import java.util.List;
+import java.util.Optional;
+import java.util.logging.Level;
+import java.util.stream.Collectors;
 
 /**
  * <p>
@@ -61,14 +65,25 @@ public class LeaderboardServiceImpl extends ServiceImpl<LeaderboardMapper, Leade
     @Override
     public String addLeaderboard(LeaderboardAddVo leaderboardAddVo) {
         Leaderboard leaderboard = new Leaderboard();
-        BeanUtils.copyProperties(leaderboardAddVo,leaderboard);
+        BeanUtils.copyProperties(leaderboardAddVo, leaderboard);
         leaderboard.setRecordDate(LocalDate.now());
         leaderboard.setCreatedAt(LocalDateTime.now());
         int i = leaderboardMapper.insert(leaderboard);
-        if (i != 1){
+        if (i != 1) {
             throw new RuntimeException("添加失败");
         }
         return "添加成功";
     }
+
+    @Override
+    public String deleteLeaderboard(List<Long> ids) {
+        ids = ids.stream().filter(id -> id > 0).collect(Collectors.toList());
+        int deletedCount = leaderboardMapper.deleteBatchIds(ids);
+        if (deletedCount <= 0) {
+            throw new LinyiException("删除失败");
+        }
+        return String.format("成功删除 %d 条信息。删除失败 %d 条信息。", deletedCount, ids.size() - deletedCount);
+    }
+
 
 }

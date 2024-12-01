@@ -6,6 +6,8 @@ import com.linyilinyi.model.entity.other.Leaderboard;
 import com.linyilinyi.model.vo.other.LeaderboardAddVo;
 import com.linyilinyi.model.vo.other.LeaderboardQueryVo;
 
+import java.util.List;
+
 /**
  * <p>
  * 排行榜表 服务类
@@ -19,4 +21,6 @@ public interface LeaderboardService extends IService<Leaderboard> {
     PageResult<Leaderboard> getLeaderboardList(long pageNo, long pageSize, LeaderboardQueryVo leaderboardQueryVo);
 
     String addLeaderboard(LeaderboardAddVo leaderboardAddVo);
+
+    String deleteLeaderboard(List<Long> ids);
 }

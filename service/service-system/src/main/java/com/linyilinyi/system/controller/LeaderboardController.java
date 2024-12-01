@@ -13,6 +13,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import javax.annotation.Resource;
+import java.util.List;
 
 /**
  * <p>
@@ -44,6 +45,12 @@ public class LeaderboardController {
     @PostMapping("addLeaderboard")
     public Result<String> addLeaderboard(@RequestBody LeaderboardAddVo leaderboardAddVo) {
         return Result.ok(leaderboardService.addLeaderboard(leaderboardAddVo));
+    }
+
+    @Operation(summary = "删除排行榜")
+    @PostMapping("deleteLeaderboard/{ids}")
+    public Result<String> deleteLeaderboard(@PathVariable List<Long> ids) {
+        return Result.ok(leaderboardService.deleteLeaderboard(ids));
     }
 
 
