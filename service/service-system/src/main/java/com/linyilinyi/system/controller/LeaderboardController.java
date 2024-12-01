@@ -53,6 +53,16 @@ public class LeaderboardController {
         return Result.ok(leaderboardService.deleteLeaderboard(ids));
     }
 
+    @Operation(summary = "根据id获取排行榜（回显）")
+    @GetMapping("getLeaderboard/{id}")
+    public Result<Leaderboard> getLeaderboard(@PathVariable Long id) {
+        return Result.ok(leaderboardService.getById(id));
+    }
 
+    @Operation(summary = "更新排行榜")
+    @PostMapping("updateLeaderboard")
+    public Result<String> updateLeaderboard(@RequestBody Leaderboard leaderboard) {
+        return Result.ok(leaderboardService.updateLeaderboard(leaderboard));
+    }
 
 }

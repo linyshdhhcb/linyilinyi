@@ -23,4 +23,6 @@ public interface LeaderboardService extends IService<Leaderboard> {
     String addLeaderboard(LeaderboardAddVo leaderboardAddVo);
 
     String deleteLeaderboard(List<Long> ids);
+
+    String updateLeaderboard(Leaderboard leaderboard);
 }

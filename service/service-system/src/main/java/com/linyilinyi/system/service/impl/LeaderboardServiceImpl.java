@@ -85,5 +85,15 @@ public class LeaderboardServiceImpl extends ServiceImpl<LeaderboardMapper, Leade
         return String.format("成功删除 %d 条信息。删除失败 %d 条信息。", deletedCount, ids.size() - deletedCount);
     }
 
+    @Override
+    public String updateLeaderboard(Leaderboard leaderboard) {
+        leaderboard.setUpdatedAt(LocalDateTime.now());
+        int i = leaderboardMapper.updateById(leaderboard);
+        if (i != 1) {
+            throw new LinyiException("修改失败");
+        }
+        return "修改成功";
+    }
+
 
 }
