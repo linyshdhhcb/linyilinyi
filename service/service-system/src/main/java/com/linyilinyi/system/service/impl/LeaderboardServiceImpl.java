@@ -7,6 +7,7 @@ import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.linyilinyi.common.exception.LinyiException;
 import com.linyilinyi.common.model.PageResult;
 import com.linyilinyi.model.entity.other.Leaderboard;
+import com.linyilinyi.model.vo.other.Hot;
 import com.linyilinyi.model.vo.other.LeaderboardAddVo;
 import com.linyilinyi.model.vo.other.LeaderboardQueryVo;
 import com.linyilinyi.system.mapper.LeaderboardMapper;
@@ -93,6 +94,12 @@ public class LeaderboardServiceImpl extends ServiceImpl<LeaderboardMapper, Leade
             throw new LinyiException("修改失败");
         }
         return "修改成功";
+    }
+
+    @Override
+    public Integer calculateHot(Hot hot) {
+        //浏览量 * 1 + 评论数 * 2 + 点赞数 * 3 + 收藏数 * 2 + 分享数 * 3
+        return Optional.ofNullable(hot).map(h -> h.getViewCount() * 1 + h.getCommentCount() * 2 + h.getLikeCount() * 3 + h.getCollectCount() * 2 + h.getShareCount() * 3).orElse(null);
     }
 
 

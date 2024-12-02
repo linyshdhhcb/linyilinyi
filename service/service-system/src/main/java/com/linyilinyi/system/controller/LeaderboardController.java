@@ -3,6 +3,7 @@ package com.linyilinyi.system.controller;
 import com.linyilinyi.common.model.PageResult;
 import com.linyilinyi.common.model.Result;
 import com.linyilinyi.model.entity.other.Leaderboard;
+import com.linyilinyi.model.vo.other.Hot;
 import com.linyilinyi.model.vo.other.LeaderboardAddVo;
 import com.linyilinyi.model.vo.other.LeaderboardQueryVo;
 import com.linyilinyi.system.service.LeaderboardService;
@@ -63,6 +64,12 @@ public class LeaderboardController {
     @PostMapping("updateLeaderboard")
     public Result<String> updateLeaderboard(@RequestBody Leaderboard leaderboard) {
         return Result.ok(leaderboardService.updateLeaderboard(leaderboard));
+    }
+
+    @Operation(summary = "计算热度")
+    @GetMapping("calculateHot")
+    public Result<Integer> calculateHot(@RequestBody Hot hot) {
+        return Result.ok(leaderboardService.calculateHot(hot));
     }
 
 }

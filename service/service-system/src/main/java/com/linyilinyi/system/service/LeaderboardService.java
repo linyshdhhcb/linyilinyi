@@ -3,6 +3,7 @@ package com.linyilinyi.system.service;
 import com.baomidou.mybatisplus.extension.service.IService;
 import com.linyilinyi.common.model.PageResult;
 import com.linyilinyi.model.entity.other.Leaderboard;
+import com.linyilinyi.model.vo.other.Hot;
 import com.linyilinyi.model.vo.other.LeaderboardAddVo;
 import com.linyilinyi.model.vo.other.LeaderboardQueryVo;
 
@@ -25,4 +26,6 @@ public interface LeaderboardService extends IService<Leaderboard> {
     String deleteLeaderboard(List<Long> ids);
 
     String updateLeaderboard(Leaderboard leaderboard);
+
+    Integer calculateHot(Hot hot);
 }
