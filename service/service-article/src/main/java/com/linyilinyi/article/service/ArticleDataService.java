@@ -21,9 +21,6 @@ public interface ArticleDataService extends IService<ArticleData> {
 
     String updateArticleData(ArticleData articleData);
 
-    String addArticleData(Integer id, Integer status);
-
-
-    void updateArticleRead(Integer id);
+    String addArticleData(Integer id, Integer status, Integer count);
 
 }

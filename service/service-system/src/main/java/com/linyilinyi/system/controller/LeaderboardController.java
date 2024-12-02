@@ -30,7 +30,7 @@ import java.util.List;
 @SuppressWarnings({"unchecked", "rawtypes"})
 public class LeaderboardController {
 
-    @Resource
+    @Autowired
     private LeaderboardService leaderboardService;
 
 
@@ -60,6 +60,12 @@ public class LeaderboardController {
         return Result.ok(leaderboardService.getById(id));
     }
 
+    @Operation(summary = "根据对象id和对象类型获取信息")
+    @GetMapping("getLeaderboardByTargetIdAndLeaderboardType")
+    public Result<Leaderboard> getLeaderboardByTargetIdAndLeaderboardType(@RequestParam Integer targetId,@RequestParam Integer leaderboardType) {
+        return Result.ok(leaderboardService.getLeaderboardByTargetIdAndLeaderboardType(targetId,leaderboardType));
+    }
+
     @Operation(summary = "更新排行榜")
     @PostMapping("updateLeaderboard")
     public Result<String> updateLeaderboard(@RequestBody Leaderboard leaderboard) {
@@ -67,7 +73,7 @@ public class LeaderboardController {
     }
 
     @Operation(summary = "计算热度")
-    @GetMapping("calculateHot")
+    @PostMapping("calculateHot")
     public Result<Integer> calculateHot(@RequestBody Hot hot) {
         return Result.ok(leaderboardService.calculateHot(hot));
     }

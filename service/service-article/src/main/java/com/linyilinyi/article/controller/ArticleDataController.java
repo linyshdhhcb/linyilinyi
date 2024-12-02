@@ -53,15 +53,8 @@ public class ArticleDataController {
     @Operation(summary = "添加文章数据")
     @PostMapping("addArticleData")
     @Log(title = "文章数据统计管理",content = "添加文章数据")
-    public Result<String> addArticleData(@RequestParam Integer id,@RequestParam Integer status){
-        return Result.ok(articleDataService.addArticleData(id,status));
-    }
-
-    @Operation(summary = "文章阅读+1")
-    @PostMapping("updateArticleDataRead")
-    @Log(title = "文章数据统计管理",content = "文章阅读")
-    public void updateArticleRead(@RequestParam Integer id){
-        articleDataService.updateArticleRead(id);
+    public Result<String> addArticleData(@RequestParam Integer id,@RequestParam Integer status,@RequestParam Integer count){
+        return Result.ok(articleDataService.addArticleData(id,status,count));
     }
 
 

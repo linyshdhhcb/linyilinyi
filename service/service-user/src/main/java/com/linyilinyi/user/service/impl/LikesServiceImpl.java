@@ -135,7 +135,7 @@ public class LikesServiceImpl extends ServiceImpl<LikesMapper, Likes> implements
         }
         Integer parsedUserId = Integer.parseInt(userId);
 
-        // Step 1: 异步获取接收者ID
+        //异步获取接收者ID
         CompletableFuture<Integer> receiverIdFuture = CompletableFuture.supplyAsync(() -> {
             return switch (targetType) {
                 case 11201 -> {
@@ -159,10 +159,10 @@ public class LikesServiceImpl extends ServiceImpl<LikesMapper, Likes> implements
             };
         });
 
-        // Step 2: 异步判断是否已点赞
+        //异步判断是否已点赞
         CompletableFuture<Boolean> isLikedFuture = CompletableFuture.supplyAsync(() -> isLikes(id, targetType, parsedUserId));
 
-        // Step 3: 等待所有任务完成后，根据结果执行点赞或取消点赞逻辑
+        //等待所有任务完成后，根据结果执行点赞或取消点赞逻辑
         return CompletableFuture.allOf(receiverIdFuture, isLikedFuture)
                 .thenApplyAsync(ignored -> {
                     try {

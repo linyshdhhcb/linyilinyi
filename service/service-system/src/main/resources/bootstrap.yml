@@ -38,6 +38,9 @@ spring:
         prefix: ${spring.application.name}
         # 文件扩展名
         file-extension: yaml
+        # 公共得yaml
+        shared-configs:
+          - data-id: common-account.yaml
   #springdoc-openapi项目配置
 springdoc:
   swagger-ui:

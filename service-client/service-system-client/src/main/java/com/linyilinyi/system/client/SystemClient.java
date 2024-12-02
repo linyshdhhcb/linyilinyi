@@ -3,7 +3,9 @@ package com.linyilinyi.system.client;
 import com.linyilinyi.common.model.PageResult;
 import com.linyilinyi.common.model.Result;
 import com.linyilinyi.model.entity.log.OperLog;
+import com.linyilinyi.model.entity.other.Leaderboard;
 import com.linyilinyi.model.vo.log.OperLogQueryVo;
+import com.linyilinyi.model.vo.other.Hot;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.extern.java.Log;
 import org.springframework.cloud.openfeign.FeignClient;
@@ -34,4 +36,10 @@ public interface SystemClient {
     public Result<PageResult<OperLog>> pageList(@RequestParam(required = false, defaultValue = "1") long pageNo,
                                                 @RequestParam(required = false, defaultValue = "5") long pageSize,
                                                 @RequestBody OperLogQueryVo operLogQueryVo);
+
+    @GetMapping("/leaderboard/calculateHot")
+    public Result<Integer> calculateHot(@RequestBody Hot hot);
+
+    @GetMapping("/leaderboard/getLeaderboardByTargetIdAndLeaderboardType")
+    public Result<Leaderboard> getLeaderboardByTargetIdAndLeaderboardType(@RequestParam Integer targetId, @RequestParam Integer leaderboardType);
 }

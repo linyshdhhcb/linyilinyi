@@ -28,4 +28,6 @@ public interface LeaderboardService extends IService<Leaderboard> {
     String updateLeaderboard(Leaderboard leaderboard);
 
     Integer calculateHot(Hot hot);
+
+    Leaderboard getLeaderboardByTargetIdAndLeaderboardType(Integer targetId, Integer leaderboardType);
 }

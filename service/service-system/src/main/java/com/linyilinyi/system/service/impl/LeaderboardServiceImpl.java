@@ -12,7 +12,6 @@ import com.linyilinyi.model.vo.other.LeaderboardAddVo;
 import com.linyilinyi.model.vo.other.LeaderboardQueryVo;
 import com.linyilinyi.system.mapper.LeaderboardMapper;
 import com.linyilinyi.system.service.LeaderboardService;
-import lombok.Data;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.BeanUtils;
 import org.springframework.stereotype.Service;
@@ -20,10 +19,8 @@ import org.springframework.stereotype.Service;
 import javax.annotation.Resource;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
-import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
-import java.util.logging.Level;
 import java.util.stream.Collectors;
 
 /**
@@ -100,6 +97,13 @@ public class LeaderboardServiceImpl extends ServiceImpl<LeaderboardMapper, Leade
     public Integer calculateHot(Hot hot) {
         //浏览量 * 1 + 评论数 * 2 + 点赞数 * 3 + 收藏数 * 2 + 分享数 * 3
         return Optional.ofNullable(hot).map(h -> h.getViewCount() * 1 + h.getCommentCount() * 2 + h.getLikeCount() * 3 + h.getCollectCount() * 2 + h.getShareCount() * 3).orElse(null);
+    }
+
+    @Override
+    public Leaderboard getLeaderboardByTargetIdAndLeaderboardType(Integer targetId, Integer leaderboardType) {
+        LambdaQueryWrapper<Leaderboard> queryWrapper = new LambdaQueryWrapper<Leaderboard>().eq(Leaderboard::getTargetId, targetId).eq(Leaderboard::getLeaderboardType, leaderboardType);
+        Leaderboard leaderboard = leaderboardMapper.selectOne(queryWrapper);
+        return leaderboard;
     }
 
 
